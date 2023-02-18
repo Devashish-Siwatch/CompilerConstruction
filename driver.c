@@ -15,13 +15,9 @@ int main()
         printf("Unable to open file");
         return 1;
     }
-
-    // Read and print each character in the file
-    while ((ch = fgetc(input_file)) != EOF)
-    {
-        printf("%c", ch);
-    }
-
+    printf("File opened successfully\n");
+    printf("%c", get_next_char(input_file));
+    printf("%c", get_next_char(input_file));
     // Close the file
     fclose(input_file);
 

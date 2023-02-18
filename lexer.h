@@ -1,3 +1,6 @@
+#ifndef LEXER_H
+#define LEXER_H
+
 #include <stdio.h>
 #define MAX_LEXEME_LENGTH 100
 
@@ -58,7 +61,9 @@ FILE *getStream(FILE *fp);
 void removeComments(char *testcaseFile, char *cleanFile);
 
 // returns the next valid token from the file
-Token get_next_token();
+Token get_next_token(FILE *input_file_pointer);
 
 // returns the next character from the file
-char get_next_char();
+char get_next_char(FILE *input_file_pointer);
+
+#endif
