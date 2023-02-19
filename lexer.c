@@ -117,6 +117,7 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 7;
             }
+            break;
         case 3:;
             ch = get_next_char(input_file_pointer);
             if (ch == '<')
@@ -127,28 +128,33 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 5;
             }
+            break;
         case 4:;
             t.token_name = DRIVERDEF;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 5:;
             retract(input_file_pointer, 1);
             t.token_name = DEF;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 6:;
             t.token_name = LE;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 7:;
             retract(input_file_pointer, 1);
             t.token_name = LT;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 8:;
             ch = get_next_char(input_file_pointer);
             if (ch == '>')
@@ -163,6 +169,7 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 13;
             }
+            break;
         case 9:;
             ch = get_next_char(input_file_pointer);
             if (ch == '>')
@@ -173,28 +180,33 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 11;
             }
+            break;
         case 10:;
             t.token_name = DRIVERENDDEF;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 11:;
             retract(input_file_pointer, 1);
             t.token_name = ENDDEF;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 12:;
             t.token_name = GE;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 13:;
             retract(input_file_pointer, 1);
             t.token_name = GT;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 14:;
             ch = get_next_char(input_file_pointer);
             if (isalpha(ch) || isdigit(ch))
@@ -205,9 +217,11 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 15;
             }
+            break;
         case 15:;
             // TODO: ALPHABET HANDLING?
             continue;
+            break;
         case 16:;
             ch = get_next_char(input_file_pointer);
             if (ch == '=')
@@ -218,13 +232,16 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 18;
             }
+            break;
         case 17:;
             t.token_name = NE;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 18:;
         // TODO: error
+            break;
         case 19:;
             ch = get_next_char(input_file_pointer);
             if (ch == '*')
@@ -235,6 +252,7 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 23;
             }
+            break;
         case 20:;
             ch = get_next_char(input_file_pointer);
             if (ch == '*')
@@ -245,6 +263,7 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 20;
             }
+            break;
         case 21:;
             ch = get_next_char(input_file_pointer);
             if (ch == '*')
@@ -255,14 +274,17 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 20;
             }
+            break;
         case 22:;
         // TODO: Comments?
+            break;
         case 23:;
             retract(input_file_pointer, 1);
             t.token_name = MUL;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 24:;
             ch = get_next_char(input_file_pointer);
             if (ch == '=')
@@ -273,32 +295,38 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 25;
             }
+            break;
         case 25:;
             retract(input_file_pointer, 1);
             t.token_name = COLON;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 26:;
             t.token_name = ASSIGNOP;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 27:;
             t.token_name = PLUS;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 28:;
             t.token_name = EOF;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 29:;
             t.token_name = MINUS;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 30:;
             ch = get_next_char(input_file_pointer);
             if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')
@@ -313,14 +341,17 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 31;
             }
+            break;
         case 31:;
             retract(input_file_pointer, 1);
-            state = 0;
+            state = 1;
+            break;
         case 32:;
             t.token_name = DIV;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 34:;
             ch = get_next_char(input_file_pointer);
             if (ch == '=')
@@ -331,13 +362,16 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 33;
             }
+            break;
         case 33:;
             // TODO: error
+            break;
         case 35:;
             t.token_name = EQ;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 36:;
             ch = get_next_char(input_file_pointer);
             if (ch == '.')
@@ -348,43 +382,52 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 37;
             }
+            break;
         case 37:;
             // TODO: error
+            break;
         case 38:;
             t.token_name = RANGEOP;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 39:;
             t.token_name = SQBC;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 40:;
             t.token_name = SQBO;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 41:;
             t.token_name = BC;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 42:;
             t.token_name = COMMA;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 43:;
             t.token_name = BO;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 44:;
             t.token_name = SEMICOL;
             t.line_no = line_no;
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 45:;
             ch = get_next_char(input_file_pointer);
             if (isdigit(ch))
@@ -399,13 +442,15 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 46;
             }
+            break;
         case 46:;
             retract(input_file_pointer, 1);
             t.token_name = NUM;
             t.line_no = line_no;
             t.numeric_value = atoi(buffer);
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 48:;
             ch = get_next_char(input_file_pointer);
             if (isdigit(ch))
@@ -420,15 +465,18 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 49;
             }
+            break;
         case 47:;
             retract(input_file_pointer, 2);
             t.token_name = NUM;
             t.line_no = line_no;
             t.numeric_value = atoi(buffer);
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 49:;
             // TODO: error
+            break;
         case 50:;
             ch = get_next_char(input_file_pointer);
             if (isdigit(ch))
@@ -443,13 +491,15 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 51;
             }
+            break;
         case 51:;
             retract(input_file_pointer, 1);
             t.token_name = RNUM;
             t.line_no = line_no;
             t.real_numeric_value = atof(buffer);
-            state = 0;
+            state = 1;
             return t;
+            break;
         case 52:;
             ch = get_next_char(input_file_pointer);
             if (ch == '+' || ch == '-')
@@ -464,8 +514,10 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 53;
             }
+            break;
         case 53:;
             // TODO: error
+            break;
         case 54:;
             ch = get_next_char(input_file_pointer);
             if (isdigit(ch))
@@ -476,8 +528,10 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 55;
             }
+            break;
         case 55:;
             // TODO: error
+            break;
         case 56:;
             ch = get_next_char(input_file_pointer);
             if (isdigit(ch))
@@ -488,12 +542,13 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 57;
             }
+            break;
         case 57:;
             retract(input_file_pointer, 1);
             t.token_name = RNUM;
             t.line_no = line_no;
             t.real_numeric_value = atof(buffer);
-            state = 0;
+            state = 1;
             return t;
         }
     }
@@ -514,6 +569,6 @@ char get_next_char(FILE *input_file_pointer)
 
 FILE *retract(FILE *input_file_pointer, int n)
 {
-    fseek(input_file_pointer, n, SEEK_CUR);
+    fseek(input_file_pointer, -n, SEEK_CUR);
     return input_file_pointer;
 }
