@@ -2,10 +2,16 @@
 #define LEXER_H
 
 #include <stdio.h>
-#define MAX_LEXEME_LENGTH 100
+#define MAX_LEXEME_LENGTH 20
+#define BUFFER_SIZE 40
 
 int state;
 int line_no;
+int begin, forward;
+
+char buffer[BUFFER_SIZE];
+char lexeme[MAX_LEXEME_LENGTH];
+
 // List of valid token names in the language
 typedef enum valid_token_names
 {
@@ -71,4 +77,6 @@ char get_next_char(FILE *input_file_pointer);
 FILE *retract(FILE *input_file_pointer, int n);
 // initializes the lexer
 void initialize_lexer_variables();
+
+void update_buffer(FILE *input_file_pointer);
 #endif

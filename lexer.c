@@ -5,8 +5,9 @@ void initialize_lexer_variables()
 {
     state = 1;
     line_no = 1;
+    begin = 0;
+    forward = 0;
 }
-char buffer = 'y';
 Token get_next_token(FILE *input_file_pointer)
 {
 
