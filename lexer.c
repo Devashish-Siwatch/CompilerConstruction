@@ -10,72 +10,93 @@ Token get_next_token(FILE *input_file_pointer)
         char ch;
         switch (state)
         {
-        case 1:;
-        ch = get_next_char(input_file_pointer);
-        if (ch == '<') {
-            state = 2;
-        }
-        else if (ch == '>') {
-            state = 8;
-        }
-        //TODO: ALPHABETS
-        else if (ch == '!') {
-            state = 16;
-        }
-        else if (ch == '*') {
-            state = 19;
-        }
-        else if (ch == ':') {
-            state = 24;
-        }
-        else if (ch == '+') {
-            state = 27;
-        }
-        else if (ch == 'EOF') {
-            state = 28;
-        }
-        else if  (ch == '-')
-        {
-            state = 29;
-        }
-        //TODO: WHITESPACE
-        else if (ch == '/')
-        {
-            state = 32;
-        }
-        else if (ch == '=')
-        {
-            state = 34;
-        }
-        else if (ch == '.')
-        {
-            state = 36;
-        }
-        //TODO: NUMERICS
-        else if (ch == ']')
-        {
-            state = 39;
-        }
-        else if (ch == '[')
-        {
-            state = 40;
-        }
-        else if (ch == ')')
-        {
-            state = 41;
-        }
-        else if (ch == ',')
-        {
-            state = 42;
-        }
-        else if (ch == '(')
-        {
-            state = 43;
-        }
-        else if (ch == ';')
-        {
-            state = 44;
-        }
+            case 1:;
+                ch = get_next_char(input_file_pointer);
+                if (ch == '<') {
+                    state = 2;
+                }
+                else if (ch == '>') {
+                    state = 8;
+                }
+                //TODO: ALPHABETS
+                else if (ch == '!') {
+                    state = 16;
+                }
+                else if (ch == '*') {
+                    state = 19;
+                }
+                else if (ch == ':') {
+                    state = 24;
+                }
+                else if (ch == '+') {
+                    state = 27;
+                }
+                else if (ch == 'EOF') {
+                    state = 28;
+                }
+                else if  (ch == '-')
+                {
+                    state = 29;
+                }
+                //TODO: WHITESPACE
+                else if (ch == '/')
+                {
+                    state = 32;
+                }
+                else if (ch == '=')
+                {
+                    state = 34;
+                }
+                else if (ch == '.')
+                {
+                    state = 36;
+                }
+                //TODO: NUMERICS
+                else if (ch == ']')
+                {
+                    state = 39;
+                }
+                else if (ch == '[')
+                {
+                    state = 40;
+                }
+                else if (ch == ')')
+                {
+                    state = 41;
+                }
+                else if (ch == ',')
+                {
+                    state = 42;
+                }
+                else if (ch == '(')
+                {
+                    state = 43;
+                }
+                else if (ch == ';')
+                {
+                    state = 44;
+                }
+            case 2:;
+                ch = get_next_char(input_file_pointer);
+                if (ch == '<') {
+                    state = 3;
+                }
+                else if (ch == '=') {
+                    state = 6;
+                }
+                else {
+                    state = 7;
+                }
+            case 3:;
+                ch = get_next_char(input_file_pointer);
+                if (ch == '<') {
+                    state = 4;
+                }
+                else {
+                    state = 5;
+                }
+            case 4:;
+                
     }
 }
 char get_next_char(FILE *input_file_pointer)
@@ -90,4 +111,9 @@ char get_next_char(FILE *input_file_pointer)
     {
         return EOF;
     }
+}
+
+FILE *retract(FILE *input_file_pointer, int n) {
+    fseek(input_file_pointer, n, SEEK_CUR);
+    return input_file_pointer;
 }
