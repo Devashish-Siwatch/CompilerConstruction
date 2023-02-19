@@ -74,7 +74,7 @@ Token get_next_token(FILE *input_file_pointer);
 // returns the next character from the file
 char get_next_char(FILE *input_file_pointer);
 
-FILE *retract(FILE *input_file_pointer, int n);
+void retract(int n);
 // initializes the lexer
 void initialize_lexer_variables(FILE *input_file_pointer);
 

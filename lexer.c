@@ -153,7 +153,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 5:;
-            retract(input_file_pointer, 1);
+            retract(1);
             t.token_name = DEF;
             t.line_no = line_no;
             state = 1;
@@ -166,7 +166,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 7:;
-            retract(input_file_pointer, 1);
+            retract(1);
             t.token_name = LT;
             t.line_no = line_no;
             state = 1;
@@ -205,7 +205,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 11:;
-            retract(input_file_pointer, 1);
+            retract(1);
             t.token_name = ENDDEF;
             t.line_no = line_no;
             state = 1;
@@ -218,7 +218,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 13:;
-            retract(input_file_pointer, 1);
+            retract(1);
             t.token_name = GT;
             t.line_no = line_no;
             state = 1;
@@ -296,7 +296,7 @@ Token get_next_token(FILE *input_file_pointer)
             // TODO: Comments?
             break;
         case 23:;
-            retract(input_file_pointer, 1);
+            retract(1);
             t.token_name = MUL;
             t.line_no = line_no;
             state = 1;
@@ -314,7 +314,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 25:;
-            retract(input_file_pointer, 1);
+            retract(1);
             t.token_name = COLON;
             t.line_no = line_no;
             state = 1;
@@ -360,7 +360,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 31:;
-            retract(input_file_pointer, 1);
+            retract(1);
             state = 1;
             break;
         case 32:;
@@ -461,7 +461,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 46:;
-            retract(input_file_pointer, 1);
+            retract(1);
             t.token_name = NUM;
             t.line_no = line_no;
             t.numeric_value = atoi(buffer);
@@ -484,7 +484,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 47:;
-            retract(input_file_pointer, 2);
+            retract(2);
             t.token_name = NUM;
             t.line_no = line_no;
             t.numeric_value = atoi(buffer);
@@ -510,7 +510,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 51:;
-            retract(input_file_pointer, 1);
+            retract(1);
             t.token_name = RNUM;
             t.line_no = line_no;
             t.real_numeric_value = atof(buffer);
@@ -561,7 +561,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 57:;
-            retract(input_file_pointer, 1);
+            retract(1);
             t.token_name = RNUM;
             t.line_no = line_no;
             t.real_numeric_value = atof(buffer);
@@ -580,7 +580,6 @@ char get_next_char(FILE *input_file_pointer)
         update_buffer(input_file_pointer);
     }
     char c = buffer[forward];
-    printf("\nc: %c\n", c);
     int lex_index = forward - begin;
     // in case the forward pointer has reached the end of the buffer and is in the first half of the buffer
     if (lex_index < 0)
@@ -593,8 +592,9 @@ char get_next_char(FILE *input_file_pointer)
     return c;
 }
 
-FILE *retract(FILE *input_file_pointer, int n)
+void retract(int n)
 {
-    fseek(input_file_pointer, -n, SEEK_CUR);
-    return input_file_pointer;
+    forward -= n;
+    if (forward < 0)
+        forward += BUFFER_SIZE;
 }
