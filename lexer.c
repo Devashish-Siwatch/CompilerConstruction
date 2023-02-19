@@ -1,12 +1,28 @@
 #include <stdio.h>
 #include "lexer.h"
 
-void initialize_lexer_variables()
+// initializing the lexer variables
+void initialize_lexer_variables(FILE *input_file_pointer)
 {
     state = 1;
     line_no = 1;
     begin = 0;
     forward = 0;
+    update_buffer(input_file_pointer);
+}
+
+// updating the buffer's alternating halves with the contents of the file
+void update_buffer(FILE *input_file_pointer)
+{
+    int num;
+    if (forward == BUFFER_SIZE)
+    {
+        forward = 0;
+    }
+    num = fread(&buffer[forward], 1, BUFFER_SIZE / 2, input_file_pointer);
+    printf("buffer contents: %s", buffer);
+    if (num != BUFFER_SIZE / 2)
+        buffer[num + forward] = EOF;
 }
 Token get_next_token(FILE *input_file_pointer)
 {
@@ -241,7 +257,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 18:;
-        // TODO: error
+            // TODO: error
             break;
         case 19:;
             ch = get_next_char(input_file_pointer);
@@ -277,7 +293,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 22:;
-        // TODO: Comments?
+            // TODO: Comments?
             break;
         case 23:;
             retract(input_file_pointer, 1);
@@ -554,18 +570,27 @@ Token get_next_token(FILE *input_file_pointer)
         }
     }
 }
+
+// getting the next character from the buffer and updating the buffer if necessary
 char get_next_char(FILE *input_file_pointer)
 {
-    char ch;
-    // check if the file has reached EOF
-    if ((ch = fgetc(input_file_pointer)) != EOF)
+    // if updating the buffer in case we reach the either end of our twin buffer
+    if ((forward == BUFFER_SIZE || forward == BUFFER_SIZE / 2))
     {
-        return ch;
+        update_buffer(input_file_pointer);
     }
-    else
+    char c = buffer[forward];
+    printf("\nc: %c\n", c);
+    int lex_index = forward - begin;
+    // in case the forward pointer has reached the end of the buffer and is in the first half of the buffer
+    if (lex_index < 0)
     {
-        return EOF;
+        lex_index += BUFFER_SIZE;
     }
+    if (lex_index < MAX_LEXEME_LENGTH)
+        lexeme[lex_index] = c;
+    forward++;
+    return c;
 }
 
 FILE *retract(FILE *input_file_pointer, int n)

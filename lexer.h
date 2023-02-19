@@ -76,7 +76,7 @@ char get_next_char(FILE *input_file_pointer);
 
 FILE *retract(FILE *input_file_pointer, int n);
 // initializes the lexer
-void initialize_lexer_variables();
+void initialize_lexer_variables(FILE *input_file_pointer);
 
 void update_buffer(FILE *input_file_pointer);
 #endif
