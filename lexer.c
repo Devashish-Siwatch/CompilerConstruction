@@ -5,6 +5,7 @@
 void initialize_lexer_variables(FILE *input_file_pointer)
 {
     state = 1;
+    eof_reached = 0;
     line_no = 1;
     begin = 0;
     forward = 0;
@@ -20,15 +21,16 @@ void update_buffer(FILE *input_file_pointer)
         forward = 0;
     }
     num = fread(&buffer[forward], 1, BUFFER_SIZE / 2, input_file_pointer);
-    printf("buffer contents: %s", buffer);
+    // printf("buffer contents: %s", buffer);
+    // printf("num: %d", num);
     if (num != BUFFER_SIZE / 2)
-        buffer[num + forward] = EOF;
+        buffer[num + forward + 1] = EOF;
 }
 Token get_next_token(FILE *input_file_pointer)
 {
 
     Token t;
-    while (1)
+    while (eof_reached == 0)
     {
         char ch;
         switch (state)
@@ -65,6 +67,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             else if (ch == EOF)
             {
+                // printf("EOF reached");
                 state = 28;
             }
             else if (ch == '-')
@@ -150,6 +153,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = DRIVERDEF;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 5:;
@@ -157,12 +162,16 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = DEF;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 6:;
             t.token_name = LE;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 7:;
@@ -170,6 +179,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = LT;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 8:;
@@ -202,6 +213,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = DRIVERENDDEF;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 11:;
@@ -209,12 +222,16 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = ENDDEF;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 12:;
             t.token_name = GE;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 13:;
@@ -222,6 +239,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = GT;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 14:;
@@ -254,6 +273,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = NE;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 18:;
@@ -293,13 +314,15 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 22:;
-            // TODO: Comments?
+            state = 1;
             break;
         case 23:;
             retract(1);
             t.token_name = MUL;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 24:;
@@ -318,30 +341,40 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = COLON;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 26:;
             t.token_name = ASSIGNOP;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 27:;
             t.token_name = PLUS;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 28:;
             t.token_name = EOF;
             t.line_no = line_no;
-            state = 1;
+            eof_reached = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 29:;
             t.token_name = MINUS;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 30:;
@@ -367,6 +400,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = DIV;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 34:;
@@ -387,6 +422,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = EQ;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 36:;
@@ -407,42 +444,56 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = RANGEOP;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 39:;
             t.token_name = SQBC;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 40:;
             t.token_name = SQBO;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 41:;
             t.token_name = BC;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 42:;
             t.token_name = COMMA;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 43:;
             t.token_name = BO;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 44:;
             t.token_name = SEMICOL;
             t.line_no = line_no;
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 45:;
@@ -466,6 +517,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.line_no = line_no;
             t.numeric_value = atoi(buffer);
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 48:;
@@ -489,6 +542,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.line_no = line_no;
             t.numeric_value = atoi(buffer);
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 49:;
@@ -515,6 +570,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.line_no = line_no;
             t.real_numeric_value = atof(buffer);
             state = 1;
+            forward++;
+            begin = forward;
             return t;
             break;
         case 52:;
@@ -566,6 +623,8 @@ Token get_next_token(FILE *input_file_pointer)
             t.line_no = line_no;
             t.real_numeric_value = atof(buffer);
             state = 1;
+            forward++;
+            begin = forward;
             return t;
         }
     }

@@ -8,7 +8,7 @@
 int state;
 int line_no;
 int begin, forward;
-
+int eof_reached;
 char buffer[BUFFER_SIZE];
 char lexeme[MAX_LEXEME_LENGTH];
 
