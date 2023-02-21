@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "lexer.h"
-
+#include "hashmap.h"
 // initializing the lexer variables
 void initialize_lexer_variables(FILE *input_file_pointer)
 {
@@ -9,6 +9,8 @@ void initialize_lexer_variables(FILE *input_file_pointer)
     line_no = 1;
     begin = 0;
     forward = 0;
+    init_hashmap(lookup_table);
+    populate_hashmap(lookup_table);
     update_buffer(input_file_pointer);
 }
 
@@ -255,8 +257,25 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 15:;
-            // TODO: ALPHABET HANDLING?
-            continue;
+            retract(1);
+            printf("inside 15: %s", lexeme);
+            if ((t.token_name = get(lookup_table, lexeme)) != -1)
+            {
+                t.line_no = line_no;
+                state = 1;
+                forward++;
+                begin = forward;
+                return t;
+            }
+            else
+            {
+                t.token_name = ID;
+                t.line_no = line_no;
+                state = 1;
+                forward++;
+                begin = forward;
+                return t;
+            }
             break;
         case 16:;
             ch = get_next_char(input_file_pointer);
