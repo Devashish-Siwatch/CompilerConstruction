@@ -2,7 +2,7 @@
 takes input[list:array[4..20] of real];
 returns [sum:real]; **frunsfsd sdfsdf sdfsdf dfs fsdfsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
  ds
- ssssssssfs dfs fds df s dfs df s dfs dfsdfsdf**
+ ssssssssfs dfs fds df s dfs df s dfs dfsdfsdf
 start
 declare s: real;
 s := 0.0;

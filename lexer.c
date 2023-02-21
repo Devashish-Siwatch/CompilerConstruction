@@ -340,8 +340,13 @@ Token get_next_token(FILE *input_file_pointer)
                 state = 21;
             }
             else
-            {
+            {   
+                if(ch =='\n')
+                line_no++;
                 state = 20;
+                if(ch == EOF)
+                state = 28;
+                
             }
             break;
         case 21:;
