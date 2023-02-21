@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "lexer.h"
 #include "hashmap.h"
 // initializing the lexer variables
@@ -9,6 +10,8 @@ void initialize_lexer_variables(FILE *input_file_pointer)
     line_no = 1;
     begin = 0;
     forward = 0;
+    lastUpdatedHalf = 1;
+    lexemeSize=0;
     init_hashmap(lookup_table);
     populate_hashmap(lookup_table);
     update_buffer(input_file_pointer);
@@ -18,15 +21,30 @@ void initialize_lexer_variables(FILE *input_file_pointer)
 void update_buffer(FILE *input_file_pointer)
 {
     int num;
+
+    if((forward == BUFFER_SIZE && lastUpdatedHalf==0)){
+        forward = 0;
+        return;
+    }
+    if(forward==BUFFER_SIZE/2 && lastUpdatedHalf==1) return;
+
+    if(forward==BUFFER_SIZE/2) lastUpdatedHalf=1;
+    else if(forward==BUFFER_SIZE) lastUpdatedHalf=0;
     if (forward == BUFFER_SIZE)
     {
         forward = 0;
     }
+    
+    printf("\n IN UPDATE BUFFER, FORWARD is %d",forward);
     num = fread(&buffer[forward], 1, BUFFER_SIZE / 2, input_file_pointer);
     // printf("buffer contents: %s", buffer);
     // printf("num: %d", num);
-    if (num != BUFFER_SIZE / 2)
-        buffer[num + forward + 1] = EOF;
+    if (num != BUFFER_SIZE / 2){
+        buffer[num + forward] = EOF;
+        printf("/n EOF INSERTED AT INDEX : %d",num+forward+2);
+    }
+        
+    printf("\n BUFFER CURRENTLY is : %s",buffer);
 }
 Token get_next_token(FILE *input_file_pointer)
 {
@@ -155,7 +173,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = DRIVERDEF;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -215,7 +233,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = DRIVERENDDEF;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -224,7 +242,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = ENDDEF;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -247,7 +265,7 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 14:;
             ch = get_next_char(input_file_pointer);
-            if (isalpha(ch) || isdigit(ch))
+            if (isalpha(ch) || isdigit(ch) || ch=='_')
             {
                 state = 14;
             }
@@ -258,13 +276,17 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 15:;
             retract(1);
-            printf("inside 15: %s", lexeme);
-            if ((t.token_name = get(lookup_table, lexeme)) != -1)
+            printf("\ninside 15: %s b: %d f: %d", lexeme, begin,forward);
+            printf("\nBUFFER : __%s__",buffer);
+            lexemeSize = forward-begin;
+            if(forward<begin) lexemeSize += BUFFER_SIZE;
+            if ((t.token_name = get(lookup_table, lexeme,lexemeSize)) != -1)
             {
                 t.line_no = line_no;
                 state = 1;
-                forward++;
+                // forward++;
                 begin = forward;
+                strcpy(lexeme,"");
                 return t;
             }
             else
@@ -272,8 +294,9 @@ Token get_next_token(FILE *input_file_pointer)
                 t.token_name = ID;
                 t.line_no = line_no;
                 state = 1;
-                forward++;
+                // forward++;
                 begin = forward;
+                strcpy(lexeme,"");
                 return t;
             }
             break;
@@ -360,7 +383,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = COLON;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -368,7 +391,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = ASSIGNOP;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -376,7 +399,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = PLUS;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -397,6 +420,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 30:;
+            printf("\n in case 30");
             ch = get_next_char(input_file_pointer);
             if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')
             {
@@ -414,12 +438,13 @@ Token get_next_token(FILE *input_file_pointer)
         case 31:;
             retract(1);
             state = 1;
+            begin = forward;
             break;
         case 32:;
             t.token_name = DIV;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -471,7 +496,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = SQBC;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -479,7 +504,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = SQBO;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -487,7 +512,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = BC;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -495,7 +520,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = COMMA;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -503,7 +528,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = BO;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -511,7 +536,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = SEMICOL;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -536,7 +561,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.line_no = line_no;
             t.numeric_value = atoi(buffer);
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -561,7 +586,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.line_no = line_no;
             t.numeric_value = atoi(buffer);
             state = 1;
-            forward++;
+            forward++; //TODO
             begin = forward;
             return t;
             break;
@@ -667,12 +692,14 @@ char get_next_char(FILE *input_file_pointer)
     if (lex_index < MAX_LEXEME_LENGTH)
         lexeme[lex_index] = c;
     forward++;
+    printf("\n In getnextchar, begin is : %d , forward was : %d, char returned:%c, forward is : %d",begin,forward-1, c, forward);
     return c;
 }
 
 void retract(int n)
 {
     forward -= n;
-    if (forward < 0)
+    if (forward <= 0)
         forward += BUFFER_SIZE;
+    printf("\n After retract(%d) begin is at : %d and forward is currently at : %d",n,begin,forward);
 }

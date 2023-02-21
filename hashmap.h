@@ -18,7 +18,7 @@ hashmap lookup_table;
 int hash(char *str);
 void init_hashmap(hashmap map);
 void insert(hashmap map, char *lexeme, valid_token_names value);
-valid_token_names get(hashmap map, char *key);
+valid_token_names get(hashmap map, char *key, int size);
 void populate_hashmap();
 
 #endif

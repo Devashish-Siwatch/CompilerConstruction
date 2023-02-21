@@ -11,6 +11,8 @@ int begin, forward;
 int eof_reached;
 char buffer[BUFFER_SIZE];
 char lexeme[MAX_LEXEME_LENGTH];
+int lastUpdatedHalf;
+int lexemeSize;
 
 // List of valid token names in the language
 typedef enum valid_token_names
@@ -45,7 +47,33 @@ typedef enum valid_token_names
     SQBC,
     BO,
     BC,
-    COMMENTMARK
+    INTEGER,
+    REAL,
+    BOOLEAN,
+    OF,
+    ARRAY,
+    START,
+    END,
+    DECLARE,
+    MODULE,
+    DRIVER,
+    PROGRAM,
+    GET_VALUE,
+    PRINT,
+    USE,
+    WITH,
+    PARAMETERS,
+    TAKES,
+    INPUT,
+    RETURNS,
+    FOR,
+    IN,
+    SWITCH,
+    CASE,
+    BREAK,
+    DEFAULT,
+    WHILE,
+    // COMMENTMARK
 } valid_token_names;
 
 // Defining token and its structure
