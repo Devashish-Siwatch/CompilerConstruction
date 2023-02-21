@@ -10,7 +10,7 @@ void initialize_lexer_variables(FILE *input_file_pointer)
     line_no = 1;
     begin = 0;
     forward = 0;
-    lastUpdatedHalf = 1;
+    lastUpdatedHalf = 0;
     lexemeSize=0;
     init_hashmap(lookup_table);
     populate_hashmap(lookup_table);
@@ -35,7 +35,7 @@ void update_buffer(FILE *input_file_pointer)
         forward = 0;
     }
     
-    printf("\n IN UPDATE BUFFER, FORWARD is %d",forward);
+    printf("\n IN UPDATE BUFFER, FORWARD is %d and last updated half is %d",forward,lastUpdatedHalf);
     num = fread(&buffer[forward], 1, BUFFER_SIZE / 2, input_file_pointer);
     // printf("buffer contents: %s", buffer);
     // printf("num: %d", num);
@@ -182,7 +182,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = DEF;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -190,7 +190,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = LE;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -199,7 +199,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = LT;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -250,7 +250,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = GE;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -259,7 +259,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = GT;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -315,7 +315,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = NE;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -363,7 +363,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = MUL;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -407,7 +407,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = EOF;
             t.line_no = line_no;
             eof_reached = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -415,7 +415,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = MINUS;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -466,7 +466,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = EQ;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -488,7 +488,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.token_name = RANGEOP;
             t.line_no = line_no;
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -586,7 +586,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.line_no = line_no;
             t.numeric_value = atoi(buffer);
             state = 1;
-            forward++; //TODO
+            // forward++; //TODO
             begin = forward;
             return t;
             break;
@@ -614,7 +614,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.line_no = line_no;
             t.real_numeric_value = atof(buffer);
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
             break;
@@ -667,7 +667,7 @@ Token get_next_token(FILE *input_file_pointer)
             t.line_no = line_no;
             t.real_numeric_value = atof(buffer);
             state = 1;
-            forward++;
+            // forward++;
             begin = forward;
             return t;
         }
@@ -680,6 +680,7 @@ char get_next_char(FILE *input_file_pointer)
     // if updating the buffer in case we reach the either end of our twin buffer
     if ((forward == BUFFER_SIZE || forward == BUFFER_SIZE / 2))
     {
+        printf("\n update conditon reached for forward %d",forward);
         update_buffer(input_file_pointer);
     }
     char c = buffer[forward];
@@ -692,7 +693,7 @@ char get_next_char(FILE *input_file_pointer)
     if (lex_index < MAX_LEXEME_LENGTH)
         lexeme[lex_index] = c;
     forward++;
-    printf("\n In getnextchar, begin is : %d , forward was : %d, char returned:%c, forward is : %d",begin,forward-1, c, forward);
+    printf("\nIn getnextchar, begin is : %d , forward was : %d, char returned:%c, forward is : %d",begin,forward-1, c, forward);
     return c;
 }
 
