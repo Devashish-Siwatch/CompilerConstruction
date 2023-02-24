@@ -6,10 +6,36 @@
 #include "parser.h"
 #include<string.h>
 
-char arrayOfNonTerminals[NUMBER_OF_UNIQUE_NONTERMINALS][MAX_LENGTH_OF_NONTERMINAL];
+int getNumberOfNonTerminals(){
+    int maxlen = 0;
+    for(int i=0 ; i<NUMBER_OF_RULES ; i++){
+        int found = 0;
+        char* lhs = grammar[i]->head->data;
+        // printf("LHS : %s\n",lhs);
+        //iterating for lhs over the set of unique nt
+        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; j++){
+            if(arrayOfNonTerminals[j][0]!='-'){
+                if(strcmp(lhs,arrayOfNonTerminals[j])==0){
+                    found = 1;
+                    // printf("For nonterminal : %s, it was found at index %d",lhs,j);
+                    break;
+                }
+            }else{
+                if(found==0){
+                    strcpy(arrayOfNonTerminals[j],lhs);
+                    // printf("For nonterminal : %s, it was added at index %d",lhs,j);
+                    maxlen++;
+                    break;
+                }
+            }
+        }
+    }
+    number_of_unique_nonterminals = maxlen;
+    return maxlen;
+}
 
 int contains_epsilon(char ** set){
-    for(int i=0 ; i<NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
+    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
         if(strcmp(set[i],"eps")==0){
             return 1;
         }
@@ -18,8 +44,8 @@ int contains_epsilon(char ** set){
 }
 
 char ** get_first_set(char* nonterminal){
-    char **first = (char**)malloc(NUMBER_OF_UNIQUE_NONTERMINALS*sizeof(char*));
-    for(int i=0 ; i<NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
+    char **first = (char**)malloc(MAX_NUMBER_OF_UNIQUE_NONTERMINALS*sizeof(char*));
+    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
         first[i] = (char*) malloc(sizeof(char)*MAX_LENGTH_OF_NONTERMINAL);
     }
     int index = 0;
@@ -40,7 +66,7 @@ char ** get_first_set(char* nonterminal){
                 while(true){
                     char** first_of_temp = get_first_set(temp->data);
                     //copy all non-eps from fot to first
-                    for(int i=0 ; i<NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
+                    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
                         if(strcmp(first_of_temp[i],"-1")==0) break;
                         if(strcmp(first_of_temp[i],"eps")!=0){
                             first[index] = first_of_temp[i];
@@ -66,45 +92,44 @@ char ** get_first_set(char* nonterminal){
         }
     }
     first[index] = "-1";
-    printf("returned for %s\n",nonterminal);
-    for(int i=0 ; i<50 ; i++){
-        printf("%s\n",first[i]);
-        if(strcmp(first[i],"-1")==0) break;
-    }
+    // printf("returned for %s\n",nonterminal);
+    // for(int i=0 ; i<50 ; i++){
+    //     printf("%s\n",first[i]);
+    //     if(strcmp(first[i],"-1")==0) break;
+    // }
     return first;
 }
 
-void init_nt_array(){
-    for(int i=0 ; i<NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
-        arrayOfNonTerminals[i][0]='-';
-    }
-}
+char *** all_first_sets(){
 
-int getNumberOfNonTerminals(){
-    int maxlen = 0;
-    for(int i=0 ; i<NUMBER_OF_RULES ; i++){
-        int found = 0;
-        char* lhs = grammar[i]->head->data;
-        printf("LHS : %s\n",lhs);
-        //iterating for lhs over the set of unique nt
-        for(int j=0 ; j<NUMBER_OF_UNIQUE_NONTERMINALS ; j++){
-            if(arrayOfNonTerminals[j][0]!='-'){
-                if(strcmp(lhs,arrayOfNonTerminals[j])==0){
-                    found = 1;
-                    printf("For nonterminal : %s, it was found at index %d",lhs,j);
-                    break;
-                }
-            }else{
-                if(found==0){
-                    strcpy(arrayOfNonTerminals[j],lhs);
-                    printf("For nonterminal : %s, it was added at index %d",lhs,j);
-                    maxlen++;
-                    break;
-                }
-            }
+    char ***first_of_all = (char***)malloc(number_of_unique_nonterminals*sizeof(char**));
+    for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+        first_of_all[i] = (char**) malloc(sizeof(char*)*MAX_NUMBER_OF_UNIQUE_NONTERMINALS);
+        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_NONTERMINALS; j++){
+            first_of_all[i][j] = (char*) malloc(sizeof(char)*MAX_LENGTH_OF_NONTERMINAL);
         }
     }
-    return maxlen;
+
+    printf("malloc done\n");
+
+    for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+        //length of arrayOfNonTerminals is more but we stop at the correct length
+        first_of_all[i] = get_first_set(arrayOfNonTerminals[i]);
+        // printf("PRINTING FIRST OF %s\n",arrayOfNonTerminals[i]);
+        // for(int j=0 ; j<NUMBER_OF_UNIQUE_NONTERMINALS; j++){
+            // printf("%s\n",first_of_all[i][j]);
+        //     if(strcmp(first_of_all[i][j],"-1")==0) break;
+        // }
+    }
+
+    return first_of_all;
+}
+
+void init_nt_array(){
+    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
+        arrayOfNonTerminals[i][0]='-';
+    }
+    getNumberOfNonTerminals();
 }
 
 void populate_grammer()
@@ -161,18 +186,26 @@ int main()
     for(int i = 0; i < NUMBER_OF_RULES; ++i )
         grammar[i] = createNewList();
     populate_grammer();
-    display_rules();
+    // display_rules();
 
     init_nt_array();
+    // printf("NO OF UNIQUE NT : %d\n",x);
 
-    int x = getNumberOfNonTerminals(grammar);
-    printf("NO OF UNIQUE NT : %d\n",x);
+    // char ** first = get_first_set("MODULEDECLARATIONS");
+    // printf("FINAL PRINT\n");
+    // for(int i=0 ; i<NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
+    //     printf("%s\n",first[i]);
+    //     if(strcmp(first[i],"-1")==0) break;
+    // }
 
-    char ** first = get_first_set("MODULEDECLARATIONS");
-    printf("FINAL PRINT\n");
-    for(int i=0 ; i<NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
-        printf("%s\n",first[i]);
-        if(strcmp(first[i],"-1")==0) break;
+    char*** complete_first_sets = all_first_sets();
+    for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+        printf("PRINTING FIRST OF %s:-\n",arrayOfNonTerminals[i]);
+        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; j++){
+            // printf("here\n");
+            if(strcmp(complete_first_sets[i][j],"-1")==0) break;
+            printf("%s\n",complete_first_sets[i][j]);
+        }
     }
 
 }

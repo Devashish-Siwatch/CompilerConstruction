@@ -4,8 +4,11 @@
 #include "lexer.h"
 #define MAX_SIZE_TOKEN_NAME 100
 #define NUMBER_OF_RULES 127
-#define NUMBER_OF_UNIQUE_NONTERMINALS 100
+#define MAX_NUMBER_OF_UNIQUE_NONTERMINALS 100
 #define MAX_LENGTH_OF_NONTERMINAL 50
+
+char arrayOfNonTerminals[MAX_NUMBER_OF_UNIQUE_NONTERMINALS][MAX_LENGTH_OF_NONTERMINAL];
+int number_of_unique_nonterminals;
 
 // typedef struct token_node
 // {
