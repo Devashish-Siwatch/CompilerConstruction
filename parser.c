@@ -6,6 +6,9 @@
 #include "parser.h"
 #include<string.h>
 
+//This function is used to get the number of unique non-terminals present in our grammar. It populates the array of non-terminals
+//which is defined in the parser.h file. It also returns the number of unique non-terminals which is stored in the variable 
+//NUMBER_OF_UNIQUE_NONTERMINALS present in the parser.h file.
 int getNumberOfNonTerminals(){
     int maxlen = 0;
     for(int i=0 ; i<NUMBER_OF_RULES ; i++){
@@ -33,6 +36,43 @@ int getNumberOfNonTerminals(){
     number_of_unique_nonterminals = maxlen;
     return maxlen;
 }
+
+//This function is used to get the number of unique terminals present in our grammar. It populates the array of terminals
+//which is defined in the parser.h file. It also returns the number of unique terminals which is stored in the variable 
+//NUMBER_OF_UNIQUE_TERMINALS present in the parser.h file.
+int getNumberOfTerminals(){
+    int maxlen = 0;
+    for(int i=0 ; i<NUMBER_OF_RULES ; i++){
+        int found = 0;
+        NODE temp = grammar[i]->head;
+        while(temp->next!=NULL){
+            temp = temp->next;
+            char* terminal = temp->data;
+            if(terminal[0]>='A' && terminal[0]<='Z'){
+                //iterating for lhs over the set of unique nt
+                for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
+                    if(arrayOfTerminals[j][0]!='-'){
+                        if(strcmp(terminal,arrayOfTerminals[j])==0){
+                            found = 1;
+                            // printf("For nonterminal : %s, it was found at index %d",lhs,j);
+                            break;
+                        }
+                    }else{
+                        if(found==0){
+                            strcpy(arrayOfTerminals[j],terminal);
+                            // printf("For nonterminal : %s, it was added at index %d",lhs,j);
+                            maxlen++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    number_of_unique_terminals = maxlen;
+    return maxlen;
+}
+
 
 int contains_epsilon(char ** set){
     for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
@@ -92,11 +132,6 @@ char ** get_first_set(char* nonterminal){
         }
     }
     first[index] = "-1";
-    // printf("returned for %s\n",nonterminal);
-    // for(int i=0 ; i<50 ; i++){
-    //     printf("%s\n",first[i]);
-    //     if(strcmp(first[i],"-1")==0) break;
-    // }
     return first;
 }
 
@@ -109,8 +144,6 @@ char *** all_first_sets(){
             first_of_all[i][j] = (char*) malloc(sizeof(char)*MAX_LENGTH_OF_NONTERMINAL);
         }
     }
-
-    printf("malloc done\n");
 
     for(int i=0 ; i<number_of_unique_nonterminals ; i++){
         //length of arrayOfNonTerminals is more but we stop at the correct length
@@ -130,6 +163,13 @@ void init_nt_array(){
         arrayOfNonTerminals[i][0]='-';
     }
     getNumberOfNonTerminals();
+}
+
+void init_t_array(){
+    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
+        arrayOfTerminals[i][0]='-';
+    }
+    getNumberOfTerminals();
 }
 
 void populate_grammer()
@@ -189,6 +229,10 @@ int main()
     // display_rules();
 
     init_nt_array();
+    init_t_array();
+    printf("NUMBER OF UNIQUE TERMINALS : %d\n",number_of_unique_terminals);
+    printf("NUMBER OF UNIQUE NON-TERMINALS : %d\n",number_of_unique_nonterminals);
+
     // printf("NO OF UNIQUE NT : %d\n",x);
 
     // char ** first = get_first_set("MODULEDECLARATIONS");
