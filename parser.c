@@ -5,6 +5,7 @@
 #include<stdbool.h>
 #include "parser.h"
 #include<string.h>
+#include "parsetable.h"
 
 int set_contains(char** arr,int arr_len, char* str){
     for(int i=0 ; i<arr_len ; i++){
@@ -15,7 +16,7 @@ int set_contains(char** arr,int arr_len, char* str){
 
 int getTypeOfData(char* str){
     if(strcmp(str,"eps")==0) return 0;                  // 0 for epsilon
-    else if((str[0]>='A' && str[1]<='Z')) return 1;       // 1 for non-terminal
+    else if((str[0]>='A' && str[0]<='Z')) return 1;       // 1 for non-terminal
     else return 2;                                      // 2 for terminal
 }
 
@@ -89,6 +90,17 @@ int getNumberOfTerminals(){
     }
     number_of_unique_terminals = maxlen;
     return maxlen;
+}
+
+void printParseTable(){
+    for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+        printf("ROW OF %s : ",arrayOfNonTerminals[i]);
+        for(int j=0 ; j<number_of_unique_terminals ; j++){
+            if(parse_table[i][j]!=-1)printf("%s :  %d___",arrayOfTerminals[j],parse_table[i][j]);
+            else printf("%s : %d___",arrayOfTerminals[j],parse_table[i][j]);
+        }
+        printf("\n");
+    }
 }
 
 
@@ -335,6 +347,155 @@ void display_rules()
         display(grammar[i]);
 
 }
+
+void createParseTable(int row,int col)
+{
+    parse_table = (int**)malloc(row*sizeof(int*));
+    for(int i=0 ; i<row ; i++){
+        parse_table[i] = (int*)malloc(col*sizeof(int));
+    }
+    for(int i=0 ; i<row ; i++){
+        for(int j=0 ; j<col ; j++){
+            parse_table[i][j] = -1;
+        }
+    }
+}
+
+void init_parse_table()
+{
+    row_size = number_of_unique_nonterminals;
+    column_size =number_of_unique_terminals;
+    createParseTable(row_size,column_size);
+}
+
+
+
+int searchForRowIndex(char* data)
+{
+    for(int i=0;i<number_of_unique_nonterminals;i++)
+    {
+        if(strcmp(data, arrayOfNonTerminals[i])==0)
+        {
+            return i;
+        }
+    }
+}
+
+int searchForColIndex(char* data)
+{
+    for(int i=0;i<number_of_unique_terminals;i++)
+    {
+        if(strcmp(data, arrayOfTerminals[i])==0)
+        {
+            return i;
+        }
+    }
+}
+void fillParseTable()
+{
+    for(int i=0;i<NUMBER_OF_RULES;i++)
+    {
+        NODE lhs = grammar[i]->head;
+        int row = searchForRowIndex(lhs->data);
+        NODE temp = lhs;
+        char **first_set = (char**)malloc(MAX_NUMBER_OF_UNIQUE_TERMINALS*sizeof(char*));
+        for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
+            first_set[i] = (char*)malloc(MAX_LENGTH_OF_TERMINAL*sizeof(char));
+        }
+        int index = 0;
+
+        while(temp->next!=NULL){
+            // printf("%s\n",temp->data);
+            temp = temp->next;
+            // printf("%s",temp->data);
+            if(getTypeOfData(temp->data)==0)
+            {
+                char** follow_of_lhs=get_follow_set(lhs->data);
+                // printf("Eps reached at rule number %d\n",i);
+                for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS; i++){
+                    if(strcmp("-1",follow_of_lhs[i])==0) break;
+                    first_set[index]=follow_of_lhs[i];
+                    index++;
+                }
+            }
+            else if(getTypeOfData(temp->data)==1)
+            {
+                // printf("%s\n",temp->data);
+                char** first_of_temp=get_first_set(temp->data);
+                //printf("%s 2\n",temp->data);
+                //copy all non-eps from this first_of_temp into our first_set
+                for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++)
+                {
+                    if(strcmp(first_of_temp[i],"-1")==0) break;
+                    if(strcmp(first_of_temp[i],"eps")!=0)
+                    {
+                        // printf("first stored: %s\n",first_of_temp[i]);
+                        if(set_contains(first_set,MAX_NUMBER_OF_UNIQUE_TERMINALS,first_of_temp[i])==0)
+                        {
+                            first_set[index] = first_of_temp[i];
+                            // printf("copied %s into index : %d \n",first_of_temp[i],index);
+                            index++;
+                        }
+                        // printf("HERE");
+                    }
+                }
+                //check if first_of_temp has eps
+                if(contains_epsilon(first_of_temp)==1)
+                {
+                    //if yes, then temp = temp->next
+                    //if temp->next is null then add follow(lhs) and break
+                    //else temp = temp->next
+                    if(temp->next==NULL){
+                        char ** follow_of_lhs = get_follow_set(lhs->data);
+                        //copy this into first_set
+                        for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++)
+                        {
+                            if(strcmp(follow_of_lhs[i],"-1")==0) break;
+                            if(set_contains(first_set,MAX_NUMBER_OF_UNIQUE_TERMINALS,follow_of_lhs[i])==0)
+                            {
+                                first_set[index] = follow_of_lhs[i];
+                                // printf("copied %s into index : %d of first of %s\n",first_of_temp[i],index,nonterminal);
+                                index++;
+                            }
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }else{
+                    //if no then break;
+                    break;
+                }
+            }
+            else
+            {
+                if(set_contains(first_set,MAX_NUMBER_OF_UNIQUE_TERMINALS,temp->data)==0){
+                    first_set[index] = temp->data;
+                    // printf("copied %s into index : %d of first of %s\n",first_of_temp[i],index,nonterminal);
+                    index++;
+                }
+                break;
+            }
+        }
+        
+        first_set[index] = "-1";
+
+        for(int j=0;j<MAX_NUMBER_OF_UNIQUE_NONTERMINALS;j++){
+            if(strcmp(first_set[j],"-1")==0) break;
+            int col=searchForColIndex(first_set[j]);
+            // printf("comparison func : %s, actual : %s\n",first_set[j],arrayOfTerminals[col]);
+            // printf("row : %d, col : %d\n",row,col);
+            if(parse_table[row][col]!=-1) printf("NOT LL1 for row=%d ; col=%d",row,col);
+            parse_table[row][col]=i;
+            // printf("row : %d, col : %d\n",row,col);
+        }
+            
+
+    }
+}
+
 int main()
 {
     grammar = (linked_list**) malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
@@ -349,6 +510,10 @@ int main()
     complete_follow_sets = all_follow_sets(); //populating follow set
     printf("NUMBER OF UNIQUE TERMINALS : %d\n",number_of_unique_terminals);
     printf("NUMBER OF UNIQUE NON-TERMINALS : %d\n",number_of_unique_nonterminals);
+
+    init_parse_table();
+    fillParseTable();
+    printParseTable();
 
 
     // printf("NO OF UNIQUE NT : %d\n",x);
@@ -371,19 +536,19 @@ int main()
     }
 
     //  Printing first sets
-    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-    //     printf("PRINTING FIRST OF %s:-\n",arrayOfNonTerminals[i]);
-    //     for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
-    //         // printf("here\n");
-    //         if(strcmp(complete_first_sets[i][j],"-1")==0) break;
-    //         printf("%s\n",complete_first_sets[i][j]);
-    //     }
-    // }
-
-    char** follow = get_follow_set("STATEMENTS");
-    for(int i=0 ; i<number_of_unique_terminals ; i++){
-        printf("%s\n",follow[i]);
-        if(strcmp(follow[i],"-1")==0) break;
+    for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+        printf("PRINTING FIRST OF %s:-\n",arrayOfNonTerminals[i]);
+        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
+            // printf("here\n");
+            if(strcmp(complete_first_sets[i][j],"-1")==0) break;
+            printf("%s\n",complete_first_sets[i][j]);
+        }
     }
+
+    // char** follow = get_follow_set("STATEMENTS");
+    // for(int i=0 ; i<number_of_unique_terminals ; i++){
+    //     printf("%s\n",follow[i]);
+    //     if(strcmp(follow[i],"-1")==0) break;
+    // }
 
 }

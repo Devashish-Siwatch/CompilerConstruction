@@ -1,0 +1,11 @@
+S A a dollar
+A B C
+A D E
+B b
+B eps
+C c
+D d
+D h
+D eps
+E k
+E e 
