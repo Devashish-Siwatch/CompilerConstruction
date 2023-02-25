@@ -75,7 +75,7 @@ int getNumberOfTerminals(){
 
 
 int contains_epsilon(char ** set){
-    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
+    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
         if(strcmp(set[i],"eps")==0){
             return 1;
         }
@@ -84,8 +84,8 @@ int contains_epsilon(char ** set){
 }
 
 char ** get_first_set(char* nonterminal){
-    char **first = (char**)malloc(MAX_NUMBER_OF_UNIQUE_NONTERMINALS*sizeof(char*));
-    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
+    char **first = (char**)malloc(MAX_NUMBER_OF_UNIQUE_TERMINALS*sizeof(char*));
+    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
         first[i] = (char*) malloc(sizeof(char)*MAX_LENGTH_OF_NONTERMINAL);
     }
     int index = 0;
@@ -106,7 +106,7 @@ char ** get_first_set(char* nonterminal){
                 while(true){
                     char** first_of_temp = get_first_set(temp->data);
                     //copy all non-eps from fot to first
-                    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
+                    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
                         if(strcmp(first_of_temp[i],"-1")==0) break;
                         if(strcmp(first_of_temp[i],"eps")!=0){
                             first[index] = first_of_temp[i];
@@ -139,8 +139,8 @@ char *** all_first_sets(){
 
     char ***first_of_all = (char***)malloc(number_of_unique_nonterminals*sizeof(char**));
     for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-        first_of_all[i] = (char**) malloc(sizeof(char*)*MAX_NUMBER_OF_UNIQUE_NONTERMINALS);
-        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_NONTERMINALS; j++){
+        first_of_all[i] = (char**) malloc(sizeof(char*)*MAX_NUMBER_OF_UNIQUE_TERMINALS);
+        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS; j++){
             first_of_all[i][j] = (char*) malloc(sizeof(char)*MAX_LENGTH_OF_NONTERMINAL);
         }
     }
@@ -245,7 +245,7 @@ int main()
     char*** complete_first_sets = all_first_sets();
     for(int i=0 ; i<number_of_unique_nonterminals ; i++){
         printf("PRINTING FIRST OF %s:-\n",arrayOfNonTerminals[i]);
-        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_NONTERMINALS ; j++){
+        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
             // printf("here\n");
             if(strcmp(complete_first_sets[i][j],"-1")==0) break;
             printf("%s\n",complete_first_sets[i][j]);
