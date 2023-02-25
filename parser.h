@@ -14,6 +14,9 @@ char arrayOfNonTerminals[MAX_NUMBER_OF_UNIQUE_NONTERMINALS][MAX_LENGTH_OF_NONTER
 char arrayOfTerminals[MAX_NUMBER_OF_UNIQUE_TERMINALS][MAX_LENGTH_OF_TERMINAL];
 int number_of_unique_nonterminals;
 int number_of_unique_terminals;
+char*** complete_first_sets;
+char*** complete_follow_sets;
+
 
 // typedef struct token_node
 // {
