@@ -710,3 +710,63 @@ void retract(int n)
         forward += BUFFER_SIZE;
     printf("\n After retract(%d) begin is at : %d and forward is currently at : %d",n,begin,forward);
 }
+
+void remove_comments(FILE *input_file_pointer, FILE *output_file_pointer)
+{
+    int state = 0;
+    char ch = fgetc(input_file_pointer);
+    while (ch != EOF)
+    {
+        if (state != 2)
+        {
+            if (ch == '*')
+            {
+                ch = fgetc(input_file_pointer);
+                if (ch == '*')
+                {
+                    state = 2;
+                }
+                else
+                {
+                    state = 0;
+                    fputc('*', output_file_pointer);
+                }
+            }
+            if (state == 0)
+            {
+                fputc(ch, output_file_pointer);
+            }
+        }
+        else if (state == 2)
+        {
+            if (ch == '*')
+            {
+                ch = fgetc(input_file_pointer);
+                if (ch == '*')
+                {
+                    state = 0;
+                }
+            }
+            else if (ch == EOF)
+            {
+                fputc(ch, output_file_pointer);
+                break;
+            }
+            else if (ch == '\n')
+            {
+                fputc(ch, output_file_pointer);
+            }
+        }
+        ch = fgetc(input_file_pointer);
+    }
+}
+
+int main()
+{
+    FILE *input_file_pointer = fopen("comms.txt", "r");
+    FILE *output_file_pointer = fopen("removed_comments.txt", "w");
+    remove_comments(input_file_pointer, output_file_pointer);
+    fclose(input_file_pointer);
+    fclose(output_file_pointer);
+    return 0;
+}

@@ -1,0 +1,29 @@
+<<module arraysum>>
+takes input[list:array[4..20] of real];
+returns [sum:real]; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
