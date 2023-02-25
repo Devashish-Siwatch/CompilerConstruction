@@ -1,16 +1,22 @@
 #ifndef TREEADT_H
 #define TREEADT_H
 #include "lexer.h"
+#include "linkedlist.h"
 
-struct tree_node
-{
-    Token token;
-    struct tree_node *next;
-    struct tree_node *parent;
-    struct tree_list *child;
-};
 typedef struct tree_node tree_node;
 typedef tree_node * TREENODE;
+struct tree_node
+{
+    char* name;
+    char* lexeme;
+    int line_number;
+    int valueIfNum;
+    float valueIfRNum;
+    TREENODE next;
+    TREENODE parent;
+    TREENODE child;
+};
+
 
 struct tree_list
 {
@@ -18,5 +24,11 @@ struct tree_list
 };
 typedef struct tree_list tree_list;
 typedef tree_list * TREELIST;
+TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent);
+TREENODE createNewTreeNode(TREENODE parent);
+TREELIST createNewTree();
+
+
+
 
 #endif

@@ -17,6 +17,9 @@ int number_of_unique_terminals;
 char*** complete_first_sets;
 char*** complete_follow_sets;
 
+int getTypeOfData(char* str);
+int searchForRowIndex(char* data);
+int searchForColIndex(char* data);
 
 // typedef struct token_node
 // {

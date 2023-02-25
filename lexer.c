@@ -277,8 +277,8 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 15:;
             retract(1);
-            printf("\ninside 15: %s b: %d f: %d", lexeme, begin,forward);
-            printf("\nBUFFER : __%s__",buffer);
+            // printf("\ninside 15: %s b: %d f: %d", lexeme, begin,forward);
+            // printf("\nBUFFER : __%s__",buffer);
             lexemeSize = forward-begin;
             if(forward<begin) lexemeSize += BUFFER_SIZE;
             if ((t.token_name = get(lookup_table, lexeme,lexemeSize)) != -1)

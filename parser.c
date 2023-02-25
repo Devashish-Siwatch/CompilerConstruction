@@ -1,11 +1,95 @@
-#include<stdio.h>
+#include <stdio.h>
 #include "linkedlist.h"
-#include<stdlib.h>
-#include<stdio.h>
-#include<stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
 #include "parser.h"
-#include<string.h>
+#include <string.h>
 #include "parsetable.h"
+#include "stack.h"
+#include "treeADT.h"
+#include "lexer.h"
+#include "driver.c"
+#include "stack.h"
+#include <ctype.h>
+
+STACK stack;
+
+char* convertToLowercase(char* str){
+    //printf("CONVert LC\n");
+    int len = 0;
+    for(int i=0 ; str[i]!='\0' ; i++){
+        len++;
+    }
+    char* temp = (char*)malloc(len*sizeof(char));
+
+    for(int i=0; i<len; i++){
+        temp[i] = tolower(str[i]);
+        printf("%c\n",temp[i]);
+    }
+    return temp;
+
+}
+
+void init_parser(){
+    //init stack and tree, added S to bottom of stack and S as root of our tree.
+    stack = init_stack();
+    TREELIST parse_tree = createNewTree();
+    TREENODE head = createNewTreeNode(NULL);
+    head->name = "S";
+    parse_tree->head = head;
+    push(stack,"S",head);
+    pop(stack);
+    pushRuleToStackandTree(stack,grammar[0],head);
+}
+
+void parser(FILE *input_file_pointer){
+    initialize_lexer_variables(input_file_pointer);
+    init_parser();
+    
+    Token current = get_next_token(input_file_pointer);
+    
+    while(current.token_name!=EOF){
+        
+        char *currentTk= enum_to_token_name_string[current.token_name];
+        printf("currentTk is %s\n",currentTk);
+        char *currentTkLower = convertToLowercase(currentTk);
+
+        STACKNODE top_of_stack = top(stack);
+        if(strcmp("dollar",top_of_stack->name)==0){
+            //stack is over
+            printf("STACK KHATAM\n");
+            return;
+        }else if(getTypeOfData(top_of_stack->name)==2){
+            //stack's top is a terminal
+            if(strcmp(currentTkLower,top_of_stack->name)==0){
+                pop(stack);
+                TREENODE treenode = top_of_stack->treepointer;
+                strcpy(treenode->lexeme,current.id.str);
+                treenode->line_number = current.line_no;
+                treenode->valueIfNum = current.numeric_value;
+                treenode->valueIfRNum = current.real_numeric_value;
+                treenode->child = NULL;
+            }else{
+                printf("ERROR : The terminal at top of stack is not equal to the result of lexer.\n");
+            }
+        }else{
+            //stack's top is a non-terminal
+            int col=searchForColIndex(currentTkLower);
+            int row=searchForRowIndex(top_of_stack->name);
+            if(parse_table[row][col]==-1){
+                printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n",top_of_stack->name,currentTkLower);
+                return;//TODO: return hoga ya error handling???
+            }
+            else{
+                int rule_no=parse_table[row][col];
+                LIST grammar_rule= grammar[rule_no];
+                pushRuleToStackandTree(stack,grammar_rule,top(stack)->treepointer);
+            }
+        }
+        current = get_next_token(input_file_pointer);
+    }
+}
 
 int set_contains(char** arr,int arr_len, char* str){
     for(int i=0 ; i<arr_len ; i++){
@@ -15,9 +99,9 @@ int set_contains(char** arr,int arr_len, char* str){
 }
 
 int getTypeOfData(char* str){
-    if(strcmp(str,"eps")==0) return 0;                  // 0 for epsilon
-    else if((str[0]>='A' && str[0]<='Z')) return 1;       // 1 for non-terminal
-    else return 2;                                      // 2 for terminal
+    if(strcmp(str,"eps")==0) return 0;                      // 0 for epsilon
+    else if((str[0]>='A' && str[0]<='Z')) return 1;         // 1 for non-terminal
+    else return 2;                                          // 2 for terminal
 }
 
 //This function is used to get the number of unique non-terminals present in our grammar. It populates the array of non-terminals
@@ -525,25 +609,43 @@ int main()
     //     if(strcmp(first[i],"-1")==0) break;
     // }
 
-    // Printing follow sets
-    for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-        printf("PRINTING FOLLOW OF %s:-\n",arrayOfNonTerminals[i]);
-        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
-            // printf("here\n");
-            if(strcmp(complete_follow_sets[i][j],"-1")==0) break;
-            printf("%s\n",complete_follow_sets[i][j]);
-        }
-    }
+    // // Printing follow sets
+    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+    //     printf("PRINTING FOLLOW OF %s:-\n",arrayOfNonTerminals[i]);
+    //     for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
+    //         // printf("here\n");
+    //         if(strcmp(complete_follow_sets[i][j],"-1")==0) break;
+    //         printf("%s\n",complete_follow_sets[i][j]);
+    //     }
+    // }
 
-    //  Printing first sets
-    for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-        printf("PRINTING FIRST OF %s:-\n",arrayOfNonTerminals[i]);
-        for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
-            // printf("here\n");
-            if(strcmp(complete_first_sets[i][j],"-1")==0) break;
-            printf("%s\n",complete_first_sets[i][j]);
-        }
+    // //  Printing first sets
+    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+    //     printf("PRINTING FIRST OF %s:-\n",arrayOfNonTerminals[i]);
+    //     for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
+    //         // printf("here\n");
+    //         if(strcmp(complete_first_sets[i][j],"-1")==0) break;
+    //         printf("%s\n",complete_first_sets[i][j]);
+    //     }
+    // }
+
+    //init_parser();
+
+
+
+    FILE *input_file;
+    // Open the input file in read mode
+    input_file = fopen("input.txt", "r");
+    if (input_file == NULL)
+    {
+        printf("Unable to open file");
+        return 1;
     }
+    // printf("File opened successfully\n");
+
+    
+
+    parser(input_file);
 
     // char** follow = get_follow_set("STATEMENTS");
     // for(int i=0 ; i<number_of_unique_terminals ; i++){
