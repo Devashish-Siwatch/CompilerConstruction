@@ -1,5 +1,16 @@
-<<module arraysum>>
-takes input[list:array[4..20] of real];
-returns xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[sum:real];
+<<<driver program>>>
 start
-declare sssssssssssssssssssssssssssssssssssssssssssssssssssssss: real;
+	declare v_1_2_3:integer;
+	get_value(v_1_2_3);
+	declare result_:integer;
+	[result_]:=use module square with parameters 1.2, A[k], -2, - j, -A[v], _1_2_3;
+		** Modify rule for <actual_para_list>**
+	print(result);
+end
+
+<<module square>>
+takes input [x:integer];
+returns [value:integer];
+start
+	value:= x*x;
+end
