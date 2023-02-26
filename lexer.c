@@ -7,12 +7,13 @@
 void initialize_lexer_variables(FILE *input_file_pointer)
 {
     state = 1;
+    sizeErrorDetected = 0;
     eof_reached = 0;
     line_no = 1;
     begin = 0;
     forward = 0;
     lastUpdatedHalf = 0;
-    lexemeSize=0;
+    lexemeSize = 0;
     init_hashmap(lookup_table);
     populate_hashmap(lookup_table);
     update_buffer(input_file_pointer);
@@ -23,29 +24,34 @@ void update_buffer(FILE *input_file_pointer)
 {
     int num;
 
-    if((forward == BUFFER_SIZE && lastUpdatedHalf==0)){
+    if ((forward == BUFFER_SIZE && lastUpdatedHalf == 0))
+    {
         forward = 0;
         return;
     }
-    if(forward==BUFFER_SIZE/2 && lastUpdatedHalf==1) return;
+    if (forward == BUFFER_SIZE / 2 && lastUpdatedHalf == 1)
+        return;
 
-    if(forward==BUFFER_SIZE/2) lastUpdatedHalf=1;
-    else if(forward==BUFFER_SIZE) lastUpdatedHalf=0;
+    if (forward == BUFFER_SIZE / 2)
+        lastUpdatedHalf = 1;
+    else if (forward == BUFFER_SIZE)
+        lastUpdatedHalf = 0;
     if (forward == BUFFER_SIZE)
     {
         forward = 0;
     }
-    
-    printf("\n IN UPDATE BUFFER, FORWARD is %d and last updated half is %d",forward,lastUpdatedHalf);
+
+    // printf("\n IN UPDATE BUFFER, FORWARD is %d and last updated half is %d", forward, lastUpdatedHalf);
     num = fread(&buffer[forward], 1, BUFFER_SIZE / 2, input_file_pointer);
     // printf("buffer contents: %s", buffer);
     // printf("num: %d", num);
-    if (num != BUFFER_SIZE / 2){
+    if (num != BUFFER_SIZE / 2)
+    {
         buffer[num + forward] = EOF;
-        printf("/n EOF INSERTED AT INDEX : %d",num+forward+2);
+        // printf("/n EOF INSERTED AT INDEX : %d", num + forward + 2);
     }
-        
-    printf("\n BUFFER CURRENTLY is : %s",buffer);
+
+    // printf("\n BUFFER CURRENTLY is : %s", buffer);
 }
 Token get_next_token(FILE *input_file_pointer)
 {
@@ -266,9 +272,17 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 14:;
             ch = get_next_char(input_file_pointer);
-            if (isalpha(ch) || isdigit(ch) || ch=='_')
+            if (isalpha(ch) || isdigit(ch) || ch == '_')
             {
                 state = 14;
+                lexemeSize = forward - begin;
+                if (forward < begin)
+                    lexemeSize += BUFFER_SIZE;
+                if (lexemeSize > MAX_LEXEME_LENGTH)
+                {
+
+                    sizeErrorDetected = 1;
+                }
             }
             else
             {
@@ -279,27 +293,43 @@ Token get_next_token(FILE *input_file_pointer)
             retract(1);
             // printf("\ninside 15: %s b: %d f: %d", lexeme, begin,forward);
             // printf("\nBUFFER : __%s__",buffer);
-            lexemeSize = forward-begin;
-            if(forward<begin) lexemeSize += BUFFER_SIZE;
-            if ((t.token_name = get(lookup_table, lexeme,lexemeSize)) != -1)
+            lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
+            if (sizeErrorDetected == 0)
             {
-                t.line_no = line_no;
-                state = 1;
-                // forward++;
-                begin = forward;
-                strcpy(lexeme,"");
-                return t;
+                if ((t.token_name = get(lookup_table, lexeme, lexemeSize)) != -1)
+                {
+                    t.line_no = line_no;
+                    state = 1;
+                    // forward++;
+                    begin = forward;
+                    strcpy(lexeme, "");
+                    return t;
+                }
+                else
+                {
+                    t.token_name = ID;
+                    t.line_no = line_no;
+                    state = 1;
+                    // printf("\nlexeme: %s\n", lexeme);
+                    strncpy(t.id.str, lexeme, lexemeSize);
+                    t.id.str[lexemeSize] = '\0'; // TODO:
+                    // forward++;
+                    begin = forward;
+                    strcpy(lexeme, "");
+                    return t;
+                }
             }
             else
             {
-                t.token_name = ID;
-                t.line_no = line_no;
+                printf("\nLexeme too long at line %d\n", line_no);
+                sizeErrorDetected = 0;
                 state = 1;
-                // forward++;
                 begin = forward;
-                strcpy(lexeme,"");
-                return t;
+                strcpy(lexeme, "");
             }
+
             break;
         case 16:;
             ch = get_next_char(input_file_pointer);
@@ -341,13 +371,12 @@ Token get_next_token(FILE *input_file_pointer)
                 state = 21;
             }
             else
-            {   
-                if(ch =='\n')
-                line_no++;
+            {
+                if (ch == '\n')
+                    line_no++;
                 state = 20;
-                if(ch == EOF)
-                state = 28;
-                
+                if (ch == EOF)
+                    state = 28;
             }
             break;
         case 21:;
@@ -426,7 +455,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 30:;
-            printf("\n in case 30");
+            // printf("\n in case 30");
             ch = get_next_char(input_file_pointer);
             if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')
             {
@@ -686,7 +715,7 @@ char get_next_char(FILE *input_file_pointer)
     // if updating the buffer in case we reach the either end of our twin buffer
     if ((forward == BUFFER_SIZE || forward == BUFFER_SIZE / 2))
     {
-        printf("\n update conditon reached for forward %d",forward);
+        // printf("\n update conditon reached for forward %d", forward);
         update_buffer(input_file_pointer);
     }
     char c = buffer[forward];
@@ -698,8 +727,9 @@ char get_next_char(FILE *input_file_pointer)
     }
     if (lex_index < MAX_LEXEME_LENGTH)
         lexeme[lex_index] = c;
+
     forward++;
-    printf("\nIn getnextchar, begin is : %d , forward was : %d, char returned:%c, forward is : %d",begin,forward-1, c, forward);
+    // printf("\nIn getnextchar, begin is : %d , forward was : %d, char returned:%c, forward is : %d", begin, forward - 1, c, forward);
     return c;
 }
 
@@ -708,5 +738,5 @@ void retract(int n)
     forward -= n;
     if (forward <= 0)
         forward += BUFFER_SIZE;
-    printf("\n After retract(%d) begin is at : %d and forward is currently at : %d",n,begin,forward);
+    // printf("\n After retract(%d) begin is at : %d and forward is currently at : %d", n, begin, forward);
 }

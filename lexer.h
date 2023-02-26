@@ -13,7 +13,7 @@ char buffer[BUFFER_SIZE];
 char lexeme[MAX_LEXEME_LENGTH];
 int lastUpdatedHalf;
 int lexemeSize;
-
+int sizeErrorDetected;
 // List of valid token names in the language
 typedef enum valid_token_names
 {
@@ -84,7 +84,7 @@ typedef struct token
     {
         struct
         {
-            char str[MAX_LEXEME_LENGTH];
+            char str[MAX_LEXEME_LENGTH + 1]; // For accomodating '\0'
         } id;
         int numeric_value;
         double real_numeric_value;

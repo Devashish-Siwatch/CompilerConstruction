@@ -8,7 +8,7 @@ int hash(char *str)
     int hash = 0;
     int c;
     while (c = *str++)
-        hash = (hash*97 + c)%100;
+        hash = (hash * 97 + c) % 100;
     return hash;
 }
 
@@ -31,24 +31,26 @@ void insert(hashmap map, char *key, valid_token_names value)
     map[index].is_used = true;
     strcpy(map[index].lexeme, key);
     map[index].value = value;
-    printf("String : %s, hash value : %d\n",key,index);
+    // printf("String : %s, hash value : %d\n", key, index);
 }
 
 valid_token_names get(hashmap map, char *key, int size)
-{   
-    printf("\ninside get, size is %d",size);
+{
+    // printf("\ninside get, size is %d",size);
     char temp[size];
     // strncpy(temp,key,sizeof(temp));
     temp[size] = '\0';
-    for(int i=0 ; i<size ; i++){
+    for (int i = 0; i < size; i++)
+    {
         temp[i] = key[i];
     }
-    printf("\n***%s***", temp);
+    // printf("\n***%s***", temp);
     int index = hash(temp);
     while (map[index].is_used)
     {
-        if (strcmp(map[index].lexeme, temp) == 0){
-            printf("\nSTRING BEING SEARCHED : %s, SEARCH RESULT : %d",temp,index);
+        if (strcmp(map[index].lexeme, temp) == 0)
+        {
+            // printf("\nSTRING BEING SEARCHED : %s, SEARCH RESULT : %d", temp, index);
             return map[index].value;
         }
         index = (index + 1) % 100;
