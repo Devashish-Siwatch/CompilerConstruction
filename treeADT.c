@@ -1,6 +1,7 @@
 #include "treeADT.h"
 #include "linkedlist.h"
 #include "parser.h"
+#include <string.h>
 #include <stdlib.h>
 
 TREELIST createNewTree(){
@@ -11,8 +12,12 @@ TREELIST createNewTree(){
 
 TREENODE createNewTreeNode(TREENODE parent){
     TREENODE temp = (TREENODE)malloc(sizeof(tree_node));
-    temp->name = "----";
-    temp->lexeme = "----";
+    char* name = (char*)malloc(50*sizeof(char));
+    char* lexeme = (char*)malloc(50*sizeof(char));
+    temp->name = name;
+    temp->lexeme = lexeme;
+    strcpy(temp->name, "----");
+    strcpy(temp->lexeme, "----");
     temp->line_number = -1;
     temp->valueIfNum = 0;
     temp->valueIfRNum = 0.0;
@@ -34,7 +39,7 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
     TREENODE treenode = createNewTreeNode(parent);
     treePointerArray[idx]=treenode;
     idx++;
-    while(temp->next!=NULL){
+    while(temp!=NULL){
 
         int type = getTypeOfData(temp->data);
         if(type==0){
@@ -43,6 +48,7 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
         }else{
             //non-terminal or terminal
             treenode->name = temp->data;
+            // printf("Inside insertRuleToTree, temp->data = %s\n",temp->data);
         }
 
         if(count==0) parent->child = treenode;
@@ -58,4 +64,10 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
         count++;
     }
     return treePointerArray;
+}
+
+void printTree(TREELIST tree){
+    TREENODE head = tree->head;
+
+
 }

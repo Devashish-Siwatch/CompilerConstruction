@@ -78,8 +78,10 @@ void pushRuleToStackandTree(STACK stack,LIST grammarRule,TREENODE parent){
     pop(stack);
     if(strcmp("eps",arrayOfTreeNodePointers[0]->name)==0) return;
 
+    // printf("PUSHING INTO STACK\n");
     for(int i=rhsLength-1 ; i>=0 ; i--){
         push(stack,arrayOfTreeNodePointers[i]->name,arrayOfTreeNodePointers[i]);
+        // printf("______________________________________Pushed %s\n",arrayOfTreeNodePointers[i]->name);
     }
 
 }

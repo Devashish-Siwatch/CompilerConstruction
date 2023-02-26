@@ -21,12 +21,13 @@ char* convertToLowercase(char* str){
     for(int i=0 ; str[i]!='\0' ; i++){
         len++;
     }
-    char* temp = (char*)malloc(len*sizeof(char));
+    char* temp = (char*)malloc((len+1)*sizeof(char));
 
     for(int i=0; i<len; i++){
         temp[i] = tolower(str[i]);
-        printf("%c\n",temp[i]);
+        // printf("%c\n",temp[i]);
     }
+    temp[len] = '\0';
     return temp;
 
 }
@@ -50,9 +51,7 @@ void parser(FILE *input_file_pointer){
     Token current = get_next_token(input_file_pointer);
     
     while(current.token_name!=EOF){
-        
         char *currentTk= enum_to_token_name_string[current.token_name];
-        printf("currentTk is %s\n",currentTk);
         char *currentTkLower = convertToLowercase(currentTk);
 
         STACKNODE top_of_stack = top(stack);
@@ -63,31 +62,36 @@ void parser(FILE *input_file_pointer){
         }else if(getTypeOfData(top_of_stack->name)==2){
             //stack's top is a terminal
             if(strcmp(currentTkLower,top_of_stack->name)==0){
+                // printf(">>>>>>>>>>Equality achieved for %s\n",currentTkLower);
                 pop(stack);
                 TREENODE treenode = top_of_stack->treepointer;
-                strcpy(treenode->lexeme,current.id.str);
+                strcpy(current.id.str,"abcd");
+                strcpy(treenode->lexeme,"abc");
                 treenode->line_number = current.line_no;
                 treenode->valueIfNum = current.numeric_value;
                 treenode->valueIfRNum = current.real_numeric_value;
                 treenode->child = NULL;
+                current = get_next_token(input_file_pointer);
             }else{
+                printf("top of stack :%s  and token we got from lexer : %s\n",top_of_stack->name, currentTkLower);
                 printf("ERROR : The terminal at top of stack is not equal to the result of lexer.\n");
+                return;
             }
         }else{
             //stack's top is a non-terminal
             int col=searchForColIndex(currentTkLower);
             int row=searchForRowIndex(top_of_stack->name);
+            // printf("row %d for %s col %d for %s\n",row,top_of_stack->name,col,currentTkLower);
             if(parse_table[row][col]==-1){
                 printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n",top_of_stack->name,currentTkLower);
                 return;//TODO: return hoga ya error handling???
-            }
-            else{
+            }else{
                 int rule_no=parse_table[row][col];
+                // printf("RULE number : %d\n",rule_no);
                 LIST grammar_rule= grammar[rule_no];
                 pushRuleToStackandTree(stack,grammar_rule,top(stack)->treepointer);
             }
         }
-        current = get_next_token(input_file_pointer);
     }
 }
 
@@ -463,6 +467,8 @@ int searchForRowIndex(char* data)
             return i;
         }
     }
+    printf("ERROR : searchForRowIndex couldn't find anything\n");
+    return -1;
 }
 
 int searchForColIndex(char* data)
@@ -474,6 +480,8 @@ int searchForColIndex(char* data)
             return i;
         }
     }
+    printf("ERROR : searchForColIndex couldn't find anything\n");
+    return -1;
 }
 void fillParseTable()
 {
@@ -592,12 +600,17 @@ int main()
     init_t_array();
     complete_first_sets = all_first_sets(); //populating first set
     complete_follow_sets = all_follow_sets(); //populating follow set
-    printf("NUMBER OF UNIQUE TERMINALS : %d\n",number_of_unique_terminals);
-    printf("NUMBER OF UNIQUE NON-TERMINALS : %d\n",number_of_unique_nonterminals);
 
     init_parse_table();
     fillParseTable();
     printParseTable();
+
+    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+    //     printf("%d. %s\n",i,arrayOfNonTerminals[i]);
+    // }
+
+    printf("NUMBER OF UNIQUE TERMINALS : %d\n",number_of_unique_terminals);
+    printf("NUMBER OF UNIQUE NON-TERMINALS : %d\n",number_of_unique_nonterminals);
 
 
     // printf("NO OF UNIQUE NT : %d\n",x);
@@ -646,6 +659,8 @@ int main()
     
 
     parser(input_file);
+
+    printf("PARSING SUCCESSFULL\n");
 
     // char** follow = get_follow_set("STATEMENTS");
     // for(int i=0 ; i<number_of_unique_terminals ; i++){
