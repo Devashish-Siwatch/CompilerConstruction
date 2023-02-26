@@ -72,7 +72,7 @@ Token get_next_token(FILE *input_file_pointer)
             {
                 state = 8;
             }
-            else if (isalpha(ch))
+            else if (isalpha(ch) || ch == '_')
             {
                 state = 14;
             }
