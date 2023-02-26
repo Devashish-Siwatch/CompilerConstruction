@@ -62,7 +62,7 @@ void parser(FILE *input_file_pointer){
         }else if(getTypeOfData(top_of_stack->name)==2){
             //stack's top is a terminal
             if(strcmp(currentTkLower,top_of_stack->name)==0){
-                // printf(">>>>>>>>>>Equality achieved for %s\n",currentTkLower);
+                printf(">>>>>>>>>>Equality achieved for %s\n",currentTkLower);
                 pop(stack);
                 TREENODE treenode = top_of_stack->treepointer;
                 strcpy(current.id.str,"abcd");

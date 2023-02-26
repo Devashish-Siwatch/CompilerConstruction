@@ -1,28 +1,16 @@
-<<module arraysum>>
-takes input[list:array[4..20] of real];
-returns [sum:real];
-start
-declare s: real;
-s := 0.0;
-declare index : integer;
-for (index in 4..20)
-start
-s := s + list[index];
-end
-sum := s;
-end
-
-
-
 <<<driver program>>>
 start
-declare num, k:integer;
-declare A:array [4..10] of integer;
-for( k in 6..10)
-start
-A[k]:=(num - k)*(num-k);
-print(A[k]);
+	declare v_1_2_3:integer;
+	get_value(v_1_2_3);
+	declare result_:integer;
+	[result_]:=use module square with parameters 1.2, A[k], -2, - j, -A[v], _1_2_3;
+		** Modify rule for <actual_para_list>**
+	print(result);
 end
-[num]:=use module arraysum with parameters A;
-print(num);
+
+<<module square>>
+takes input [x:integer];
+returns [value:integer];
+start
+	value:= x*x;
 end

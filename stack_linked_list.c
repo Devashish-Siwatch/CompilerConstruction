@@ -28,7 +28,7 @@ void removeFirstStackNode(STACKLIST list)
     if(list -> count !=0)
     {
         STACKNODE temp = list -> head;
-        // printf("______________________________________Popped %s\n",temp->name);
+        printf("______________________________________Popped %s\n",temp->name);
         list -> head = temp -> next;
         (list -> count)--;
         free(temp); 
