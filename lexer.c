@@ -385,7 +385,10 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 18:;
             printf("\033[31mDid not expect %c after !\033[0m",ch);
+            retract(1);
             state = 1;
+            strcpy(lexeme, "");
+            begin = forward;
             break;
         case 19:;
             ch = get_next_char(input_file_pointer);
@@ -551,7 +554,10 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 33:;
             printf("\033[31mDid not expect %c after =\033[0m",ch);
+            retract(1);
             state = 1;
+            strcpy(lexeme, "");
+            begin = forward;
 // TODO: error
             break;
         case 35:;
@@ -578,7 +584,10 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 37:;
             printf("\033[31mDid not expect %c after .\033[0m",ch);
+            retract(1);
             state = 1;
+            strcpy(lexeme, "");
+            begin = forward;
 // TODO: error
             break;
         case 38:;
@@ -716,7 +725,10 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 49:;
             printf("\033[31mDid not expect %c after .\033[0m",ch);
+            retract(1);
             state = 1;
+            strcpy(lexeme, "");
+            begin = forward;
 // TODO: error
             break;
         case 50:;
@@ -764,7 +776,10 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 53:;
             printf("\033[31mDid not expect %c after e\033[0m",ch);
+            retract(1);
             state = 1;
+            strcpy(lexeme, "");
+            begin = forward;
 // TODO: error
             break;
         case 54:;
@@ -780,7 +795,10 @@ Token get_next_token(FILE *input_file_pointer)
             break;
         case 55:;
             printf("\033[31mDid not expect %c after (+/-)\033[0m",ch);
+            retract(1);
             state = 1;
+            strcpy(lexeme, "");
+            begin = forward;
 // TODO: error
             break;
         case 56:;

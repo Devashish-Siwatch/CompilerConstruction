@@ -16,7 +16,7 @@ ID	4	um16789
 PLUS	4	+
 NUM	5	123
 ID	5	abc123
-NUM	5	.23
+NUM	5	23
 MINUS	5	-
 DIV	5	/
 MUL	5	*
@@ -28,13 +28,14 @@ BO	5	(
 ID	5	begin
 MINUS	5	-
 MINUS	5	-
-NUM	5	12.03e+a2
+ID	5	a2
 DRIVERDEF	5	<<<
 DEF	5	<<
 EQ	5	==
-ID	5	=>=value_123___16
+GE	5	>=
+ID	5	value_123___16
 PLUS	6	+
-ID	6	342543.dfsf
+ID	6	dfsf
 PLUS	6	+
 CASE	6	case
 MINUS	6	-
@@ -42,6 +43,7 @@ ID	6	case1
 DIV	6	/
 DIV	8	/
 TRUE	8	true
+PLUS	9	+
 SEMICOL	10	;
 DEFAULT	10	default
 LE	10	<=
@@ -52,7 +54,8 @@ PLUS	10	+
 NUM	10	12
 RANGEOP	10	..
 RANGEOP	10	..
-ASSIGNOP	10	.::=
+COLON	10	:
+ASSIGNOP	10	:=
 NUM	10	30
 SWITCH	10	switch
 BREAK	12	break
@@ -76,7 +79,8 @@ PLUS	12	+
 PLUS	12	+
 ARRAY	12	array
 SQBO	12	[
-PLUS	12	187.e+
+ID	12	e
+PLUS	12	+
 NUM	12	12
 RNUM	12	1.0E-12
 ID	12	e34
