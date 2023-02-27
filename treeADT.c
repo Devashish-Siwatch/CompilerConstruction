@@ -4,13 +4,35 @@
 #include <string.h>
 #include <stdlib.h>
 
+void printParseTree(TREENODE  node) {
+
+    if (node== NULL)
+        return;
+
+    if(node->child)
+        printParseTree(node->child);
+    
+    printf("%s\n", node->name);
+
+    if (node->child)
+    {
+        tree_node *temp = node->child->next;
+
+        while (temp != NULL) 
+        {
+            printParseTree(temp);
+            temp = temp->next;
+        }
+    }
+}
+
 TREELIST createNewTree(){
     TREELIST temp = (TREELIST) malloc(sizeof(tree_list));
     temp->head = NULL;
     return temp;
 }
 
-TREENODE createNewTreeNode(TREENODE parent){
+TREENODE createNewTreeNode(TREENODE parent){\
     TREENODE temp = (TREENODE)malloc(sizeof(tree_node));
     char* name = (char*)malloc(50*sizeof(char));
     char* lexeme = (char*)malloc(50*sizeof(char));
@@ -30,35 +52,47 @@ TREENODE createNewTreeNode(TREENODE parent){
 TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
     NODE temp = grammar_rule->head;
     int numberOfRHSElements=grammar_rule->count-1;
+
+    // int lengthOfRHS = 0;
+    // NODE temp2 = temp;
+    // while(temp!=NULL){
+    //     temp = temp->next;
+    //     lengthOfRHS++;
+    // }
     TREENODE* treePointerArray = (TREENODE*) malloc(numberOfRHSElements*sizeof(TREENODE));
+    for(int i=0 ; i<numberOfRHSElements ; i++){
+        treePointerArray[i] = (TREENODE) malloc(sizeof(tree_node));
+    }
     int idx=0;
     temp = temp->next;
     //temp is at first node of RHS
     int count = 0;
-    
     TREENODE treenode = createNewTreeNode(parent);
-    treePointerArray[idx]=treenode;
-    idx++;
     while(temp!=NULL){
 
         int type = getTypeOfData(temp->data);
         if(type==0){
             //epsilon
             treenode->name = "eps";
+            // printf("Inside insertRuleToTree, name entered = eps\n");
+
         }else{
             //non-terminal or terminal
             treenode->name = temp->data;
-            // printf("Inside insertRuleToTree, temp->data = %s\n",temp->data);
+            // printf("Inside insertRuleToTree, name entered = %s\n",temp->data);
         }
 
         if(count==0) parent->child = treenode;
 
+        treePointerArray[idx]=treenode;
+        printf("INSERTED INTO ============= %s\n",treenode->name);
+        idx++;
+
+        if(count==numberOfRHSElements-1) break;
+
         TREENODE next_of_treenode = createNewTreeNode(parent);
         treenode->next = next_of_treenode;
         treenode = next_of_treenode;
-
-        treePointerArray[idx]=treenode;
-        idx++;
 
         temp = temp->next;
         count++;
