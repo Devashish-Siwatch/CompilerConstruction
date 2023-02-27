@@ -14,6 +14,7 @@
 #include <ctype.h>
 
 STACK stack;
+TREENODE head;
 
 char *convertToLowercase(char *str)
 {
@@ -39,7 +40,7 @@ void init_parser()
     // init stack and tree, added S to bottom of stack and S as root of our tree.
     stack = init_stack();
     TREELIST parse_tree = createNewTree();
-    TREENODE head = createNewTreeNode(NULL);
+    head = createNewTreeNode(NULL);
     head->name = "S";
     parse_tree->head = head;
     push(stack, "S", head);
@@ -103,7 +104,7 @@ void parser(FILE *input_file_pointer)
             else
             {
                 int rule_no = parse_table[row][col];
-                // printf("RULE number : %d\n",rule_no);
+                printf("RULE number : %d\n",rule_no);
                 LIST grammar_rule = grammar[rule_no];
                 pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer);
             }
@@ -254,6 +255,11 @@ char **get_first_set(char *nonterminal)
         first[i] = (char *)malloc(sizeof(char) * MAX_LENGTH_OF_NONTERMINAL);
     }
     int index = 0;
+    //this is the case if get_first_set() is called on a terminal
+    if(getTypeOfData(nonterminal)==2){
+        first[index] = nonterminal;
+        index++;
+    }
     for (int i = 0; i < NUMBER_OF_RULES; i++)
     {
         // printf("here for %s\n",nonterminal);
@@ -723,12 +729,12 @@ int main()
 
     // printf("NO OF UNIQUE NT : %d\n",x);
 
-    // char ** first = get_first_set("MODULEDECLARATIONS");
-    // printf("FINAL PRINT\n");
-    // for(int i=0 ; i<NUMBER_OF_UNIQUE_NONTERMINALS ; i++){
-    //     printf("%s\n",first[i]);
-    //     if(strcmp(first[i],"-1")==0) break;
-    // }
+    char ** first = get_first_set("MODULE1");
+    printf("FINAL PRINT\n");
+    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
+        printf("%s\n",first[i]);
+        if(strcmp(first[i],"-1")==0) break;
+    }
 
     // // Printing follow sets
     // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
@@ -765,6 +771,8 @@ int main()
     parser(input_file);
 
     printf("PARSING SUCCESSFULL\n");
+
+    printParseTree(head);
 
     // char** follow = get_follow_set("STATEMENTS");
     // for(int i=0 ; i<number_of_unique_terminals ; i++){
