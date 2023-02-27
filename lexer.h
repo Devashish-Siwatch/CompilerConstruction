@@ -94,7 +94,7 @@ typedef struct token
 FILE *getStream(FILE *fp);
 
 // removes comments from the testcase file and creates a new file without comments
-void removeComments(char *testcaseFile, char *cleanFile);
+void removeComments(FILE *input_file_pointer, FILE *output_file_pointer);
 
 // returns the next valid token from the file
 Token get_next_token(FILE *input_file_pointer);
