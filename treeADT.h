@@ -28,6 +28,7 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent);
 TREENODE createNewTreeNode(TREENODE parent);
 TREELIST createNewTree();
 void printParseTree(TREENODE node);
+void printTree(TREELIST tree);
 
 
 

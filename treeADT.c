@@ -6,20 +6,17 @@
 
 void printParseTree(TREENODE  node) {
 
-    if (node== NULL)
-        return;
+    if (node == NULL) return;
 
-    if(node->child)
+    if(node->child != NULL){
         printParseTree(node->child);
+    }
     
-    printf("%s\n", node->name);
+    printf("Name : %-20s, lexeme : %-20s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15d \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
 
-    if (node->child)
-    {
-        tree_node *temp = node->child->next;
-
-        while (temp != NULL) 
-        {
+    if (node->child != NULL){
+        TREENODE temp = node->child->next;
+        while (temp != NULL){
             printParseTree(temp);
             temp = temp->next;
         }
@@ -102,6 +99,5 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
 
 void printTree(TREELIST tree){
     TREENODE head = tree->head;
-
-
+    printParseTree(head);
 }
