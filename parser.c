@@ -101,6 +101,9 @@ void parser(FILE *input_file_pointer)
             {
                 printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n", top_of_stack->name, currentTkLower);
                 return; // TODO: return hoga ya error handling???
+            }else if(parse_table[row][col] == -2){
+                printf("Idhar handling ho sakti hai\n");
+                return; //TODO: isko karo
             }
             else
             {
@@ -372,7 +375,6 @@ char **get_follow_set(char *nonterminal)
                                 break;
                             if (strcmp(first_of_next[i], "eps") != 0)
                             {
-
                                 if (set_contains(follow, MAX_NUMBER_OF_UNIQUE_TERMINALS, first_of_next[i]) == 0)
                                 {
                                     follow[index] = first_of_next[i];
@@ -403,7 +405,6 @@ char **get_follow_set(char *nonterminal)
                     {
                         if (strcmp(follow_of_lhs[i], "-1") == 0)
                             break;
-
                         if (set_contains(follow, MAX_NUMBER_OF_UNIQUE_TERMINALS, follow_of_lhs[i]) == 0)
                         {
                             follow[index] = follow_of_lhs[i];
@@ -418,6 +419,27 @@ char **get_follow_set(char *nonterminal)
     }
     follow[index] = "-1";
     return follow;
+}
+
+char** get_synch_set(char* nonterminal){
+    return get_follow_set(nonterminal);
+}
+
+char*** all_synch_sets(){
+    char ***synch_of_all = (char ***)malloc(number_of_unique_nonterminals * sizeof(char **));
+    for (int i = 0; i < number_of_unique_nonterminals; i++)
+    {
+        synch_of_all[i] = (char **)malloc(sizeof(char *) * MAX_NUMBER_OF_UNIQUE_TERMINALS);
+        for (int j = 0; j < MAX_NUMBER_OF_UNIQUE_TERMINALS; j++)
+        {
+            synch_of_all[i][j] = (char *)malloc(sizeof(char) * MAX_LENGTH_OF_NONTERMINAL);
+        }
+    }
+
+    for (int i = 0; i < number_of_unique_nonterminals; i++){
+        synch_of_all[i] = get_synch_set(arrayOfNonTerminals[i]);
+    }
+
 }
 
 char ***all_first_sets()
@@ -543,17 +565,32 @@ void display_rules()
 void createParseTable(int row, int col)
 {
     parse_table = (int **)malloc(row * sizeof(int *));
-    for (int i = 0; i < row; i++)
-    {
+    for (int i = 0; i < row; i++){
         parse_table[i] = (int *)malloc(col * sizeof(int));
     }
-    for (int i = 0; i < row; i++)
-    {
-        for (int j = 0; j < col; j++)
-        {
+    for (int i = 0; i < row; i++){
+        for (int j = 0; j < col; j++){
             parse_table[i][j] = -1;
         }
     }
+
+    
+    for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+        //populating the columns found in the synch set
+        char** synch_set = get_synch_set(arrayOfNonTerminals[i]);
+        for (int j = 0; j < MAX_NUMBER_OF_UNIQUE_NONTERMINALS; j++){
+            if (strcmp(synch_set[j], "-1") == 0)
+                break;
+            int column = searchForColIndex(synch_set[j]);
+            // printf("comparison func : %s, actual : %s\n",first_set[j],arrayOfTerminals[col]);
+            // printf("row : %d, col : %d\n",row,col);
+            // if (parse_table[row][col] != -1 || parse_table[row][col] != -2)
+            //     printf("SYNCH POPULATING : NOT LL1 for row=%d ; col=%d", row, col);
+            parse_table[i][column] = -2;
+            // printf("row : %d, col : %d\n",row,col);
+        }    
+    }
+
 }
 
 void init_parse_table()
@@ -689,15 +726,15 @@ void fillParseTable()
 
         first_set[index] = "-1";
 
-        for (int j = 0; j < MAX_NUMBER_OF_UNIQUE_NONTERMINALS; j++)
-        {
+        //populating the columns found in the first_set
+        for (int j = 0; j < MAX_NUMBER_OF_UNIQUE_NONTERMINALS; j++){
             if (strcmp(first_set[j], "-1") == 0)
                 break;
             int col = searchForColIndex(first_set[j]);
             // printf("comparison func : %s, actual : %s\n",first_set[j],arrayOfTerminals[col]);
             // printf("row : %d, col : %d\n",row,col);
-            if (parse_table[row][col] != -1)
-                printf("NOT LL1 for row=%d ; col=%d", row, col);
+            if (parse_table[row][col] != -1 && parse_table[row][col] != -2)
+                printf("ACTUAL POPULATING : NOT LL1 for row=%d ; col=%d", row, col);
             parse_table[row][col] = i;
             // printf("row : %d, col : %d\n",row,col);
         }
@@ -711,14 +748,20 @@ int main()
         grammar[i] = createNewList();
     populate_grammer();
     // display_rules();
+    printf("here\n");
 
     init_nt_array();
     init_t_array();
+    printf("here\n");
     complete_first_sets = all_first_sets();   // populating first set
     complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets(); //populating synch set
+    printf("here\n");
 
     init_parse_table();
+        printf("here\n");
     fillParseTable();
+        printf("here\n");
     printParseTable();
 
     // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
@@ -772,7 +815,7 @@ int main()
     parser(input_file);
 
     printf("PARSING SUCCESSFULL\n");
-    printTree(parse_tree);
+    // printTree(parse_tree);
     // printParseTree(parse_tree->head);
 
     // char** follow = get_follow_set("STATEMENTS");

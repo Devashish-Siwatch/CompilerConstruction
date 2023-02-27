@@ -16,6 +16,7 @@ int number_of_unique_nonterminals;
 int number_of_unique_terminals;
 char*** complete_first_sets;
 char*** complete_follow_sets;
+char*** complete_synch_sets;
 
 int getTypeOfData(char* str);
 int searchForRowIndex(char* data);
