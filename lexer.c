@@ -1,12 +1,3 @@
-/*
-Group - 41
-Praneet Karna - 2020A7PS1202P
-Kshitij Tandon - 2020A7PS0972P
-Devashish Siwatch - 2020A7PS0113P
-Samyak Jain - 2020A7PS0089P
-Chaitanya Iyer - 2020A7PS0012P
-*/
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -191,8 +182,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -203,8 +197,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -214,8 +211,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -226,8 +226,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -263,8 +266,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -275,8 +281,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -286,8 +295,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -298,8 +310,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -352,8 +367,7 @@ Token get_next_token(FILE *input_file_pointer)
                     state = 1;
                     // printf("\nlexeme: %s\n", lexeme);
                     strncpy(t.id.str, lexeme, lexemeSize);
-                    t.id.str[lexemeSize] = '\0'; state = 1;
-// TODO:
+                    t.id.str[lexemeSize] = '\0'; // TODO:
                     // forward++;
                     begin = forward;
                     strcpy(lexeme, "");
@@ -387,9 +401,12 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
             begin = forward;
+            strcpy(lexeme, "");
             return t;
             break;
         case 18:;
@@ -446,8 +463,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -469,8 +489,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -480,8 +503,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -491,8 +517,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -502,8 +531,11 @@ Token get_next_token(FILE *input_file_pointer)
             eof_reached = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -513,8 +545,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -545,8 +580,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -567,7 +605,6 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             strcpy(lexeme, "");
             begin = forward;
-// TODO: error
             break;
         case 35:;
             t.token_name = EQ;
@@ -575,8 +612,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -597,7 +637,7 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             strcpy(lexeme, "");
             begin = forward;
-// TODO: error
+            // TODO: error
             break;
         case 38:;
             t.token_name = RANGEOP;
@@ -605,8 +645,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -616,8 +659,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -627,8 +673,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -638,8 +687,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -649,8 +701,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -660,8 +715,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -671,8 +729,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -699,8 +760,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -727,8 +791,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++; //TODO
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -738,7 +805,6 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             strcpy(lexeme, "");
             begin = forward;
-// TODO: error
             break;
         case 50:;
             ch = get_next_char(input_file_pointer);
@@ -763,8 +829,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
             break;
@@ -789,7 +858,6 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             strcpy(lexeme, "");
             begin = forward;
-// TODO: error
             break;
         case 54:;
             ch = get_next_char(input_file_pointer);
@@ -808,7 +876,6 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             strcpy(lexeme, "");
             begin = forward;
-// TODO: error
             break;
         case 56:;
             ch = get_next_char(input_file_pointer);
@@ -829,8 +896,11 @@ Token get_next_token(FILE *input_file_pointer)
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
+            if (forward < begin)
+                lexemeSize += BUFFER_SIZE;
             strncpy(t.id.str, lexeme, lexemeSize);
-            t.id.str[lexemeSize] = '\0'; state = 1;
+            t.id.str[lexemeSize] = '\0';
+            strcpy(lexeme, "");
             begin = forward;
             return t;
         }
