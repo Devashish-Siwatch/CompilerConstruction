@@ -57,6 +57,7 @@ Token get_next_token(FILE *input_file_pointer)
 {
 
     Token t;
+    t.numeric_value = 0;
     while (eof_reached == 0)
     {
         char ch;
@@ -756,7 +757,7 @@ Token get_next_token(FILE *input_file_pointer)
             retract(1);
             t.token_name = NUM;
             t.line_no = line_no;
-            t.numeric_value = atoi(buffer);
+            t.numeric_value = atoi(lexeme);
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
@@ -787,7 +788,7 @@ Token get_next_token(FILE *input_file_pointer)
             retract(2);
             t.token_name = NUM;
             t.line_no = line_no;
-            t.numeric_value = atoi(buffer);
+            t.numeric_value = atoi(lexeme);
             state = 1;
             // forward++; //TODO
             lexemeSize = forward - begin;

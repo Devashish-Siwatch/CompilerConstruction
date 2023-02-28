@@ -89,15 +89,12 @@ typedef enum valid_token_names
 typedef struct token
 {
     valid_token_names token_name;
-    union
-    {
-        struct
+    struct
         {
             char str[MAX_LEXEME_LENGTH + 1]; // For accomodating '\0'
         } id;
-        int numeric_value;
-        double real_numeric_value;
-    };
+    int numeric_value;
+    double real_numeric_value;
     int line_no;
 } Token;
 FILE *getStream(FILE *fp);
