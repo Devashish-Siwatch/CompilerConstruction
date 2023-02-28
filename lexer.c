@@ -826,7 +826,7 @@ Token get_next_token(FILE *input_file_pointer)
             retract(1);
             t.token_name = RNUM;
             t.line_no = line_no;
-            t.real_numeric_value = strtof(lexeme, NULL);
+            t.real_numeric_value = strtod(lexeme, NULL);
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
@@ -893,7 +893,7 @@ Token get_next_token(FILE *input_file_pointer)
             retract(1);
             t.token_name = RNUM;
             t.line_no = line_no;
-            t.real_numeric_value = strtof(lexeme, NULL);
+            t.real_numeric_value = strtod(lexeme, NULL);
             state = 1;
             // forward++;
             lexemeSize = forward - begin;
