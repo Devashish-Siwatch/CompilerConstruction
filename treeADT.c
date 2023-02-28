@@ -12,7 +12,7 @@ void printParseTree(TREENODE  node) {
         printParseTree(node->child);
     }
     
-    printf("Name : %-20s, lexeme : %-20s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15d \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
+    printf("Name : %-20s, lexeme : %-20s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15f \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
 
     if (node->child != NULL){
         TREENODE temp = node->child->next;

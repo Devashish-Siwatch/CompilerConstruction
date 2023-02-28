@@ -73,7 +73,6 @@ void parser(FILE *input_file_pointer)
             if (strcmp(currentTkLower, top_of_stack->name) == 0)
             {
                 printf(">>>>>>>>>>Equality achieved for %s\n", currentTkLower);
-                pop(stack);
                 TREENODE treenode = top_of_stack->treepointer;
                 // strcpy(current.id.str, "abcd");
                 strcpy(treenode->lexeme, current.id.str);
@@ -83,6 +82,7 @@ void parser(FILE *input_file_pointer)
                 treenode->valueIfRNum = current.real_numeric_value;
                 treenode->child = NULL;
                 current = get_next_token(input_file_pointer);
+                pop(stack);
             }
             else
             {
@@ -815,7 +815,7 @@ int main()
     parser(input_file);
 
     printf("PARSING SUCCESSFULL\n");
-    // printTree(parse_tree);
+    printTree(parse_tree);
     // printParseTree(parse_tree->head);
 
     // char** follow = get_follow_set("STATEMENTS");
