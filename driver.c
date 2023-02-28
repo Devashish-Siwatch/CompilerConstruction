@@ -78,7 +78,7 @@ void save_all_tokens(FILE *input_file, FILE *output_file)
     while (1)
     {
         token = get_next_token(input_file);
-        printf("\n%s\t%d\t%s\n", enum_to_token_name_string[token.token_name], token.line_no, token.id.str);
+        printf("\n%s\t%d\t%s\t%d\t%f\n", enum_to_token_name_string[token.token_name], token.line_no, token.id.str, token.numeric_value, token.real_numeric_value);
         if (token.token_name == EOF)
         {
             break;
