@@ -9,6 +9,7 @@ Chaitanya Iyer - 2020A7PS0012P
 
 #include <stdio.h>
 #include "lexer.h"
+#include "parser.h"
 #include <time.h>
 #include <stdlib.h>
 
@@ -171,15 +172,24 @@ int main(int argc, char *argv[])
         }
         else if (choice == 3)
         {
-            printf("Parser TODO\n");
+            FILE *input_file;
+            input_file = fopen(argv[1], "r");
+
+            if (input_file == NULL)
+            {
+                printf("Unable to open file");
+                return 1;
+            }
+
+            int parse = parser_complete_functionality(input_file);
+
         }
         else if (choice == 4)
         {
             FILE *input_file;
-            char ch;
 
             // Open the input file in read mode
-            input_file = fopen("input.txt", "r");
+            input_file = fopen(argv[1], "r");
 
             // If the file doesn't exist or can't be opened, exit the program
             if (input_file == NULL)
@@ -187,7 +197,13 @@ int main(int argc, char *argv[])
                 printf("Unable to open file");
                 return 1;
             }
-            printf("File opened successfully\n");
+            FILE* token_file = fopen("token_output.txt", "w");
+            // If the file doesn't exist or can't be opened, exit the program
+            if (token_file == NULL)
+            {
+                printf("Unable to open file");
+                return 1;
+            }
             clock_t start_time, end_time;
 
             double total_CPU_time, total_CPU_time_in_seconds;
@@ -195,7 +211,8 @@ int main(int argc, char *argv[])
             start_time = clock();
 
             // TODO: Run lexer and parser
-
+            int parser = parser_complete_functionality(input_file);
+            
             end_time = clock();
 
             total_CPU_time = (double)(end_time - start_time);
@@ -203,8 +220,11 @@ int main(int argc, char *argv[])
             total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
 
             // Print both total_CPU_time and total_CPU_time_in_seconds
+            printf("Total CPU time = %lf\n", total_CPU_time);
+            printf("Total CPU time in seconds = %lf\n", total_CPU_time_in_seconds);
             // Close the file
             fclose(input_file);
+            fclose(token_file);
         }
         else
         {

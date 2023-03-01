@@ -8,14 +8,71 @@
 #include "parsetable.h"
 #include "stack.h"
 #include "treeADT.h"
-#include "lexer.h"
-#include "driver.c"
 #include "stack.h"
 #include <ctype.h>
 
 STACK stack;
 TREELIST parse_tree;
-
+char *enum_to_token_name[] = {
+    "ID",
+    "NUM",
+    "RNUM",
+    "AND",
+    "OR",
+    "TRUE",
+    "FALSE",
+    "PLUS",
+    "MINUS",
+    "MUL",
+    "DIV",
+    "LT",
+    "LE",
+    "GT",
+    "GE",
+    "EQ",
+    "NE",
+    "DEF",
+    "ENDDEF",
+    "DRIVERDEF",
+    "DRIVERENDDEF",
+    "COLON",
+    "RANGEOP",
+    "SEMICOL",
+    "COMMA",
+    "ASSIGNOP",
+    "SQBO",
+    "SQBC",
+    "BO",
+    "BC",
+    "INTEGER",
+    "REAL",
+    "BOOLEAN",
+    "OF",
+    "ARRAY",
+    "START",
+    "END",
+    "DECLARE",
+    "MODULE",
+    "DRIVER",
+    "PROGRAM",
+    "GET_VALUE",
+    "PRINT",
+    "USE",
+    "WITH",
+    "PARAMETERS",
+    "TAKES",
+    "INPUT",
+    "RETURNS",
+    "FOR",
+    "IN",
+    "SWITCH",
+    "CASE",
+    "BREAK",
+    "DEFAULT",
+    "WHILE",
+    "EOFILE"
+    // "COMMENTMARK"
+};
 char *convertToLowercase(char *str)
 {
     // printf("CONVert LC\n");
@@ -57,7 +114,7 @@ void parser(FILE *input_file_pointer)
 
     while (current.token_name != EOFILE)
     {
-        char *currentTk = enum_to_token_name_string[current.token_name];
+        char *currentTk = enum_to_token_name[current.token_name];
         char *currentTkLower = convertToLowercase(currentTk);
 
         STACKNODE top_of_stack = top(stack);
@@ -774,7 +831,7 @@ void fillParseTable()
     }
 }
 
-int main()
+int parser_complete_functionality(FILE *input_file)
 {
     grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
     for (int i = 0; i < NUMBER_OF_RULES; ++i)
@@ -835,20 +892,21 @@ int main()
 
     // init_parser();
 
-    FILE *input_file;
-    // Open the input file in read mode
-    input_file = fopen("input.txt", "r");
-    if (input_file == NULL)
-    {
-        printf("Unable to open file");
-        return 1;
-    }
+    // FILE *input_file;
+    // // Open the input file in read mode
+    // input_file = fopen("input.txt", "r");
+    // if (input_file == NULL)
+    // {
+    //     printf("Unable to open file");
+    //     return 1;
+    // }
     // printf("File opened successfully\n");
 
     parser(input_file);
 
     printf("PARSING SUCCESSFULL\n");
     printTree(parse_tree);
+    return 0;
     // printParseTree(parse_tree->head);
 
     // char** follow = get_follow_set("STATEMENTS");
