@@ -82,7 +82,7 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
         if(count==0) parent->child = treenode;
 
         treePointerArray[idx]=treenode;
-        printf("INSERTED INTO ============= %s\n",treenode->name);
+        // printf("INSERTED INTO ============= %s\n",treenode->name);
         idx++;
 
         if(count==numberOfRHSElements-1) break;
