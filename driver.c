@@ -86,8 +86,8 @@ void save_all_tokens(FILE *input_file, FILE *output_file)
         {
             break;
         }
-        printf("\n%d\t%s\t%s\n", token.line_no, enum_to_token_name_string[token.token_name], token.id.str);
-        fprintf(output_file, "%s\t\t%d\t\t%s\n", enum_to_token_name_string[token.token_name], token.line_no, token.id.str);
+        printf("\n%-5d\t%-20s\t%-20s\n", token.line_no, enum_to_token_name_string[token.token_name], token.id.str);
+        fprintf(output_file, "%-5s\t\t%-20d\t\t%-20s\n", enum_to_token_name_string[token.token_name], token.line_no, token.id.str);
         //  break;
     }
 }
@@ -181,8 +181,17 @@ int main(int argc, char *argv[])
                 return 1;
             }
 
-            int parse = parser_complete_functionality(input_file);
+            FILE *output_file;
+            output_file = fopen(argv[2], "w");
+            if (output_file == NULL)
+            {
+                printf("\033[31mUnable to open output file\033[0m\n");
+                return 1;
+            }
+
+            int parse = parser_complete_functionality(input_file,output_file);
             fclose(input_file);
+            fclose(output_file);
         }
         else if (choice == 4)
         {
@@ -197,13 +206,15 @@ int main(int argc, char *argv[])
                 printf("Unable to open file");
                 return 1;
             }
-            FILE* token_file = fopen("token_output.txt", "w");
-            // If the file doesn't exist or can't be opened, exit the program
-            if (token_file == NULL)
+
+            FILE *output_file;
+            output_file = fopen(argv[2], "w");
+            if (output_file == NULL)
             {
-                printf("Unable to open file");
+                printf("\033[31mUnable to open output file\033[0m\n");
                 return 1;
             }
+
             clock_t start_time, end_time;
 
             double total_CPU_time, total_CPU_time_in_seconds;
@@ -211,7 +222,7 @@ int main(int argc, char *argv[])
             start_time = clock();
 
             // TODO: Run lexer and parser
-            int parser = parser_complete_functionality(input_file);
+            int parser = parser_complete_functionality(input_file,output_file);
             
             end_time = clock();
 
@@ -220,11 +231,11 @@ int main(int argc, char *argv[])
             total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
 
             // Print both total_CPU_time and total_CPU_time_in_seconds
-            printf("Total CPU time = %lf\n", total_CPU_time);
-            printf("Total CPU time in seconds = %lf\n", total_CPU_time_in_seconds);
+            printf("Total CPU time (in ticks)   = %lf\n", total_CPU_time);
+            printf("Total CPU time (in seconds) = %lf\n", total_CPU_time_in_seconds);
             // Close the file
             fclose(input_file);
-            fclose(token_file);
+            fclose(output_file);
         }
         else
         {

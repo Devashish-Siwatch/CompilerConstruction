@@ -4,12 +4,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-void printParseTree(TREENODE  node) {
+void printParseTree(TREENODE  node, FILE* output_file) {
 
     if (node == NULL) return;
 
     if(node->child != NULL){
-        printParseTree(node->child);
+        printParseTree(node->child,output_file);
     }
     
     //printf("Name : %-20s, lexeme : %-20s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15f \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
@@ -47,10 +47,47 @@ void printParseTree(TREENODE  node) {
         printf("%-20s","");
     // printf("%-5f ",node->valueIfRNum);
     printf("\n");
+
+    //Writing to output file
+    fprintf(output_file,"%-20s ",node->lexeme);
+    if(node->line_number<0)
+        fprintf(output_file,"%-11d ",node->line_number);
+    else
+        fprintf(output_file,"%-10d ",node->line_number);
+    if(strcmp(node->lexeme,"----"))
+        fprintf(output_file,"%-20s ",node->name);
+    else
+        fprintf(output_file,"%-20s","");
+
+    if(strcmp(node->name,"num")==0){
+        fprintf(output_file,"%-10d ",node->valueIfNum); 
+    }
+    else if(strcmp(node->name,"rnum")==0){
+        fprintf(output_file,"%-10f ",node->valueIfRNum);
+    }
+    else
+    {
+        fprintf(output_file,"%-11s","");
+    }
+    if(strcmp(node->name,"S")==0)
+        fprintf(output_file,"ROOT%-17s","");
+    else
+        fprintf(output_file,"%-20s ",node->parent->name);
+    if(node->child!=NULL)
+        fprintf(output_file,"no%-10s","");
+    else    
+        fprintf(output_file,"yes%-9s","");
+    if(node->child!=NULL)
+        fprintf(output_file,"%-20s ",node->name);
+    else
+        fprintf(output_file,"%-20s","");
+    // printf("%-5f ",node->valueIfRNum);
+    fprintf(output_file,"\n");
+
     if (node->child != NULL){
         TREENODE temp = node->child->next;
         while (temp != NULL){
-            printParseTree(temp);
+            printParseTree(temp, output_file);
             temp = temp->next;
         }
     }
@@ -130,7 +167,7 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
     return treePointerArray;
 }
 
-void printTree(TREELIST tree){
+void printTree(TREELIST tree, FILE *output_file){
     TREENODE head = tree->head;
-    printParseTree(head);
+    printParseTree(head, output_file);
 }

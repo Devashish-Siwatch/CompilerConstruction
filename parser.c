@@ -852,7 +852,7 @@ void parser(FILE *input_file_pointer)
     }
 }
 
-int parser_complete_functionality(FILE* input_file)
+int parser_complete_functionality(FILE* input_file, FILE* output_file)
 {
     grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
     for (int i = 0; i < NUMBER_OF_RULES; ++i)
@@ -926,7 +926,7 @@ int parser_complete_functionality(FILE* input_file)
     parser(input_file);
 
     
-    printTree(parse_tree);
+    printTree(parse_tree,output_file);
 
     // char** follow = get_follow_set("STATEMENTS");
     // for(int i=0 ; i<number_of_unique_terminals ; i++){
