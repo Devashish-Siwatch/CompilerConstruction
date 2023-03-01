@@ -65,6 +65,7 @@ Token get_next_token(FILE *input_file_pointer)
         {
         case 1:;
             ch = get_next_char(input_file_pointer);
+            printf("CHar %c",ch);
             if (ch == '<')
             {
                 state = 2;
@@ -527,7 +528,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 28:;
-            t.token_name = EOF;
+            t.token_name = EOFILE;
             t.line_no = line_no;
             eof_reached = 1;
             // forward++;

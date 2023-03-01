@@ -81,7 +81,7 @@ typedef enum valid_token_names
     CASE,
     BREAK,
     DEFAULT,
-    WHILE,
+    WHILE,EOFILE
     // COMMENTMARK
 } valid_token_names;
 

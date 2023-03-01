@@ -55,7 +55,7 @@ void parser(FILE *input_file_pointer)
 
     Token current = get_next_token(input_file_pointer);
 
-    while (current.token_name != EOF)
+    while (current.token_name != EOFILE)
     {
         char *currentTk = enum_to_token_name_string[current.token_name];
         char *currentTkLower = convertToLowercase(currentTk);
