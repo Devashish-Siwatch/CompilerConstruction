@@ -11,15 +11,17 @@ Chaitanya Iyer - 2020A7PS0012P
 #define LEXER_H
 
 #include <stdio.h>
-#define MAX_LEXEME_LENGTH 20
-#define BUFFER_SIZE 40
+// #define MAX_LEXEME_LENGTH 20
+// #define BUFFER_SIZE 40
 
+int BUFFER_SIZE;
+int MAX_LEXEME_LENGTH;
 int state;
 int line_no;
 int begin, forward;
 int eof_reached;
-char buffer[BUFFER_SIZE];
-char lexeme[MAX_LEXEME_LENGTH];
+char* buffer;
+char* lexeme;
 int lastUpdatedHalf;
 int lexemeSize;
 int sizeErrorDetected;
@@ -91,7 +93,7 @@ typedef struct token
     valid_token_names token_name;
     struct
         {
-            char str[MAX_LEXEME_LENGTH + 1]; // For accomodating '\0'
+            char *str; // For accomodating '\0'
         } id;
     int numeric_value;
     double real_numeric_value;

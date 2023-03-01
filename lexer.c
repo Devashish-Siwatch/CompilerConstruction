@@ -7,6 +7,8 @@
 void initialize_lexer_variables(FILE *input_file_pointer)
 {
     state = 1;
+    buffer = (char*)malloc(sizeof(char) * BUFFER_SIZE);
+    lexeme = (char*)malloc(sizeof(char) * MAX_LEXEME_LENGTH);
     sizeErrorDetected = 0;
     eof_reached = 0;
     line_no = 1;
@@ -40,11 +42,12 @@ void update_buffer(FILE *input_file_pointer)
     {
         forward = 0;
     }
-
+    
     // printf("\n IN UPDATE BUFFER, FORWARD is %d and last updated half is %d", forward, lastUpdatedHalf);
-    num = fread(&buffer[forward], 1, BUFFER_SIZE / 2, input_file_pointer);
+    num = fread(buffer+forward, 1, BUFFER_SIZE / 2, input_file_pointer);
     // printf("buffer contents: %s", buffer);
     // printf("num: %d", num);
+
     if (num != BUFFER_SIZE / 2)
     {
         buffer[num + forward] = EOF;
@@ -58,13 +61,17 @@ Token get_next_token(FILE *input_file_pointer)
 
     Token t;
     t.numeric_value = 0;
+    t.real_numeric_value = 0.0;
+    t.id.str =(char*)malloc(sizeof(char) * (MAX_LEXEME_LENGTH+1));
     while (eof_reached == 0)
     {
         char ch;
+        
         switch (state)
         {
         case 1:;
             ch = get_next_char(input_file_pointer);
+            // printf("first char%c\n", ch);
             // printf("Char %c",ch);
             if (ch == '<')
             {
@@ -378,7 +385,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             else
             {
-                printf("\nLexeme too long at line %d\n", line_no);
+                printf("\033[31m\nLexeme too long at line %d\033[0m\n", line_no);
                 sizeErrorDetected = 0;
                 state = 1;
                 begin = forward;
@@ -412,7 +419,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 18:;
-            printf("\033[31mDid not expect %c after !\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after ! on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -602,7 +609,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 33:;
-            printf("\033[31mDid not expect %c after =\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after = on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -634,7 +641,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 37:;
-            printf("\033[31mDid not expect %c after .\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after . on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -802,7 +809,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 49:;
-            printf("\033[31mDid not expect %c after .\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after . on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -855,7 +862,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 53:;
-            printf("\033[31mDid not expect %c after e\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after e on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -873,7 +880,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 55:;
-            printf("\033[31mDid not expect %c after (+/-)\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after (+/-) on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -920,6 +927,7 @@ char get_next_char(FILE *input_file_pointer)
     }
     char c = buffer[forward];
     int lex_index = forward - begin;
+    
     // in case the forward pointer has reached the end of the buffer and is in the first half of the buffer
     if (lex_index < 0)
     {
@@ -929,6 +937,7 @@ char get_next_char(FILE *input_file_pointer)
         lexeme[lex_index] = c;
 
     forward++;
+    
     // printf("\nIn getnextchar, begin is : %d , forward was : %d, char returned:%c, forward is : %d", begin, forward - 1, c, forward);
     return c;
 }
@@ -960,11 +969,13 @@ void removeComments(FILE *input_file_pointer, FILE *output_file_pointer)
                 {
                     state = 0;
                     fputc('*', output_file_pointer);
+                    printf("%c", ch);
                 }
             }
             if (state == 0)
             {
                 fputc(ch, output_file_pointer);
+                printf("%c", ch);
             }
         }
         else if (state == 2)
@@ -985,6 +996,7 @@ void removeComments(FILE *input_file_pointer, FILE *output_file_pointer)
             else if (ch == '\n')
             {
                 fputc(ch, output_file_pointer);
+                printf("%c", ch);
             }
         }
         ch = fgetc(input_file_pointer);
