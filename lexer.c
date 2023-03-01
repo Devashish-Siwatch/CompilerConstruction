@@ -527,14 +527,12 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 28:;
-            t.token_name = EOF;
+            t.token_name = EOF1;
             t.line_no = line_no;
             eof_reached = 1;
             // forward++;
-            lexemeSize = forward - begin;
-            if (forward < begin)
-                lexemeSize += BUFFER_SIZE;
-            strncpy(t.id.str, lexeme, lexemeSize);
+            lexemeSize = 6;
+            strcpy(t.id.str, "dollar");
             t.id.str[lexemeSize] = '\0';
             strcpy(lexeme, "");
             begin = forward;

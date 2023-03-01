@@ -1,3 +1,5 @@
 driver.exe
 .vscode
 *.exe
+lexer
+parser
