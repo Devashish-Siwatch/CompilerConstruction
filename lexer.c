@@ -378,7 +378,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             else
             {
-                printf("\nLexeme too long at line %d\n", line_no);
+                printf("\033[31m\nLexeme too long at line %d\033[0m\n", line_no);
                 sizeErrorDetected = 0;
                 state = 1;
                 begin = forward;
@@ -412,7 +412,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 18:;
-            printf("\033[31mDid not expect %c after !\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after ! on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -602,7 +602,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 33:;
-            printf("\033[31mDid not expect %c after =\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after = on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -634,7 +634,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 37:;
-            printf("\033[31mDid not expect %c after .\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after . on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -802,7 +802,7 @@ Token get_next_token(FILE *input_file_pointer)
             return t;
             break;
         case 49:;
-            printf("\033[31mDid not expect %c after .\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after . on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -855,7 +855,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 53:;
-            printf("\033[31mDid not expect %c after e\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after e on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -873,7 +873,7 @@ Token get_next_token(FILE *input_file_pointer)
             }
             break;
         case 55:;
-            printf("\033[31mDid not expect %c after (+/-)\033[0m",ch);
+            printf("\033[31m\nDid not expect %c after (+/-) on line number %d \033[0m\n",ch,line_no);
             retract(1);
             state = 1;
             strcpy(lexeme, "");
@@ -960,11 +960,13 @@ void removeComments(FILE *input_file_pointer, FILE *output_file_pointer)
                 {
                     state = 0;
                     fputc('*', output_file_pointer);
+                    printf("%c", ch);
                 }
             }
             if (state == 0)
             {
                 fputc(ch, output_file_pointer);
+                printf("%c", ch);
             }
         }
         else if (state == 2)
@@ -985,6 +987,7 @@ void removeComments(FILE *input_file_pointer, FILE *output_file_pointer)
             else if (ch == '\n')
             {
                 fputc(ch, output_file_pointer);
+                printf("%c", ch);
             }
         }
         ch = fgetc(input_file_pointer);
