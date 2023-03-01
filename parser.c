@@ -64,7 +64,7 @@ void parser(FILE *input_file_pointer)
         if (strcmp("dollar", top_of_stack->name) == 0)
         {
             // stack is over
-            printf("STACK KHATAM\n");
+            printf("\033[31m  We arrived at the end of the stack, before the input has ended.\n  \033[0m");
             return;
         }
         else if (getTypeOfData(top_of_stack->name) == 2)
@@ -72,13 +72,13 @@ void parser(FILE *input_file_pointer)
             // stack's top is a terminal
             if (strcmp(currentTkLower, top_of_stack->name) == 0)
             {
-                printf(">>>>>>>>>>Equality achieved for %s\n", currentTkLower);
+                // printf(">>>>>>>>>>Equality achieved for %s\n", currentTkLower);
                 TREENODE treenode = top_of_stack->treepointer;
                 // strcpy(current.id.str, "abcd");
                 strcpy(treenode->lexeme, current.id.str);
                 treenode->line_number = current.line_no;
                 treenode->valueIfNum = current.numeric_value;
-                printf("WE ARE HERE : %d\n", current.numeric_value);
+                // printf("WE ARE HERE : %d\n", current.numeric_value);
                 treenode->valueIfRNum = current.real_numeric_value;
                 treenode->child = NULL;
                 current = get_next_token(input_file_pointer);
@@ -86,9 +86,16 @@ void parser(FILE *input_file_pointer)
             }
             else
             {
-                printf("top of stack :%s  and token we got from lexer : %s\n", top_of_stack->name, currentTkLower);
-                printf("ERROR : The terminal at top of stack is not equal to the result of lexer.\n");
-                return;
+                // printf("top of stack :%s  and token we got from lexer : %s\n", top_of_stack->name, currentTkLower);
+                // printf("ERROR : The terminal at top of stack is not equal to the result of lexer.\n");
+                printf("\033[31m  We arrived at the case where the terminal at top of stack does not match with the input token.\n  \033[0m");
+                TREENODE treenode = top_of_stack->treepointer;
+                // char* temp_str = strcat("ERROR HANDLED FOR LEXEME : ",current.id.str);
+                // strcpy(treenode->lexeme, temp_str);
+                treenode->line_number = -9999;
+                treenode->child = NULL;
+                pop(stack);
+                printf("\033[31m  We have popped stack without forwarding the input token.  \033[0m");
             }
         }
         else
@@ -99,20 +106,27 @@ void parser(FILE *input_file_pointer)
             // printf("row %d for %s col %d for %s\n",row,top_of_stack->name,col,currentTkLower);
             if (parse_table[row][col] == -1)
             {
-                printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n", top_of_stack->name, currentTkLower);
-                return; // TODO: return hoga ya error handling???
+                // printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n", top_of_stack->name, currentTkLower);
+                printf("\033[31m  Moved ahead as nothing found for parse-table entry.\n  \033[0m");
+                current = get_next_token(input_file_pointer);
             }else if(parse_table[row][col] == -2){
-                printf("Idhar handling ho sakti hai\n");
-                return; //TODO: isko karo
+                // printf("Idhar handling ho sakti hai\n");
+                printf("\033[31m  We arrived at a case where the input token is in the synch set.\n  \033[0m");
+                pop(stack);
             }
             else
             {
                 int rule_no = parse_table[row][col];
-                printf("RULE number : %d\n",rule_no);
+                // printf("RULE number : %d\n",rule_no);
                 LIST grammar_rule = grammar[rule_no];
                 pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer);
             }
         }
+    }
+    if(strcmp(top(stack)->name,"dollar")!=0){
+        printf("\033[31m  We arrived at the case where the input tokens have ended but the stack has not ended.\n  \033[0m");
+    }else{
+        printf("PARSING SUCCESSFULL\n");
     }
 }
 
@@ -422,7 +436,26 @@ char **get_follow_set(char *nonterminal)
 }
 
 char** get_synch_set(char* nonterminal){
-    return get_follow_set(nonterminal);
+    int size_of_synch = (MAX_NUMBER_OF_UNIQUE_TERMINALS + MAX_EXTRA_TERMINALS);
+    char** synch = (char**)malloc(size_of_synch*sizeof(char*));
+    for(int i=0 ; i<size_of_synch ; i++){
+        synch[i] = (char*)malloc(sizeof(char));
+    }
+    char** follow = get_follow_set(nonterminal);
+    int index = 0;
+    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
+        if(strcmp("-1",follow[i])!=0){
+            synch[i] = follow[i];
+            index++;
+        }else break;
+    }
+    synch[index] = "semicol";
+    index++;
+    synch[index] = "start";
+    index++;
+    synch[index] = "end";
+    index++;
+    return synch;
 }
 
 char*** all_synch_sets(){
@@ -748,20 +781,20 @@ int main()
         grammar[i] = createNewList();
     populate_grammer();
     // display_rules();
-    printf("here\n");
+    // printf("here\n");
 
     init_nt_array();
     init_t_array();
-    printf("here\n");
+    // printf("here\n");
     complete_first_sets = all_first_sets();   // populating first set
     complete_follow_sets = all_follow_sets(); // populating follow set
     complete_synch_sets = all_synch_sets(); //populating synch set
-    printf("here\n");
+    // printf("here\n");
 
     init_parse_table();
-        printf("here\n");
+        // printf("here\n");
     fillParseTable();
-        printf("here\n");
+        // printf("here\n");
     printParseTable();
 
     // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
@@ -773,12 +806,12 @@ int main()
 
     // printf("NO OF UNIQUE NT : %d\n",x);
 
-    char ** first = get_first_set("MODULE1");
-    printf("FINAL PRINT\n");
-    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
-        printf("%s\n",first[i]);
-        if(strcmp(first[i],"-1")==0) break;
-    }
+    // char ** first = get_first_set("MODULE1");
+    // printf("FINAL PRINT\n");
+    // for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
+    //     printf("%s\n",first[i]);
+    //     if(strcmp(first[i],"-1")==0) break;
+    // }
 
     // // Printing follow sets
     // for(int i=0 ; i<number_of_unique_nonterminals ; i++){

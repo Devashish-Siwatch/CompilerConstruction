@@ -81,7 +81,7 @@ void pushRuleToStackandTree(STACK stack,LIST grammarRule,TREENODE parent){
     // printf("PUSHING INTO STACK\n");
     for(int i=rhsLength-1 ; i>=0 ; i--){
         push(stack,arrayOfTreeNodePointers[i]->name,arrayOfTreeNodePointers[i]);
-        printf("______________________________________Pushed %s\n",arrayOfTreeNodePointers[i]->name);
+        // printf("______________________________________Pushed %s\n",arrayOfTreeNodePointers[i]->name);
     }
 
 }
