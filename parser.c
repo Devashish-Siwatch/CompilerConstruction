@@ -48,88 +48,6 @@ void init_parser()
     pushRuleToStackandTree(stack, grammar[0], head);
 }
 
-void parser(FILE *input_file_pointer)
-{
-    initialize_lexer_variables(input_file_pointer);
-    init_parser();
-
-    Token current = get_next_token(input_file_pointer);
-
-    while (current.token_name != EOFILE)
-    {
-        char *currentTk = enum_to_token_name_string[current.token_name];
-        char *currentTkLower = convertToLowercase(currentTk);
-
-        STACKNODE top_of_stack = top(stack);
-        if (strcmp("dollar", top_of_stack->name) == 0)
-        {
-            // stack is over
-            printf("\033[31m  We arrived at the end of the stack, before the input has ended.\n  \033[0m");
-            return;
-        }
-        else if (getTypeOfData(top_of_stack->name) == 2)
-        {
-            // stack's top is a terminal
-            if (strcmp(currentTkLower, top_of_stack->name) == 0)
-            {
-                // printf(">>>>>>>>>>Equality achieved for %s\n", currentTkLower);
-                TREENODE treenode = top_of_stack->treepointer;
-                // strcpy(current.id.str, "abcd");
-                strcpy(treenode->lexeme, current.id.str);
-                treenode->line_number = current.line_no;
-                treenode->valueIfNum = current.numeric_value;
-                // printf("WE ARE HERE : %d\n", current.numeric_value);
-                treenode->valueIfRNum = current.real_numeric_value;
-                treenode->child = NULL;
-                current = get_next_token(input_file_pointer);
-                pop(stack);
-            }
-            else
-            {
-                // printf("top of stack :%s  and token we got from lexer : %s\n", top_of_stack->name, currentTkLower);
-                // printf("ERROR : The terminal at top of stack is not equal to the result of lexer.\n");
-                printf("\033[31m  We arrived at the case where the terminal at top of stack does not match with the input token.\n  \033[0m");
-                TREENODE treenode = top_of_stack->treepointer;
-                // char* temp_str = strcat("ERROR HANDLED FOR LEXEME : ",current.id.str);
-                // strcpy(treenode->lexeme, temp_str);
-                treenode->line_number = -9999;
-                treenode->child = NULL;
-                pop(stack);
-                printf("\033[31m  We have popped stack without forwarding the input token.  \033[0m");
-            }
-        }
-        else
-        {
-            // stack's top is a non-terminal
-            int col = searchForColIndex(currentTkLower);
-            int row = searchForRowIndex(top_of_stack->name);
-            // printf("row %d for %s col %d for %s\n",row,top_of_stack->name,col,currentTkLower);
-            if (parse_table[row][col] == -1)
-            {
-                // printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n", top_of_stack->name, currentTkLower);
-                printf("\033[31m  Moved ahead as nothing found for parse-table entry.\n  \033[0m");
-                current = get_next_token(input_file_pointer);
-            }else if(parse_table[row][col] == -2){
-                // printf("Idhar handling ho sakti hai\n");
-                printf("\033[31m  We arrived at a case where the input token is in the synch set.\n  \033[0m");
-                pop(stack);
-            }
-            else
-            {
-                int rule_no = parse_table[row][col];
-                // printf("RULE number : %d\n",rule_no);
-                LIST grammar_rule = grammar[rule_no];
-                pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer);
-            }
-        }
-    }
-    if(strcmp(top(stack)->name,"dollar")!=0){
-        printf("\033[31m  We arrived at the case where the input tokens have ended but the stack has not ended.\n  \033[0m");
-    }else{
-        printf("PARSING SUCCESSFULL\n");
-    }
-}
-
 int set_contains(char **arr, int arr_len, char *str)
 {
     for (int i = 0; i < arr_len; i++)
@@ -449,8 +367,10 @@ char** get_synch_set(char* nonterminal){
             index++;
         }else break;
     }
-    synch[index] = "semicol";
-    index++;
+    if(strcmp("STATEMENTS",nonterminal)!=0){
+        synch[index] = "semicol";
+        index++;
+    }
     synch[index] = "start";
     index++;
     synch[index] = "end";
@@ -774,6 +694,104 @@ void fillParseTable()
     }
 }
 
+void parser(FILE *input_file_pointer)
+{
+    initialize_lexer_variables(input_file_pointer);
+    init_parser();
+
+    Token current = get_next_token(input_file_pointer);
+
+    while (current.token_name != EOFILE)
+    {
+        char *currentTk = enum_to_token_name_string[current.token_name];
+        char *currentTkLower = convertToLowercase(currentTk);
+
+        STACKNODE top_of_stack = top(stack);
+        if (strcmp("dollar", top_of_stack->name) == 0)
+        {
+            // stack is over
+            printf("\033[31m We arrived at the end of the stack, before the input has ended.\n\033[0m");
+            return;
+        }
+        else if (getTypeOfData(top_of_stack->name) == 2)
+        {
+            // stack's top is a terminal
+            if (strcmp(currentTkLower, top_of_stack->name) == 0)
+            {
+                // printf(">>>>>>>>>>Equality achieved for %s\n", currentTkLower);
+                TREENODE treenode = top_of_stack->treepointer;
+                // strcpy(current.id.str, "abcd");
+                strcpy(treenode->lexeme, current.id.str);
+                treenode->line_number = current.line_no;
+                treenode->valueIfNum = current.numeric_value;
+                // printf("WE ARE HERE : %d\n", current.numeric_value);
+                treenode->valueIfRNum = current.real_numeric_value;
+                treenode->child = NULL;
+                current = get_next_token(input_file_pointer);
+                pop(stack);
+            }
+            else
+            {
+                // printf("top of stack :%s  and token we got from lexer : %s\n", top_of_stack->name, currentTkLower);
+                // printf("ERROR : The terminal at top of stack is not equal to the result of lexer.\n");
+                TREENODE treenode = top_of_stack->treepointer;
+                // char* temp_str = strcat("ERROR HANDLED FOR LEXEME : ",current.id.str);
+                // strcpy(treenode->lexeme, temp_str);
+                treenode->line_number = -9999;
+                treenode->child = NULL;
+                pop(stack);
+                printf("\033[31m We arrived at the case where the terminal at top of stack does not match with the input token So, we have popped stack without forwarding the input token. LINE NUMBER : %d \n \033[0m",current.line_no);
+            }
+        }
+        else
+        {
+            // stack's top is a non-terminal
+            int col = searchForColIndex(currentTkLower);
+            int row = searchForRowIndex(top_of_stack->name);
+            // printf("row %d for %s col %d for %s\n",row,top_of_stack->name,col,currentTkLower);
+            if (parse_table[row][col] == -1)
+            {
+                // printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n", top_of_stack->name, currentTkLower);
+                printf("\033[31m  We arrived at a case where the input token is not present in the parse table for the nonterminal at the top of the stack. So we move to the next token. LINE NUMBER : %d\n\033[0m",current.line_no);
+                current = get_next_token(input_file_pointer);
+            }else if(parse_table[row][col] == -2){
+                // printf("Idhar handling ho sakti hai\n");
+                printf("\033[31m  We arrived at a case where the input token is in the synch set. So we pop the top of stack. LINE NUMBER : %d\n\033[0m",current.line_no);
+                pop(stack);
+            }
+            else
+            {
+                int rule_no = parse_table[row][col];
+                // printf("RULE number : %d\n",rule_no);
+                LIST grammar_rule = grammar[rule_no];
+                pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer);
+            }
+        }
+    }
+
+    while(true){
+        STACKNODE top_of_stack = top(stack);
+        if(strcmp(top_of_stack->name,"dollar")==0){
+            break;
+        }else if(getTypeOfData(top_of_stack->name)==2){
+            break;
+        }else{
+            char** first_of_top = get_first_set(top_of_stack->name);
+            if(contains_epsilon(first_of_top)==1){
+                pop(stack);
+            }else{
+                break;
+            }
+        }
+    }
+
+    if(strcmp(top(stack)->name,"dollar")!=0){
+        printf("\033[31m  We arrived at the case where the input tokens have ended but the stack has not ended.\n  \033[0m");
+    }else{
+        printf("PARSING SUCCESSFULL\n");
+    }
+}
+
 int main()
 {
     grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
@@ -847,9 +865,8 @@ int main()
 
     parser(input_file);
 
-    printf("PARSING SUCCESSFULL\n");
-    printTree(parse_tree);
-    // printParseTree(parse_tree->head);
+    
+     printTree(parse_tree);
 
     // char** follow = get_follow_set("STATEMENTS");
     // for(int i=0 ; i<number_of_unique_terminals ; i++){
