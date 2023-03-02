@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "lexer.h"
 #include "hashmap.h"
+#include "ctype.h"
 // initializing the lexer variables
 void initialize_lexer_variables(FILE *input_file_pointer)
 {
