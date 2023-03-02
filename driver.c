@@ -112,6 +112,12 @@ int main(int argc, char *argv[])
         printf("\033[31mUnable to open output file\033[0m\n");
         return 1;
     }
+    printf("Status: \n\n");
+    printf("FIRST AND FOLLOW SET AUTOMATED\n");
+    printf("Both lexical and syntax analysis modules implemented\n");
+    printf("Parse tree constructed\n");
+    printf("Modules worked correctly with all the provided 6 testcases\n\n");
+
     // BUFFER_SIZE = atoi(argv[3]);
     // MAX_LEXEME_LENGTH = BUFFER_SIZE/2;
     BUFFER_SIZE = 2*atoi(argv[3]);

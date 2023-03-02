@@ -12,25 +12,9 @@ Chaitanya Iyer - 2020A7PS0012P
 
 
 #include "stdbool.h"
+#include "linkedlistDef.h"
 
-struct node
-{
-    char* data;
-    struct node *next;
-};
-typedef struct node node;
-typedef node * NODE;
 
-struct linked_list
-{
-    int count;
-    NODE head;
-    // NODE tail; // Not required for stack. Required for Queue
-};
-typedef struct linked_list linked_list;
-typedef linked_list * LIST;
-
-linked_list** grammar;
 
 LIST createNewList();
 // This function allocates memory for a new list and returns a pointer to it.

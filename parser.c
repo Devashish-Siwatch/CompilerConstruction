@@ -1,3 +1,11 @@
+/*
+Group - 41
+Praneet Karna - 2020A7PS1202P
+Kshitij Tandon - 2020A7PS0972P
+Devashish Siwatch - 2020A7PS0113P
+Samyak Jain - 2020A7PS0089P
+Chaitanya Iyer - 2020A7PS0012P
+*/
 #include <stdio.h>
 #include "linkedlist.h"
 #include <stdlib.h>
@@ -5,7 +13,7 @@
 #include <stdbool.h>
 #include "parser.h"
 #include <string.h>
-#include "parsetable.h"
+
 #include "stack.h"
 #include "treeADT.h"
 #include "stack.h"
@@ -428,10 +436,14 @@ char** get_synch_set(char* nonterminal){
         synch[index] = "semicol";
         index++;
     }
-    synch[index] = "start";
-    index++;
-    synch[index] = "end";
-    index++;
+    if(strcmp("MODULEDEF",nonterminal)!=0){
+        synch[index] = "start";
+        index++;
+    }
+    if(strcmp("MODULEDEF",nonterminal)!=0){
+        synch[index] = "end";
+        index++;
+    }
     synch[index] = "-1";
     return synch;
 }
@@ -759,7 +771,7 @@ void parser(FILE *input_file_pointer)
     int error_flag = 0;
     init_parser();
     initialize_lexer_variables(input_file_pointer);
-
+    int errLine=-1;
     Token current = get_next_token(input_file_pointer);
 
     while (current.token_name != EOFILE)
@@ -803,7 +815,10 @@ void parser(FILE *input_file_pointer)
                 treenode->child = NULL;
                 pop(stack);
                 error_flag = 1;
-                printf("\033[31m\nSYNTACTIC ERROR : We arrived at the case where the terminal at top of stack does not match with the input token So, we have popped stack without forwarding the input token. LINE NUMBER : %d\n\033[0m",current.line_no);
+                if(errLine!=current.line_no){
+                    printf("\033[31m\nSYNTACTIC ERROR :At line number :%d\n\033[0m",current.line_no);
+                    errLine=current.line_no;
+                }
             }
         }
         else
@@ -816,12 +831,19 @@ void parser(FILE *input_file_pointer)
             {
                 error_flag = 1;
                 // printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n", top_of_stack->name, currentTkLower);
-                printf("\033[31m\nSYNTACTIC ERROR : We arrived at a case where the input token is not present in the parse table for the nonterminal at the top of the stack. So we move to the next token. LINE NUMBER : %d\n\033[0m",current.line_no);
+                // printf("\033[31m\nSYNTACTIC ERROR : We arrived at a case where the input token is not present in the parse table for the nonterminal at the top of the stack. So we move to the next token. LINE NUMBER : %d\n\033[0m",current.line_no);
+                if(errLine!=current.line_no){
+                    printf("\033[31m\nSYNTACTIC ERROR :At line number :%d\n\033[0m",current.line_no);
+                    errLine=current.line_no;
+                }
                 current = get_next_token(input_file_pointer);
             }else if(parse_table[row][col] == -2){
-                // printf("Idhar handling ho sakti hai\n");
                 error_flag = 1;
-                printf("\033[31m\nSYNTACTIC ERROR : We arrived at a case where the input token is in the synch set. So we pop the top of stack. LINE NUMBER : %d\n\033[0m",current.line_no);
+                // printf("\033[31m\nSYNTACTIC ERROR : We arrived at a case where the input token is in the synch set. So we pop the top of stack. LINE NUMBER : %d\n\033[0m",current.line_no);
+                if(errLine!=current.line_no){
+                    printf("\033[31m\nSYNTACTIC ERROR :At line number :%d\n\033[0m",current.line_no);
+                    errLine=current.line_no;
+                }
                 pop(stack);
             }
             else

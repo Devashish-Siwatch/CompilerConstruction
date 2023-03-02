@@ -1,3 +1,12 @@
+/*
+Group - 41
+Praneet Karna - 2020A7PS1202P
+Kshitij Tandon - 2020A7PS0972P
+Devashish Siwatch - 2020A7PS0113P
+Samyak Jain - 2020A7PS0089P
+Chaitanya Iyer - 2020A7PS0012P
+*/
+
 #include "stack.h"
 #include "parser.h"
 #include"treeADT.h"

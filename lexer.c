@@ -1,3 +1,12 @@
+/*
+Group - 41
+Praneet Karna - 2020A7PS1202P
+Kshitij Tandon - 2020A7PS0972P
+Devashish Siwatch - 2020A7PS0113P
+Samyak Jain - 2020A7PS0089P
+Chaitanya Iyer - 2020A7PS0012P
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -158,6 +167,10 @@ Token get_next_token(FILE *input_file_pointer)
             else if (ch == ';')
             {
                 state = 44;
+            }
+            else{
+                state = 1;
+                printf("\033[31m\nLEXICAL ERROR : Invalid character in line %d\033[0m\n", line_no);
             }
             break;
         case 2:;
