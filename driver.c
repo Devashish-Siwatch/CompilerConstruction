@@ -114,9 +114,9 @@ int main(int argc, char *argv[])
     }
     // BUFFER_SIZE = atoi(argv[3]);
     // MAX_LEXEME_LENGTH = BUFFER_SIZE/2;
-    BUFFER_SIZE = atoi(argv[3]);
+    BUFFER_SIZE = 2*atoi(argv[3]);
     MAX_LEXEME_LENGTH = BUFFER_SIZE/2;
-    printf("BUFFER_SIZE = %d, MAX_LEXEME_LENGTH = %d", BUFFER_SIZE, MAX_LEXEME_LENGTH);
+    printf("SINGLE_BUFFER_SIZE = %d", BUFFER_SIZE/2);
     
     int choice;
     while (1)

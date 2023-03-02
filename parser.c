@@ -756,6 +756,7 @@ void fillParseTable()
 
 void parser(FILE *input_file_pointer)
 {
+    int error_flag = 0;
     init_parser();
     initialize_lexer_variables(input_file_pointer);
 
@@ -770,7 +771,8 @@ void parser(FILE *input_file_pointer)
         if (strcmp("dollar", top_of_stack->name) == 0)
         {
             // stack is over
-            printf("\033[31m\nPARSING ERROR : We arrived at the end of the stack, before the input has ended.\n\033[0m");
+            printf("\033[31m\nSYNTACTIC ERROR : We arrived at the end of the stack, before the input has ended.\n\033[0m");
+            error_flag = 1;
             return;
         }
         else if (getTypeOfData(top_of_stack->name) == 2)
@@ -800,7 +802,8 @@ void parser(FILE *input_file_pointer)
                 treenode->line_number = -9999;
                 treenode->child = NULL;
                 pop(stack);
-                printf("\033[31m\nPARSING ERROR : We arrived at the case where the terminal at top of stack does not match with the input token So, we have popped stack without forwarding the input token. LINE NUMBER : %d\n\033[0m",current.line_no);
+                error_flag = 1;
+                printf("\033[31m\nSYNTACTIC ERROR : We arrived at the case where the terminal at top of stack does not match with the input token So, we have popped stack without forwarding the input token. LINE NUMBER : %d\n\033[0m",current.line_no);
             }
         }
         else
@@ -811,12 +814,14 @@ void parser(FILE *input_file_pointer)
             // printf("row %d for %s col %d for %s\n",row,top_of_stack->name,col,currentTkLower);
             if (parse_table[row][col] == -1)
             {
+                error_flag = 1;
                 // printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n", top_of_stack->name, currentTkLower);
-                printf("\033[31m\nPARSING ERROR : We arrived at a case where the input token is not present in the parse table for the nonterminal at the top of the stack. So we move to the next token. LINE NUMBER : %d\n\033[0m",current.line_no);
+                printf("\033[31m\nSYNTACTIC ERROR : We arrived at a case where the input token is not present in the parse table for the nonterminal at the top of the stack. So we move to the next token. LINE NUMBER : %d\n\033[0m",current.line_no);
                 current = get_next_token(input_file_pointer);
             }else if(parse_table[row][col] == -2){
                 // printf("Idhar handling ho sakti hai\n");
-                printf("\033[31m\nPARSING ERROR : We arrived at a case where the input token is in the synch set. So we pop the top of stack. LINE NUMBER : %d\n\033[0m",current.line_no);
+                error_flag = 1;
+                printf("\033[31m\nSYNTACTIC ERROR : We arrived at a case where the input token is in the synch set. So we pop the top of stack. LINE NUMBER : %d\n\033[0m",current.line_no);
                 pop(stack);
             }
             else
@@ -845,11 +850,14 @@ void parser(FILE *input_file_pointer)
         }
     }
 
-    if(strcmp(top(stack)->name,"dollar")!=0){
-        printf("\033[31m\nPARSING ERROR : We arrived at the case where the input tokens have ended but the stack has not ended.\n\033[0m");
-    }else{
-        printf("PARSING SUCCESSFULL\n");
-    }
+
+    if(error_flag==0) printf("Input source code is syntactically correct...........\n");
+
+    // if(strcmp(top(stack)->name,"dollar")!=0){
+    //     printf("\033[31m\nSYNTACTIC ERROR : We arrived at the case where the input tokens have ended but the stack has not ended.\n\033[0m");
+    // }else{
+    //     printf("Input source code is syntactically correct...........\n");
+    // }
 }
 
 int parser_complete_functionality(FILE* input_file, FILE* output_file)

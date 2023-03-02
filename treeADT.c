@@ -13,40 +13,40 @@ void printParseTree(TREENODE  node, FILE* output_file) {
     }
     
     //printf("Name : %-20s, lexeme : %-20s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15f \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
-    printf("%-20s ",node->lexeme);
-    if(node->line_number<0)
-        printf("%-11d ",node->line_number);
-    else
-        printf("%-10d ",node->line_number);
-    if(strcmp(node->lexeme,"----"))
-        printf("%-20s ",node->name);
-    else
-        printf("%-20s","");
+    // printf("%-20s ",node->lexeme);
+    // if(node->line_number<0)
+    //     printf("%-11d ",node->line_number);
+    // else
+    //     printf("%-10d ",node->line_number);
+    // if(strcmp(node->lexeme,"----"))
+    //     printf("%-20s ",node->name);
+    // else
+    //     printf("%-20s","");
 
-    if(strcmp(node->name,"num")==0){
-        printf("%-10d ",node->valueIfNum); 
-    }
-    else if(strcmp(node->name,"rnum")==0){
-        printf("%-10f ",node->valueIfRNum);
-    }
-    else
-    {
-        printf("%-11s","");
-    }
-    if(strcmp(node->name,"S")==0)
-        printf("ROOT%-17s","");
-    else
-        printf("%-20s ",node->parent->name);
-    if(node->child!=NULL)
-        printf("no%-10s","");
-    else    
-        printf("yes%-9s","");
-    if(node->child!=NULL)
-        printf("%-20s ",node->name);
-    else
-        printf("%-20s","");
-    // printf("%-5f ",node->valueIfRNum);
-    printf("\n");
+    // if(strcmp(node->name,"num")==0){
+    //     printf("%-10d ",node->valueIfNum); 
+    // }
+    // else if(strcmp(node->name,"rnum")==0){
+    //     printf("%-10f ",node->valueIfRNum);
+    // }
+    // else
+    // {
+    //     printf("%-11s","");
+    // }
+    // if(strcmp(node->name,"S")==0)
+    //     printf("ROOT%-17s","");
+    // else
+    //     printf("%-20s ",node->parent->name);
+    // if(node->child!=NULL)
+    //     printf("no%-10s","");
+    // else    
+    //     printf("yes%-9s","");
+    // if(node->child!=NULL)
+    //     printf("%-20s ",node->name);
+    // else
+    //     printf("%-20s","");
+    // // printf("%-5f ",node->valueIfRNum);
+    // printf("\n");
 
     //Writing to output file
     fprintf(output_file,"%-20s ",node->lexeme);
