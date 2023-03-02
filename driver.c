@@ -87,7 +87,7 @@ void save_all_tokens(FILE *input_file, FILE *output_file)
             break;
         }
         printf("\n%-5d\t%-20s\t%-20s\n", token.line_no, enum_to_token_name_string[token.token_name], token.id.str);
-        fprintf(output_file, "%-5s\t\t%-20d\t\t%-20s\n", enum_to_token_name_string[token.token_name], token.line_no, token.id.str);
+        fprintf(output_file, "%-20s %-20d %-20s\n", enum_to_token_name_string[token.token_name], token.line_no, token.id.str);
         //  break;
     }
 }
