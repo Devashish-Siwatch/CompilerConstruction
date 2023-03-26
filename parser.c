@@ -110,7 +110,7 @@ void init_parser()
     parse_tree->head = head;
     push(stack, "S", head);
     pop(stack);
-    pushRuleToStackandTree(stack, grammar[0], head);
+    pushRuleToStackandTree(stack, grammar[0], head,0);
 }
 
 int set_contains(char **arr, int arr_len, char *str)
@@ -246,6 +246,16 @@ int contains_epsilon(char **set)
         }
     }
     return 0;
+}
+
+int get_epsilon_rule_number(char* nonterminal){
+    for(int i=0 ; i<NUMBER_OF_RULES ; i++){
+        LIST rule = grammar[i];
+        if(strcmp(rule->head->data,nonterminal)==0 && strcmp(rule->head->next->data,"eps")==0){
+            return i;
+        }
+    }
+    return -1;
 }
 
 char **get_first_set(char *nonterminal)
@@ -851,7 +861,7 @@ void parser(FILE *input_file_pointer)
                 int rule_no = parse_table[row][col];
                 // printf("RULE number : %d\n",rule_no);
                 LIST grammar_rule = grammar[rule_no];
-                pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer);
+                pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer,rule_no);
             }
         }
     }
@@ -861,12 +871,18 @@ void parser(FILE *input_file_pointer)
         if(strcmp(top_of_stack->name,"dollar")==0){
             break;
         }else if(getTypeOfData(top_of_stack->name)==2){
+            error_flag = 1;
             break;
         }else{
             char** first_of_top = get_first_set(top_of_stack->name);
             if(contains_epsilon(first_of_top)==1){
-                pop(stack);
+                //int rule_no = parse_table[row][col];
+                int rule_no = get_epsilon_rule_number(top_of_stack->name);
+                // printf("RULE number : %d\n",rule_no);
+                LIST grammar_rule = grammar[rule_no];
+                pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer,rule_no);
             }else{
+                error_flag = 1;
                 break;
             }
         }

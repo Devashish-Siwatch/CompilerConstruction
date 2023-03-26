@@ -13,7 +13,7 @@ Chaitanya Iyer - 2020A7PS0012P
 #include "linkedlist.h"
 #include "treeADTDef.h"
 
-TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent);
+TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent, int grammar_rule_number);
 TREENODE createNewTreeNode(TREENODE parent);
 TREELIST createNewTree();
 void printTree(TREELIST tree, FILE* output_file);

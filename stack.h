@@ -31,7 +31,7 @@ int isEmpty(Stack *stack);
 void freeStack(Stack *stack); 
 // Frees all memory associated with stack
 int isTopTerminal(STACK stack);
-void pushRuleToStackandTree(STACK stack,LIST grammarRule,TREENODE parent);
+void pushRuleToStackandTree(STACK stack,LIST grammarRule,TREENODE parent,int grammar_rule_number);
 
 STACK init_stack();
 #endif
