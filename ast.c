@@ -159,8 +159,52 @@ TREENODE generate_ast(TREENODE node){
                 node->child = generate_ast(node->child);
                 return node;
             }
+            case 29:
+            case 36:
+            case 37:
+            case 49:
             case 30:
             case 17:
+            case 78:
+            case 89:
+            case 91:
+            case 92:
+            case 93:
+            case 94:
+            case 95:
+            case 96:
+            case 97:
+            case 98:
+            case 99:
+            case 100:
+            case 101:
+            case 102:
+            case 103:
+            case 52:
+            case 53:
+            case 131:
+            case 132:
+            case 133:
+            case 130:
+            case 128:
+            case 45:
+            case 46:
+            case 18:
+            case 19:
+            case 22:
+            case 23:
+            case 24:
+            case 118:
+            case 109:
+            case 110:
+            case 111:
+            case 41:
+            case 42:
+            case 38:
+            case 39:
+            case 31:
+            case 32:
+            case 28:
             {
                 TREENODE temp = node->child;
                 free(node);
@@ -266,6 +310,151 @@ TREENODE generate_ast(TREENODE node){
                 free(node);
                 return NULL;
             }
+            case 74:
+            case 81:
+            case 84:
+            case 119:
+            case 123:
+            {
+                node->child->next->inh = generate_ast(node->child);
+                TREENODE temp = node->child->next;
+                free(node->child);
+                free(node);
+                return generate_ast(temp);
+                
+            }
+            case 75:
+            case 82:
+            case 85:
+            case 121:
+            case 124:
+            {
+                TREENODE logical_op = generate_ast(node->child);
+                logical_op->child = node->inh;
+                node->child->next->next->inh = generate_ast(node->child->next);
+                logical_op->child->next = generate_ast(node->child->next->next);
+                free(node->child->next);
+                free(node->child);
+                free(node);
+                return logical_op;
+            }
+            case 76:
+            case 83:
+            case 86:
+            case 122:
+            case 125:
+            case 108:
+            {
+                return node->inh;
+            }
+            case 77:
+            {
+                node->child->next->inh = generate_ast(node->child);
+                TREENODE temp = node->child->next;
+                free(node);
+                return generate_ast(temp);
+            }
+            case 79:
+            {
+                TREENODE relational_op = generate_ast(node->child);
+                relational_op->child = node->inh;
+                relational_op->child->next = generate_ast(node->child->next);
+                free(node->child->next);
+                free(node->child);
+                free(node);
+                return relational_op;
+            }
+            case 80:
+            {
+                TREENODE temp = node->inh;
+                free(node);
+                return temp;
+            }
+            case 87:
+            case 88:
+            case 126:
+            case 127:
+            {
+                TREENODE factor2 = node->child->next;
+                TREENODE sign = generate_ast(node->child);
+                sign->next = generate_ast(factor2);
+                free(factor2);
+                free(node);
+                return sign;
+            }
+            case 90:
+            case 129:
+            {
+                TREENODE expr = node->child->next;
+                free(node->child);// free (
+                node->child = expr;
+                free(node->child->next);// free )
+                TREENODE temp = node->child;
+                free(node);
+                return generate_ast(temp);
+            }
+            case 51:
+            {
+                TREENODE id = node->child;
+                TREENODE whichstmt = node->child->next;
+                TREENODE ass = (TREENODE) malloc(sizeof(tree_node));
+                ass->name = "ASSIGNMENTSTMT";
+                ass->child = generate_ast(id);
+                ass->child->next = generate_ast(whichstmt);
+                free(whichstmt);
+                free(node);
+                return ass;
+            }
+            case 54:
+            {
+                TREENODE expr = node->child->next;
+                free(node->child); // free :=
+                free(expr->next); // free ;
+                return generate_ast(expr);
+                free(expr);
+            }
+            case 55:
+            {
+                // TREENODE aexplt= node->child->next;
+                // free(node->child); // free [
+                // generate_ast(aexplt);
+                // TREENODE expr=aexplt->next->next->next;
+                // free(aexplt->next->next);
+                // free(aexplt->next);
+                TREENODE aexplt = node->child->next;
+                TREENODE expr = aexplt->next->next->next;
+                TREENODE arrstmt = (TREENODE) malloc(sizeof(tree_node));
+                arrstmt->name = "LVALUEARRSTMT";
+                arrstmt->child = generate_ast(aexplt);
+                arrstmt->child->next = generate_ast(expr);
+                free(node->child); // free [
+                free(aexplt->next->next); //free ]
+                free(aexplt->next);   // free:=
+                free(expr->next);   // free ;
+                free(aexplt);
+                free(expr);
+                return arrstmt;
+            }
+            // TODO : VERIFY AND UNCOMMENT
+            // case 105:
+            // {
+            //     TREENODE id = node->child->next->next;
+            //     free(node->child); //free switch
+            //     free(node->child->next); //free (
+            //     TREENODE cstmts = id->next->next->next;
+            //     free(id->next); // free )
+            //     free(id->next->next); //free start
+            //     TREENODE deflt = cstmts->next;
+            //     free(deflt->next); //free end
+            //     TREENODE conditionalstmt = (TREENODE) malloc(sizeof(tree_node));
+            //     conditionalstmt->name = "CONDITIONALSTMT";
+            //     conditionalstmt->child = generate_ast(id);
+            //     conditionalstmt->child->next = generate_ast(cstmts);
+            //     conditionalstmt->child->next->next = generate_ast(deflt);
+            //     free(cstmts);
+            //     free(deflt);
+            //     return conditionalstmt;
+            // }
 
             case 33: //IOSTMT
             {
@@ -296,5 +485,8 @@ TREENODE generate_ast(TREENODE node){
             }
         }
     }
-    else return node;
+    else{
+        node->next = NULL;
+        return node;
+    } 
 }
