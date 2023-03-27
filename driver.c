@@ -198,6 +198,7 @@ int main(int argc, char *argv[])
             int parse = parser_complete_functionality(input_file,output_file);
             fclose(input_file);
             fclose(output_file);
+            
         }
         else if (choice == 4)
         {

@@ -13,6 +13,7 @@ Chaitanya Iyer - 2020A7PS0012P
 #include <stdbool.h>
 #include "parser.h"
 #include <string.h>
+#include "astDef.h"
 
 #include "stack.h"
 #include "treeADT.h"
@@ -973,7 +974,9 @@ int parser_complete_functionality(FILE* input_file, FILE* output_file)
 
     
     printTree(parse_tree,output_file);
-
+    generate_ast(parse_tree->head);
+    printf("\n\n\n\n\n");
+    printTree(parse_tree,output_file);
     // char** follow = get_follow_set("STATEMENTS");
     // for(int i=0 ; i<number_of_unique_terminals ; i++){
     //     printf("%s\n",follow[i]);

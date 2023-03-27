@@ -20,7 +20,7 @@ void printParseTree(TREENODE  node, FILE* output_file) {
     if(node->child != NULL){
         printParseTree(node->child,output_file);
     }
-    // printf("%s and rule number : %d\n",node->name, node->rule_number+1);
+    printf("%s and rule number : %d\n",node->name, node->rule_number+1);
     /*
     printf("Name : %-20s, lexeme : %-20s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15f \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
     printf("%-20s ",node->lexeme);

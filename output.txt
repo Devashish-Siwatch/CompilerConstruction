@@ -10,28 +10,23 @@ program              4          program                         DRIVERMODULE    
 >>>                  4          driverenddef                    DRIVERMODULE         yes                             4          
 start                5          start                           MODULEDEF            yes                             5          
 ----                 -1                                         DRIVERMODULE         no          MODULEDEF            -1         
-declare              6          declare                         DECLARESTMT          yes                             6          
-----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-var_1_               6          id                              IDLIST               yes                             6          
-----                 -1                                         DECLARESTMT          no          IDLIST               -1         
-,                    6          comma                           N3                   yes                             6          
-----                 -1                                         IDLIST               no          N3                   -1         
-var_2_               6          id                              N3                   yes                             6          
-,                    6          comma                           N3                   yes                             6          
-----                 -1                                         N3                   no          N3                   -1         
-var_3_               6          id                              N3                   yes                             6          
-----                 -1                                         N3                   yes                             -1         
-----                 -1                                         N3                   no          N3                   -1         
-:                    6          colon                           DECLARESTMT          yes                             6          
-integer              6          integer                         DATATYPE             yes                             6          
-----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
-;                    6          semicol                         DECLARESTMT          yes                             6          
-----                 -1                                         STATEMENTS           no          STATEMENT            -1         
-----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
-----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
 end                  7          end                             MODULEDEF            yes                             7          
 ----                 -1                                         OTHERMODULES         yes                             -1         
 ----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
+----                 -1                                         ROOT                 no          S                    -1         
+----                 -1                                         S                    yes                             -1         
+¿éöxä´              -1          m¿éöˇˇˇˇ                   (úı–çö             yes                             -1         
+–çö`éöˇˇˇˇˇˇˇˇ     -1          (úı–çö                        PROGRAM              no          (úı–çö             -1         
+----                 -1                                         S                    no          PROGRAM              -1         
+----                 -1                                         OTHERMODULES         yes                             -1         
+----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
+----                 -1                                         STATEMENTS           yes                             -1         
+----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
+----                 -1                                         DRIVERMODULE         no          MODULEDEF            -1         
+----                 -1                                         PROGRAM              no          DRIVERMODULE         -1         
+----                 -1                                         –çö`éöˇˇˇˇˇˇˇˇ     yes                             -1         
+`éö»è€              -1          –çö`éöˇˇˇˇˇˇˇˇ                PROGRAM              no          –çö`éöˇˇˇˇˇˇˇˇ     -1         
 ----                 -1                                         ROOT                 no          S                    -1         
 ----                 -1                                         S                    yes                             -1         

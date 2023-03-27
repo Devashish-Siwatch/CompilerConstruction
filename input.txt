@@ -3,7 +3,7 @@
 **declare module compute;**
 <<<driver program>>>
 start
-	declare var_1_, var_2_, var_3_:integer;
+	declare a:integer;
 end
 
 **

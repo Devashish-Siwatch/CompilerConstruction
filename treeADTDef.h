@@ -25,6 +25,7 @@ struct tree_node
     TREENODE next;
     TREENODE parent;
     TREENODE child;
+    TREENODE inh;
 };
 
 
