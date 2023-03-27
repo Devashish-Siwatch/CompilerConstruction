@@ -3,8 +3,7 @@
 **declare module compute;**
 <<<driver program>>>
 start
-	declare a,b,c,d,e:integer;
-	declare p,q,r:integer;
+	use module abc with parameters a,-a,+a;
 end
 
 **
@@ -19,9 +18,3 @@ start
 	res_1:= (true AND c==b)OR(b>p AND (a<=c));
 	print(res_1);
 end
-
-**
-
-**verify the output of the lexical analyzer as well**
-**check the correctness of the parse tree**
-
