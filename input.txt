@@ -1,6 +1,3 @@
-** This testcase demonstrates the syntactic correctness of the constructs such as modules, simple and declaration statements, and expressions**
-
-**declare module compute;**
 <<<driver program>>>
 start
 	use module abc with parameters a,-a,+a;

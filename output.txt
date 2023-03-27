@@ -3,12 +3,12 @@
 ----                 -1                                         S                    no          PROGRAM              -1         
 ----                 -1                                         OTHERMODULES         yes                             -1         
 ----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
-<<<                  4          driverdef                       DRIVERMODULE         yes                             4          
+<<<                  1          driverdef                       DRIVERMODULE         yes                             1          
 ----                 -1                                         PROGRAM              no          DRIVERMODULE         -1         
-driver               4          driver                          DRIVERMODULE         yes                             4          
-program              4          program                         DRIVERMODULE         yes                             4          
->>>                  4          driverenddef                    DRIVERMODULE         yes                             4          
-start                5          start                           MODULEDEF            yes                             5          
+driver               1          driver                          DRIVERMODULE         yes                             1          
+program              1          program                         DRIVERMODULE         yes                             1          
+>>>                  1          driverenddef                    DRIVERMODULE         yes                             1          
+start                2          start                           MODULEDEF            yes                             2          
 ----                 -1                                         DRIVERMODULE         no          MODULEDEF            -1         
 ----                 -1                                         OPTIONAL             yes                             -1         
 ----                 -1                                         MODULEREUSESTMT      no          OPTIONAL             -1         
