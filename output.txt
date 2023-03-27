@@ -10,29 +10,62 @@ program              1          program                         DRIVERMODULE    
 >>>                  1          driverenddef                    DRIVERMODULE         yes                             1          
 start                2          start                           MODULEDEF            yes                             2          
 ----                 -1                                         DRIVERMODULE         no          MODULEDEF            -1         
-for                  3          for                             ITERATIVESTMT        yes                             3          
-----                 -1                                         STATEMENT            no          ITERATIVESTMT        -1         
-(                    3          bo                              ITERATIVESTMT        yes                             3          
-index                3          id                              ITERATIVESTMT        yes                             3          
-in                   3          in                              ITERATIVESTMT        yes                             3          
--                    3          minus                           NUM2                 yes                             3          
-----                 -1                                         RANGE                no          NUM2                 -1         
-10                   3          num                  10         NUM2                 yes                             3          
-----                 -1                                         ITERATIVESTMT        no          RANGE                -1         
-..                   3          rangeop                         RANGE                yes                             3          
-+                    3          plus                            NUM2                 yes                             3          
-----                 -1                                         RANGE                no          NUM2                 -1         
-15                   3          num                  15         NUM2                 yes                             3          
-)                    3          bc                              ITERATIVESTMT        yes                             3          
-start                4          start                           ITERATIVESTMT        yes                             4          
+switch               3          switch                          CONDIONALSTMT        yes                             3          
+----                 -1                                         STATEMENT            no          CONDIONALSTMT        -1         
+(                    3          bo                              CONDIONALSTMT        yes                             3          
+a                    3          id                              CONDIONALSTMT        yes                             3          
+)                    3          bc                              CONDIONALSTMT        yes                             3          
+start                4          start                           CONDIONALSTMT        yes                             4          
+case                 5          case                            CASESTMTS            yes                             5          
+----                 -1                                         CONDIONALSTMT        no          CASESTMTS            -1         
+1                    5          num                  1          VALUE                yes                             5          
+----                 -1                                         CASESTMTS            no          VALUE                -1         
+:                    5          colon                           CASESTMTS            yes                             5          
+declare              6          declare                         DECLARESTMT          yes                             6          
+----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
+a                    6          id                              IDLIST               yes                             6          
+----                 -1                                         DECLARESTMT          no          IDLIST               -1         
+----                 -1                                         N3                   yes                             -1         
+----                 -1                                         IDLIST               no          N3                   -1         
+:                    6          colon                           DECLARESTMT          yes                             6          
+real                 6          real                            DATATYPE             yes                             6          
+----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
+;                    6          semicol                         DECLARESTMT          yes                             6          
+----                 -1                                         STATEMENTS           no          STATEMENT            -1         
+----                 -1                                         CASESTMTS            no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
-----                 -1                                         ITERATIVESTMT        no          STATEMENTS           -1         
-end                  5          end                             ITERATIVESTMT        yes                             5          
+----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+break                7          break                           CASESTMTS            yes                             7          
+;                    7          semicol                         CASESTMTS            yes                             7          
+case                 8          case                            N7                   yes                             8          
+----                 -1                                         CASESTMTS            no          N7                   -1         
+true                 8          true                            VALUE                yes                             8          
+----                 -1                                         N7                   no          VALUE                -1         
+:                    8          colon                           N7                   yes                             8          
+print                9          print                           IOSTMT               yes                             9          
+----                 -1                                         STATEMENT            no          IOSTMT               -1         
+(                    9          bo                              IOSTMT               yes                             9          
+3                    9          num                  3          VAR2                 yes                             9          
+----                 -1                                         VAR_BOOL             no          VAR2                 -1         
+----                 -1                                         IOSTMT               no          VAR_BOOL             -1         
+)                    9          bc                              IOSTMT               yes                             9          
+;                    9          semicol                         IOSTMT               yes                             9          
+----                 -1                                         STATEMENTS           no          STATEMENT            -1         
+----                 -1                                         N7                   no          STATEMENTS           -1         
+----                 -1                                         STATEMENTS           yes                             -1         
+----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+break                10         break                           N7                   yes                             10         
+;                    10         semicol                         N7                   yes                             10         
+----                 -1                                         N7                   yes                             -1         
+----                 -1                                         N7                   no          N7                   -1         
+----                 -1                                         DEFAULT              yes                             -1         
+----                 -1                                         CONDIONALSTMT        no          DEFAULT              -1         
+end                  11         end                             CONDIONALSTMT        yes                             11         
 ----                 -1                                         STATEMENTS           no          STATEMENT            -1         
 ----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-end                  6          end                             MODULEDEF            yes                             6          
+end                  12         end                             MODULEDEF            yes                             12         
 ----                 -1                                         OTHERMODULES         yes                             -1         
 ----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
 ----                 -1                                         ROOT                 no          S                    -1         

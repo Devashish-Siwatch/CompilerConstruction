@@ -1,6 +1,12 @@
 <<<driver program>>>
 start
-	for(index in  -10..+15)
+	switch(a)
 	start
+	case 1 : 
+	declare a : real;
+	break;
+	case true:
+	print(3);
+	break;
 	end
 end

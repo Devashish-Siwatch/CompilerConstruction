@@ -238,6 +238,7 @@ TREENODE generate_ast(TREENODE node)
         case 6:
         case 27:
         case 73:
+        case 108:
         {
             appendAtEnd(node->inh, NULL);
             free(node->child);
@@ -345,7 +346,7 @@ TREENODE generate_ast(TREENODE node)
         case 86:
         case 122:
         case 125:
-        case 108:
+        case 113:
         {
             return node->inh;
         }
@@ -438,25 +439,87 @@ TREENODE generate_ast(TREENODE node)
             return arrstmt;
         }
             // TODO : VERIFY AND UNCOMMENT
-            // case 105:
-            // {
-            //     TREENODE id = node->child->next->next;
-            //     free(node->child); //free switch
-            //     free(node->child->next); //free (
-            //     TREENODE cstmts = id->next->next->next;
-            //     free(id->next); // free )
-            //     free(id->next->next); //free start
-            //     TREENODE deflt = cstmts->next;
-            //     free(deflt->next); //free end
-            //     TREENODE conditionalstmt = (TREENODE) malloc(sizeof(tree_node));
-            //     conditionalstmt->name = "CONDITIONALSTMT";
-            //     conditionalstmt->child = generate_ast(id);
-            //     conditionalstmt->child->next = generate_ast(cstmts);
-            //     conditionalstmt->child->next->next = generate_ast(deflt);
-            //     free(cstmts);
-            //     free(deflt);
-            //     return conditionalstmt;
-            // }
+            case 105:
+            {
+                TREENODE id = node->child->next->next;
+                free(node->child); //free switch
+                free(node->child->next); //free (
+                TREENODE cstmts = id->next->next->next;
+                free(id->next); // free )
+                free(id->next->next); //free start
+                TREENODE deflt = cstmts->next;
+                free(deflt->next); //free end
+                TREENODE conditionalstmt = (TREENODE) malloc(sizeof(tree_node));
+                conditionalstmt->name = "CONDITIONALSTMT";
+                conditionalstmt->child = generate_ast(id);
+                conditionalstmt->child->next = generate_ast(cstmts);
+                conditionalstmt->child->next->next = generate_ast(deflt);
+                free(cstmts);
+                free(deflt);
+                free(node);
+                return conditionalstmt;
+            }
+            case 106:
+            {
+                TREENODE caseStmtsHead = (TREENODE) malloc(sizeof(tree_node));
+                caseStmtsHead->name = "CASE_STMTS_HEAD";
+                TREENODE caseStmt = (TREENODE) malloc(sizeof(tree_node));
+                caseStmt->name = "CASE_STMT";
+                TREENODE value = node->child->next;
+                TREENODE stmts = value->next->next;
+                TREENODE n7 = stmts->next->next->next;
+                free(node->child);
+                free(value->next);
+                free(stmts->next);
+                free(stmts->next->next);
+                n7->inh = caseStmtsHead;
+                caseStmt->child = generate_ast(value);
+
+                TREENODE stmts_head = (TREENODE) malloc(sizeof(tree_node));
+                stmts_head->name = "STATEMENTS_HEAD_OF_THIS_CASE";
+                stmts->inh = stmts_head;
+                generate_ast(stmts);
+                caseStmt->child->next = stmts_head;
+                appendAtEnd(caseStmtsHead, caseStmt);
+                generate_ast(n7);
+                return caseStmtsHead;
+            }
+            case 107:
+            {
+                TREENODE caseStmt = (TREENODE) malloc(sizeof(tree_node));
+                caseStmt->name = "CASE_STMT";
+                TREENODE value = node->child->next;
+                TREENODE stmts = value->next->next;
+                TREENODE n7 = stmts->next->next->next;
+                free(node->child);
+                free(value->next);
+                free(stmts->next);
+                free(stmts->next->next);
+                n7->inh = node->inh;
+                caseStmt->child = generate_ast(value);
+                TREENODE statements_head = (TREENODE) malloc(sizeof(tree_node));
+                statements_head->name = "STATEMENTS_HEAD_OF_THIS_CASE";
+                stmts->inh = statements_head;
+                generate_ast(stmts);
+                caseStmt->child->next = statements_head;
+                appendAtEnd(node->inh, caseStmt);
+                generate_ast(n7);
+                return NULL;
+            }
+            case 112:
+            {
+                TREENODE temp = node->child->next->next;
+                free(node);
+                free(node->child);
+                free(node->child->next);
+                free(temp->next);
+                free(temp->next->next);
+                TREENODE default_stmts_head = (TREENODE) malloc(sizeof(tree_node));
+                default_stmts_head->name = "DEFAULT_STATEMENTS_HEAD";
+                temp->inh = default_stmts_head;
+                generate_ast(temp);
+                return default_stmts_head;
+            }
 
         case 33: // IOSTMT
         {
