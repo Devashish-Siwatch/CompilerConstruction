@@ -1,5 +1,6 @@
 <<<driver program>>>
 start
-	get_value(v_1_2_3);
-	print(true);
+	for(index in  -10..+15)
+	start
+	end
 end
