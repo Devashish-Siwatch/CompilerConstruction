@@ -1,5 +1,15 @@
 <<<driver program>>>
 start
-	get_value(v_1_2_3);
-	print(true);
+	switch(a)
+	start
+	case 1 : 
+	declare a : real;
+	break;
+	case true:
+	print(3);
+	break;
+	default:
+	print(33);
+	break;
+	end
 end
