@@ -266,6 +266,34 @@ TREENODE generate_ast(TREENODE node){
                 free(node);
                 return NULL;
             }
+
+            case 33: //IOSTMT
+            {
+                TREENODE IO_INPUT = (TREENODE) malloc(sizeof(tree_node));
+                IO_INPUT->name = "IO_INPUT";
+                TREENODE temp = node->child->next->next;
+                free(node->child->next->next->next->next);
+                free(node->child->next->next->next);
+                free(node->child->next);
+                free(node->child);
+                temp->next = NULL;
+                IO_INPUT->child = generate_ast(temp);
+                return IO_INPUT;
+            }
+
+            case 34:
+            {
+                TREENODE IO_OUTPUT = (TREENODE) malloc(sizeof(tree_node));
+                IO_OUTPUT->name = "IO_OUTPUT";
+                TREENODE temp_var_bool = node->child->next->next;
+                free(node->child->next->next->next->next);
+                free(node->child->next->next->next);
+                free(node->child->next);
+                free(node->child);
+                temp_var_bool->next = NULL;
+                IO_OUTPUT->child = generate_ast(temp_var_bool);
+                return IO_OUTPUT;
+            }
         }
     }
     else return node;

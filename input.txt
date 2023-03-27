@@ -1,27 +1,5 @@
-** This testcase demonstrates the syntactic correctness of the constructs such as modules, simple and declaration statements, and expressions**
-
-**declare module compute;**
 <<<driver program>>>
 start
-	declare a,b,c,d,e:integer;
-	declare p,q,r:integer;
+	get_value(v_1_2_3);
+	print(true);
 end
-
-**
-<<module compute>>
-takes input[a:integer, b:integer, c:integer];
-returns [res_1:boolean, res_2_a:integer, res_2__b:real];
-start
-	declare b:boolean;
-	res_2_a:= -(a*b-c/5);
-	res_2__b:= ((res_2_a + a)*12+22.34E-2)/13;
-	b := a <=  b AND c >= a OR  a<0 AND false;
-	res_1:= (true AND c==b)OR(b>p AND (a<=c));
-	print(res_1);
-end
-
-**
-
-**verify the output of the lexical analyzer as well**
-**check the correctness of the parse tree**
-
