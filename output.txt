@@ -10,51 +10,46 @@ program              4          program                         DRIVERMODULE    
 >>>                  4          driverenddef                    DRIVERMODULE         yes                             4          
 start                5          start                           MODULEDEF            yes                             5          
 ----                 -1                                         DRIVERMODULE         no          MODULEDEF            -1         
-declare              6          declare                         DECLARESTMT          yes                             6          
-----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-a                    6          id                              IDLIST               yes                             6          
-----                 -1                                         DECLARESTMT          no          IDLIST               -1         
-,                    6          comma                           N3                   yes                             6          
-----                 -1                                         IDLIST               no          N3                   -1         
-b                    6          id                              N3                   yes                             6          
-,                    6          comma                           N3                   yes                             6          
-----                 -1                                         N3                   no          N3                   -1         
-c                    6          id                              N3                   yes                             6          
-,                    6          comma                           N3                   yes                             6          
-----                 -1                                         N3                   no          N3                   -1         
-d                    6          id                              N3                   yes                             6          
-,                    6          comma                           N3                   yes                             6          
-----                 -1                                         N3                   no          N3                   -1         
-e                    6          id                              N3                   yes                             6          
-----                 -1                                         N3                   yes                             -1         
-----                 -1                                         N3                   no          N3                   -1         
-:                    6          colon                           DECLARESTMT          yes                             6          
-integer              6          integer                         DATATYPE             yes                             6          
-----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
-;                    6          semicol                         DECLARESTMT          yes                             6          
+a                    6          id                              ASSIGNMENTSTMT       yes                             6          
+----                 -1                                         SIMPLESTMT           no          ASSIGNMENTSTMT       -1         
+[                    6          sqbo                            LVALUEARRSTMT        yes                             6          
+----                 -1                                         WHICHSTMT            no          LVALUEARRSTMT        -1         
+s                    6          id                              VARALT               yes                             6          
+----                 -1                                         FACTOR2ALT           no          VARALT               -1         
+----                 -1                                         FACTORALT            no          FACTOR2ALT           -1         
+----                 -1                                         TERMALT              no          FACTORALT            -1         
+----                 -1                                         ARITHMETICEXPRALT    no          TERMALT              -1         
+----                 -1                                         N6ALT                yes                             -1         
+----                 -1                                         TERMALT              no          N6ALT                -1         
+----                 -1                                         LVALUEARRSTMT        no          ARITHMETICEXPRALT    -1         
+----                 -1                                         N5ALT                yes                             -1         
+----                 -1                                         ARITHMETICEXPRALT    no          N5ALT                -1         
+]                    6          sqbc                            LVALUEARRSTMT        yes                             6          
+:=                   6          assignop                        LVALUEARRSTMT        yes                             6          
+3                    6          num                  3          VAR                  yes                             6          
+----                 -1                                         FACTOR2              no          VAR                  -1         
+----                 -1                                         FACTOR               no          FACTOR2              -1         
+----                 -1                                         TERM                 no          FACTOR               -1         
+----                 -1                                         ARITHMETICEXPR       no          TERM                 -1         
+----                 -1                                         N6                   yes                             -1         
+----                 -1                                         TERM                 no          N6                   -1         
+----                 -1                                         BOOLEANEXPRESSION1   no          ARITHMETICEXPR       -1         
+----                 -1                                         N5                   yes                             -1         
+----                 -1                                         ARITHMETICEXPR       no          N5                   -1         
+----                 -1                                         EXPRESSION           no          BOOLEANEXPRESSION1   -1         
+----                 -1                                         N4                   yes                             -1         
+----                 -1                                         BOOLEANEXPRESSION1   no          N4                   -1         
+----                 -1                                         LVALUEARRSTMT        no          EXPRESSION           -1         
+----                 -1                                         BOOLEANEXPRESSION2   yes                             -1         
+----                 -1                                         EXPRESSION           no          BOOLEANEXPRESSION2   -1         
+;                    6          semicol                         LVALUEARRSTMT        yes                             6          
+----                 -1                                         ASSIGNMENTSTMT       no          WHICHSTMT            -1         
+----                 -1                                         STATEMENT            no          SIMPLESTMT           -1         
 ----                 -1                                         STATEMENTS           no          STATEMENT            -1         
 ----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
-declare              7          declare                         DECLARESTMT          yes                             7          
-----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-p                    7          id                              IDLIST               yes                             7          
-----                 -1                                         DECLARESTMT          no          IDLIST               -1         
-,                    7          comma                           N3                   yes                             7          
-----                 -1                                         IDLIST               no          N3                   -1         
-q                    7          id                              N3                   yes                             7          
-,                    7          comma                           N3                   yes                             7          
-----                 -1                                         N3                   no          N3                   -1         
-r                    7          id                              N3                   yes                             7          
-----                 -1                                         N3                   yes                             -1         
-----                 -1                                         N3                   no          N3                   -1         
-:                    7          colon                           DECLARESTMT          yes                             7          
-integer              7          integer                         DATATYPE             yes                             7          
-----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
-;                    7          semicol                         DECLARESTMT          yes                             7          
-----                 -1                                         STATEMENTS           no          STATEMENT            -1         
-----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-end                  8          end                             MODULEDEF            yes                             8          
+end                  7          end                             MODULEDEF            yes                             7          
 ----                 -1                                         OTHERMODULES         yes                             -1         
 ----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
 ----                 -1                                         ROOT                 no          S                    -1         
