@@ -22,6 +22,7 @@
 
 void appendAtEnd(TREENODE head, TREENODE node)
 {
+    if(node!=NULL)node->next = NULL;
     if(head==NULL)
         head=node;
     else
@@ -33,6 +34,18 @@ void appendAtEnd(TREENODE head, TREENODE node)
         }
         temp->child=node;
     }
+}
+
+void printAst(TREENODE head)
+{
+    if(head==NULL)
+    {
+       // printf("Currently at %s",head->name);
+        return;
+    }
+    printAst(head->child);
+    printf("Currently at %s\n",head->name);
+        printAst(head->next);
 }
 
 TREENODE generate_ast(TREENODE node){
@@ -140,66 +153,120 @@ TREENODE generate_ast(TREENODE node){
         // }
         switch(rule_number){
             case 0:
+            {
                 free(node->child->next);
                 node->child->next = NULL;
                 node->child = generate_ast(node->child);
-                break;
+                return node;
+            }
             case 30:
             case 17:
+            {
                 TREENODE temp = node->child;
                 free(node);
                 return generate_ast(temp);
+            }
             case 1:
+            {
                 TREENODE moduleDeclarationsHead = (TREENODE) malloc(sizeof(tree_node));
+                moduleDeclarationsHead->name = "MDSHead";
                 TREENODE otherModulesHead = (TREENODE) malloc(sizeof(tree_node));
+                otherModulesHead->name = "OMSHead";
                 TREENODE otherModules2Head = (TREENODE) malloc(sizeof(tree_node));
+                otherModules2Head->name = "OMS2Head";
                 node->child->inh = moduleDeclarationsHead;
                 node->child->next->inh = otherModulesHead;
                 node->child->next->next->next->inh = otherModules2Head;
                 generate_ast(node->child);
                 generate_ast(node->child->next);
-
+                TREENODE temp_driver_module = node->child->next->next;
+                TREENODE temp_other_modules_2 = node->child->next->next->next;
                 node->child = moduleDeclarationsHead;
                 node->child->next = otherModulesHead;
-                node->child->next->next = generate_ast(node->child->next->next);
-                generate_ast(node->child->next->next->next);
+                node->child->next->next = generate_ast(temp_driver_module);
+                generate_ast(temp_other_modules_2);
                 node->child->next->next->next = otherModules2Head;
                 return node->child;
+            }
             case 3:
             case 6:
             case 27:
+            case 73:
+            {
                 appendAtEnd(node->inh, NULL);
                 free(node->child);
                 // node->child = NULL;
                 free(node);
                 return NULL;
-            case 8:
+            }
+            case 7:
+            {
                 for(int i=0 ; i<4 ; i++){
                     TREENODE temp = node->child->next;
                     free(node->child);
                     node->child = temp;
                 }
                 return generate_ast(node->child);
+            }
             case 25:
+            {
                 TREENODE temp = node->child->next;
                 free(node->child);
                 free(temp->next);
                 node->child = temp;
                 TREENODE statementsHead = (TREENODE)malloc(sizeof(tree_node));
+                statementsHead->name = "STMTSHead";
                 temp->inh = statementsHead;
                 generate_ast(temp);
                 free(node);
                 return statementsHead;
+            }
             case 26:
+            {
                 appendAtEnd(node->inh, generate_ast(node->child));
                 node->child->next->inh = node->inh;
                 generate_ast(node->child->next);
                 free(node);
                 return NULL;
+            }
             case 104:
+            {
                 TREENODE idList = node->child->next;
                 TREENODE dType = idList->next->next;
-                
+                free(node->child); //free declare
+                free(idList->next); //free :
+                free(dType->next); //free ;
+                node->child = generate_ast(idList);
+                node->child->next = generate_ast(dType);
+                node->child->next->next = NULL;
+                free(idList);
+                return node;
+            }
+            case 71:
+            {
+                TREENODE idListHead = (TREENODE)malloc(sizeof(tree_node));
+                idListHead->name = "IDLHead";
+                TREENODE temp_N3 = node->child->next;
+                appendAtEnd(idListHead,node->child);
+                temp_N3->inh = idListHead;
+                generate_ast(temp_N3);
+                free(node);
+                return idListHead;
+            }
+            case 72:
+            {
+                TREENODE temp = node->child->next;
+                free(node->child);
+                node->child = temp;
+                TREENODE temp_N3 = node->child->next;
+                appendAtEnd(node->inh,node->child);
+                temp_N3->inh = node->inh;
+                generate_ast(temp_N3);
+                node = NULL;
+                free(node);
+                return NULL;
+            }
         }
     }
+    else return node;
 }

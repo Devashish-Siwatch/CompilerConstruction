@@ -3,7 +3,8 @@
 **declare module compute;**
 <<<driver program>>>
 start
-	declare a:integer;
+	declare a,b,c,d,e:integer;
+	declare p,q,r:integer;
 end
 
 **

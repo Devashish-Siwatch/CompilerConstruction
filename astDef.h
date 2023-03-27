@@ -7,8 +7,9 @@
 
 
 // typedef struct ast_node_moduleDeclarations{
-    void appendAtEnd(TREENODE head, TREENODE node);
+void appendAtEnd(TREENODE head, TREENODE node);
 TREENODE generate_ast(TREENODE node);
+void printAst(TREENODE head);
 // } AST_NODE_MODULEDECLARATIONS;
 
 // typedef struct ast_node_otherModules{

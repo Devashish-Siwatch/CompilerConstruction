@@ -974,9 +974,9 @@ int parser_complete_functionality(FILE* input_file, FILE* output_file)
 
     
     printTree(parse_tree,output_file);
-    generate_ast(parse_tree->head);
+    
     printf("\n\n\n\n\n");
-    printTree(parse_tree,output_file);
+    printAst(generate_ast(parse_tree->head));
     // char** follow = get_follow_set("STATEMENTS");
     // for(int i=0 ; i<number_of_unique_terminals ; i++){
     //     printf("%s\n",follow[i]);
