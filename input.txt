@@ -8,8 +8,5 @@ start
 	case true:
 	print(3);
 	break;
-	default:
-	print(33);
-	break;
 	end
 end

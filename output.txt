@@ -58,29 +58,14 @@ break                10         break                           N7              
 ;                    10         semicol                         N7                   yes                             10         
 ----                 -1                                         N7                   yes                             -1         
 ----                 -1                                         N7                   no          N7                   -1         
-default              11         default                         DEFAULT              yes                             11         
+----                 -1                                         DEFAULT              yes                             -1         
 ----                 -1                                         CONDIONALSTMT        no          DEFAULT              -1         
-:                    11         colon                           DEFAULT              yes                             11         
-print                12         print                           IOSTMT               yes                             12         
-----                 -1                                         STATEMENT            no          IOSTMT               -1         
-(                    12         bo                              IOSTMT               yes                             12         
-33                   12         num                  33         VAR2                 yes                             12         
-----                 -1                                         VAR_BOOL             no          VAR2                 -1         
-----                 -1                                         IOSTMT               no          VAR_BOOL             -1         
-)                    12         bc                              IOSTMT               yes                             12         
-;                    12         semicol                         IOSTMT               yes                             12         
-----                 -1                                         STATEMENTS           no          STATEMENT            -1         
-----                 -1                                         DEFAULT              no          STATEMENTS           -1         
-----                 -1                                         STATEMENTS           yes                             -1         
-----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-break                13         break                           DEFAULT              yes                             13         
-;                    13         semicol                         DEFAULT              yes                             13         
-end                  14         end                             CONDIONALSTMT        yes                             14         
+end                  11         end                             CONDIONALSTMT        yes                             11         
 ----                 -1                                         STATEMENTS           no          STATEMENT            -1         
 ----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-end                  15         end                             MODULEDEF            yes                             15         
+end                  12         end                             MODULEDEF            yes                             12         
 ----                 -1                                         OTHERMODULES         yes                             -1         
 ----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
 ----                 -1                                         ROOT                 no          S                    -1         

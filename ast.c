@@ -269,6 +269,7 @@ TREENODE generate_ast(TREENODE node)
         case 27:
         case 65:
         case 73:
+        case 108:
         {
             appendAtEnd(node->inh, NULL);
             free(node->child);
@@ -494,7 +495,7 @@ TREENODE generate_ast(TREENODE node)
         case 86:
         case 122:
         case 125:
-        case 108:
+        case 113:
         {
             return node->inh;
         }
