@@ -1,13 +1,13 @@
-declare module c;
+** This testcase demonstrates correctness of module structure with declaration and simple statements**
 <<<driver program>>>
 start
-	switch(a)
-	start
-	case 1 : 
-	declare a : real;
-	break;
-	case true:
-	print(3);
-	break;
-	end
+	[result_]:=use module square with parameters a[1];
 end
+**
+<<module square>>
+takes input [x:integer];
+returns [value:integer];
+start
+	value:= x*x;
+end
+**

@@ -81,101 +81,6 @@ TREENODE generate_ast(TREENODE node)
         if (rule_number == -1)
             printf("KUCH TO DIKKAT HAI\n");
         printf("%d ************\n ", rule_number);
-
-        // switch(rule_number){
-        //     case 0:
-        //     case 30:
-        //     case 17:
-        //         return generate_ast(node->child);
-        //         break;
-        //     case 1:
-        //         node->child->inh = node->child;
-        //         node->child->next->inh = node->child->next;
-        //         node->child->next->next->inh = node->child->next->next;
-        //         TREENODE temp = node->child;
-        //         while(temp!=NULL){
-        //             generate_ast(temp);
-        //             temp = temp->next;
-        //         }
-        //         return node;
-        //         break;
-        //     case 3:
-        //     case 6:
-        //     case 27:
-
-        //         free(node->child);
-        //         free(node);
-        //         // insertNullAtEnd(node->inh);
-        //         return NULL;
-        //         break;
-        //     case 7:
-        //         for(int i=0 ; i<4 ; i++){
-        //             TREENODE temp = node->child->next;
-        //             free(node->child);
-        //             node->child = temp;
-        //         }
-        //         return generate_ast(node->child);
-        //         break;
-        //     case 25:
-        //         for(int i=0 ; i<1 ; i++){
-        //             TREENODE temp = node->child->next;
-        //             free(node->child);
-        //             node->child = temp;
-        //         }
-        //         free(node->child->next);
-        //         node->child->next = NULL;
-        //         node->child->inh = node;
-        //         return generate_ast(node->child);
-        //     case 26:
-        //         //TREENODE stmt = generate_ast(node->child);
-        //         appendAtEnd(node->inh, generate_ast(node->child));
-
-        //         node->child->next->inh = node->inh;
-        //         generate_ast(node->child->next);
-        //         break;
-        //     case 104:
-
-        //         TREENODE temp = node->child->next;
-        //         free(node->child);
-        //         node->child = temp;
-
-        //         TREENODE temp1=node->child;
-        //         TREENODE temp2=node->child->next->next;
-        //         free(temp1->next);
-        //         free(temp2->next);
-        //         node->child=NULL;
-        //         TREENODE temp3=generate_ast(temp1);
-        //         TREENODE temp4=generate_ast(temp2);
-        //         temp3->next=temp4;
-        //         node->child=temp3;
-
-        //         // node->child=generate_ast(node->child);
-
-        //         // temp = node->child->next->next;
-        //         // free(node->child->next);
-        //         // node->child->next = temp;
-        //         // free(node->child->next->next);
-        //         // node->child->next->next = NULL;
-        //         // generate_ast(node->child->next);
-        //         break;
-        //     case 71:
-        //         node->inh=node->child;
-        //         node->child->next->inh=node->inh;
-
-        //         return generate_ast(node->child->next);
-
-        //         break;
-        //     case 72:
-        //         appendAtEnd(node->inh, node->child->next);
-        //         node->child->next->next->inh = node->inh;
-        //         return node;
-        //         break;
-        //     case 73:
-        //         node->parent->child=NULL;
-        //         free(node);
-        //         break;
-        //     default: printf("%d L lg gye\n", rule_number);
-        // }
         switch (rule_number)
         {
         case 0:
@@ -231,12 +136,25 @@ TREENODE generate_ast(TREENODE node)
         case 31:
         case 32:
         case 28:
+        case 50:
+        case 67:
+        case 68:
+        case 57:
+        case 58:
         case 60:
         case 61:
         {
             TREENODE temp = node->child;
             free(node);
             return generate_ast(temp);
+        }
+        case 43:
+        case 47:
+        {
+            TREENODE temp_second = node->child->next;
+            free(node->child);
+            free(temp_second->next);
+            return generate_ast(temp_second);
         }
         case 1:
         {
@@ -265,6 +183,7 @@ TREENODE generate_ast(TREENODE node)
         case 13:
         case 16:
         case 27:
+        case 65:
         case 73:
         case 108:
         {
@@ -458,6 +377,7 @@ TREENODE generate_ast(TREENODE node)
                 array_element->name = "ARRAY_ELEMENT";
                 array_element->child = generate_ast(node->child);
                 array_element->child->next = generate_ast(node->child->next);
+                array_element->child->next->next = NULL;
                 free(node);
                 return array_element;
             }
@@ -468,8 +388,9 @@ TREENODE generate_ast(TREENODE node)
         case 119:
         case 123:
         {
-            node->child->next->inh = generate_ast(node->child);
+            //node->child->next->inh = generate_ast(node->child);
             TREENODE temp = node->child->next;
+            temp->inh = generate_ast(node->child);
             free(node->child);
             free(node);
             return generate_ast(temp);
@@ -901,6 +822,7 @@ TREENODE generate_ast(TREENODE node)
             return temp;
         }
         case 40:
+        case 35:
         {
             TREENODE temp = node->child;
             TREENODE temp1 = node->child->next;
