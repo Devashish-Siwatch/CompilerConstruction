@@ -37,6 +37,30 @@ void appendAtEnd(TREENODE head, TREENODE node)
     }
 }
 
+void appendAtEndNextNotNULL(TREENODE head, TREENODE node, int step)
+{
+    if (step == 2 && node != NULL && node->next != NULL)
+    {
+        node->next->next = NULL;
+    }
+    else if (step == 3 && node != NULL && node->next != NULL && node->next != NULL)
+    {
+        node->next->next->next = NULL;
+    }
+
+    if (head == NULL)
+        head = node;
+    else
+    {
+        TREENODE temp = head;
+        while (temp->child != NULL)
+        {
+            temp = temp->child;
+        }
+        temp->child = node;
+    }
+}
+
 void printAst(TREENODE head)
 {
     if (head == NULL)
@@ -238,6 +262,8 @@ TREENODE generate_ast(TREENODE node)
         }
         case 3:
         case 6:
+        case 13:
+        case 16:
         case 27:
         case 73:
         case 108:
@@ -315,6 +341,126 @@ TREENODE generate_ast(TREENODE node)
             node = NULL;
             free(node);
             return NULL;
+        }
+        case 62: // MODULEREUSESTMT
+        {
+            TREENODE tempiter = node->child;
+            TREENODE opt, id, aplist;
+            for (int i = 0; i < 8; i++)
+            { // removing all unnecessary nodes
+                TREENODE temp = tempiter->next;
+                if (i == 0)
+                { // optional saved
+                    opt = tempiter;
+                }
+                else if (i == 3)
+                { // id saved
+                    id = tempiter;
+                }
+                else if (i == 6)
+                { // ACTUALPARALIST saved
+                    aplist = tempiter;
+                }
+                else
+                    free(tempiter);
+                tempiter = temp;
+            }
+            TREENODE module_reuse = (TREENODE)malloc(sizeof(tree_node));
+            module_reuse->name = "MODULE_REUSE_STMT";
+            node->child = generate_ast(opt);
+            if (node->child == NULL)
+                node->child = generate_ast(id);
+            else
+            {
+                node->child->next = generate_ast(id);
+            }
+            id->next = generate_ast(aplist);
+            free(opt);
+            module_reuse->child = node->child;
+            return module_reuse;
+        }
+        case 69:
+        {
+            TREENODE temp_idlist = node->child->next;
+            free(node->child);
+            free(temp_idlist->next->next);
+            free(temp_idlist->next);
+            node->child = generate_ast(temp_idlist);
+            free(temp_idlist);
+            return node->child;
+        }
+        case 10:
+        case 44:
+        case 48:
+        case 59:
+        case 70:
+        {
+            free(node->child);
+            return NULL;
+        }
+        case 63:
+        {
+            TREENODE apl2head = (TREENODE)malloc(sizeof(tree_node));
+            apl2head->name = "APL2Head";
+            TREENODE temp_sign = generate_ast(node->child);
+            if (temp_sign != NULL)
+            {
+                temp_sign->next = generate_ast(node->child->next);
+                apl2head->child = temp_sign;
+                node->child->next->next->inh = apl2head;
+                generate_ast(node->child->next->next);
+                return apl2head;
+            }
+            else
+            {
+                apl2head->child = generate_ast(node->child->next);
+                node->child->next->next->inh = apl2head;
+                generate_ast(node->child->next->next);
+                return apl2head;
+            }
+        }
+        case 64:
+        {
+            TREENODE temp_comma = node->child;
+            node->child = node->child->next;
+            free(temp_comma);
+            TREENODE temp_sign = generate_ast(node->child);
+            if (temp_sign != NULL)
+            {
+                // inserting sign->apl2 in list
+                temp_sign->next = generate_ast(node->child->next);
+                appendAtEndNextNotNULL(node->inh, temp_sign, 2);
+                node->child->next->next->inh = node->inh;
+                generate_ast(node->child->next->next);
+                return NULL;
+            }
+            else
+            {
+                // inserting apl2 in list
+
+                appendAtEnd(node->inh, generate_ast(node->child->next));
+
+                node->child->next->next->inh = node->inh;
+                generate_ast(node->child->next->next);
+                return NULL;
+            }
+        }
+        case 66:
+        {
+            TREENODE temp = generate_ast(node->child->next);
+            if (temp == NULL)
+            {
+                return generate_ast(node->child);
+            }
+            else
+            {
+                TREENODE array_element = (TREENODE)malloc(sizeof(tree_node));
+                array_element->name = "ARRAY_ELEMENT";
+                array_element->child = generate_ast(node->child);
+                array_element->child->next = generate_ast(node->child->next);
+                free(node);
+                return array_element;
+            }
         }
         case 74:
         case 81:
@@ -603,6 +749,128 @@ TREENODE generate_ast(TREENODE node)
             node->child->next = temp;
             return node;
         }
+        case 8:
+        {
+            TREENODE id=node->child->next->next;
+            free(node->child->next);
+            free(node->child);
+            free(node);
+            TREENODE iplist = id->next->next->next->next->next;
+            free(id->next->next->next->next);
+            free(id->next->next->next);
+            free(id->next->next);
+            free(id->next);
+            TREENODE ret = iplist->next->next->next;
+            free(iplist->next->next);
+            free(iplist->next);
+            TREENODE mdef = ret->next;
+            TREENODE MODULE1 = (TREENODE)malloc(sizeof(tree_node));
+            MODULE1->name="Module1";
+            MODULE1->child=generate_ast(id);
+            MODULE1->child->next=generate_ast(iplist);
+            TREENODE temp_ret=generate_ast(ret);
+            if(temp_ret==NULL){
+                MODULE1->child->next->next=generate_ast(mdef);
+            }
+            else{
+                MODULE1->child->next->next=temp_ret;
+                MODULE1->child->next->next->next=generate_ast(mdef);
+
+            }
+            return MODULE1;
+            
+        }
+        case 9:{
+            TREENODE opl=node->child->next->next;
+            free(node->child->next);
+            free(node->child);
+            free(opl->next->next);
+            free(opl->next);
+            free(node);
+            return generate_ast(opl);
+        }
+
+        case 11:
+        {
+            TREENODE inputPlistHead = (TREENODE)malloc(sizeof(tree_node));
+            inputPlistHead->name = "InputPlistHead";
+
+            TREENODE temp_id = node->child;
+            TREENODE temp_N1 = node->child->next->next->next;
+            TREENODE temp_datatype = node->child->next->next;
+            free(temp_id->next);
+
+            TREENODE inputPlistElement = generate_ast(temp_id);
+            inputPlistElement->next = generate_ast(temp_datatype);
+            appendAtEndNextNotNULL(inputPlistHead, inputPlistElement,2);
+
+            temp_N1->inh = inputPlistHead;
+            generate_ast(temp_N1);
+            free(node);
+            return inputPlistHead;
+        }
+        case 14:
+        {
+            TREENODE outputPlistHead = (TREENODE)malloc(sizeof(tree_node));
+            outputPlistHead->name = "OutputPlistHead";
+
+            TREENODE temp_id = node->child;
+            TREENODE temp_N1 = node->child->next->next->next;
+            TREENODE temp_datatype = node->child->next->next;
+            free(temp_id->next);
+
+            TREENODE outputPlistElement = generate_ast(temp_id);
+            outputPlistElement->next = generate_ast(temp_datatype);
+            appendAtEndNextNotNULL(outputPlistHead, outputPlistElement,2);
+
+            temp_N1->inh = outputPlistHead;
+            generate_ast(temp_N1);
+            free(node);
+            return outputPlistHead;
+        }
+        case 12:
+        {
+            TREENODE temp_id = node->child->next;
+            TREENODE temp_datatype = temp_id->next->next;
+            TREENODE temp_N1 = temp_datatype->next;
+            free(temp_id->next);
+
+            TREENODE inputPlistElement = generate_ast(temp_id);
+            inputPlistElement->next = generate_ast(temp_datatype);
+            appendAtEndNextNotNULL(node->inh, inputPlistElement, 2);
+            temp_N1->inh = node->inh;
+
+            generate_ast(temp_N1);
+            free(node);
+            free(temp_datatype);
+            return NULL;
+        }
+        case 15:
+        {
+            TREENODE temp_id = node->child->next;
+            TREENODE temp_datatype = temp_id->next->next;
+            TREENODE temp_N1 = temp_datatype->next;
+            free(temp_id->next);
+
+            TREENODE outputPlistElement = generate_ast(temp_id);
+            outputPlistElement->next = generate_ast(temp_datatype);
+            appendAtEndNextNotNULL(node->inh, outputPlistElement, 2);
+            temp_N1->inh = node->inh;
+
+            generate_ast(temp_N1);
+            free(node);
+            free(temp_datatype);
+            return NULL;
+        }
+        case 5:
+        {
+            appendAtEnd(node->inh,generate_ast(node->child));
+            node->child->next->inh=node->inh;
+            generate_ast(node->child->next);
+            free(node->child);
+            free(node);
+            return NULL;
+        }
         case 20:
         {
             TREENODE tempRange2 = node->child->next->next;
@@ -658,6 +926,8 @@ TREENODE generate_ast(TREENODE node)
             return NULL;
         }
     }
+
+        
     }
     else
     {
