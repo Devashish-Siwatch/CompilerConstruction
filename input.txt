@@ -1,3 +1,4 @@
+declare module c;
 <<<driver program>>>
 start
 	switch(a)

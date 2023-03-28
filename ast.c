@@ -207,6 +207,8 @@ TREENODE generate_ast(TREENODE node)
         case 31:
         case 32:
         case 28:
+        case 60:
+        case 61:
         {
             TREENODE temp = node->child;
             free(node);
@@ -601,7 +603,61 @@ TREENODE generate_ast(TREENODE node)
             node->child->next = temp;
             return node;
         }
+        case 20:
+        {
+            TREENODE tempRange2 = node->child->next->next;
+            TREENODE tempType = node->child->next->next->next->next->next;
+            free(node->child->next->next->next->next);
+            free(node->child->next->next->next);
+            free(node->child->next);
+            free(node->child);
+            free(node);
+            TREENODE range2 = generate_ast(tempRange2);
+            range2->next = generate_ast(tempType);
+            return range2;
         }
+        case 21:
+        {
+            TREENODE tempIndex2 = node->child->next->next;
+            free(node->child->next);
+            node->child = generate_ast(node->child);
+            node->child->next = generate_ast(tempIndex2);
+            return node;
+        }
+        case 56:
+        {
+            TREENODE temp1 = generate_ast(node->child->next);
+            TREENODE temp = generate_ast(node->child);
+            temp->next = temp1;
+            free(node);
+            return temp;
+        }
+        case 40:
+        {
+            TREENODE temp = node->child;
+            TREENODE temp1 = node->child->next;
+            temp = generate_ast(node->child);
+            temp->next = generate_ast(temp1);
+            free(node);
+            return temp;
+        }
+        case 4:
+        {
+            TREENODE temp = node->child->next->next;
+            free(node->child->next->next->next);
+            free(node->child->next);
+            free(node->child);
+            free(node);
+            return generate_ast(temp);
+        }
+        case 2:
+        {   
+            appendAtEnd(node->inh, generate_ast(node->child));
+            node->child->next->inh = node->inh;
+            generate_ast(node->child->next);
+            return NULL;
+        }
+    }
     }
     else
     {
