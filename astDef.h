@@ -7,6 +7,7 @@
 
 
 // typedef struct ast_node_moduleDeclarations{
+void appendAtEndNextNotNULL(TREENODE head, TREENODE node, int step);
 void appendAtEnd(TREENODE head, TREENODE node);
 TREENODE generate_ast(TREENODE node);
 void printAst(TREENODE head);

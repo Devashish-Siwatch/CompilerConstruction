@@ -231,12 +231,6 @@ TREENODE generate_ast(TREENODE node)
         case 31:
         case 32:
         case 28:
-
-        case 50:
-        case 67:
-        case 68:
-        case 57: // SIGN plus
-        case 58: // SIGN minus
         {
             TREENODE temp = node->child;
             free(node);
@@ -269,8 +263,8 @@ TREENODE generate_ast(TREENODE node)
         case 13:
         case 16:
         case 27:
-        case 65:
         case 73:
+        case 108:
         {
             appendAtEnd(node->inh, NULL);
             free(node->child);
@@ -465,6 +459,7 @@ TREENODE generate_ast(TREENODE node)
                 free(node);
                 return array_element;
             }
+        }
         case 74:
         case 81:
         case 84:
@@ -497,7 +492,7 @@ TREENODE generate_ast(TREENODE node)
         case 86:
         case 122:
         case 125:
-        case 108:
+        case 113:
         {
             return node->inh;
         }
@@ -590,25 +585,87 @@ TREENODE generate_ast(TREENODE node)
             return arrstmt;
         }
             // TODO : VERIFY AND UNCOMMENT
-            // case 105:
-            // {
-            //     TREENODE id = node->child->next->next;
-            //     free(node->child); //free switch
-            //     free(node->child->next); //free (
-            //     TREENODE cstmts = id->next->next->next;
-            //     free(id->next); // free )
-            //     free(id->next->next); //free start
-            //     TREENODE deflt = cstmts->next;
-            //     free(deflt->next); //free end
-            //     TREENODE conditionalstmt = (TREENODE) malloc(sizeof(tree_node));
-            //     conditionalstmt->name = "CONDITIONALSTMT";
-            //     conditionalstmt->child = generate_ast(id);
-            //     conditionalstmt->child->next = generate_ast(cstmts);
-            //     conditionalstmt->child->next->next = generate_ast(deflt);
-            //     free(cstmts);
-            //     free(deflt);
-            //     return conditionalstmt;
-            // }
+            case 105:
+            {
+                TREENODE id = node->child->next->next;
+                free(node->child); //free switch
+                free(node->child->next); //free (
+                TREENODE cstmts = id->next->next->next;
+                free(id->next); // free )
+                free(id->next->next); //free start
+                TREENODE deflt = cstmts->next;
+                free(deflt->next); //free end
+                TREENODE conditionalstmt = (TREENODE) malloc(sizeof(tree_node));
+                conditionalstmt->name = "CONDITIONALSTMT";
+                conditionalstmt->child = generate_ast(id);
+                conditionalstmt->child->next = generate_ast(cstmts);
+                conditionalstmt->child->next->next = generate_ast(deflt);
+                free(cstmts);
+                free(deflt);
+                free(node);
+                return conditionalstmt;
+            }
+            case 106:
+            {
+                TREENODE caseStmtsHead = (TREENODE) malloc(sizeof(tree_node));
+                caseStmtsHead->name = "CASE_STMTS_HEAD";
+                TREENODE caseStmt = (TREENODE) malloc(sizeof(tree_node));
+                caseStmt->name = "CASE_STMT";
+                TREENODE value = node->child->next;
+                TREENODE stmts = value->next->next;
+                TREENODE n7 = stmts->next->next->next;
+                free(node->child);
+                free(value->next);
+                free(stmts->next);
+                free(stmts->next->next);
+                n7->inh = caseStmtsHead;
+                caseStmt->child = generate_ast(value);
+
+                TREENODE stmts_head = (TREENODE) malloc(sizeof(tree_node));
+                stmts_head->name = "STATEMENTS_HEAD_OF_THIS_CASE";
+                stmts->inh = stmts_head;
+                generate_ast(stmts);
+                caseStmt->child->next = stmts_head;
+                appendAtEnd(caseStmtsHead, caseStmt);
+                generate_ast(n7);
+                return caseStmtsHead;
+            }
+            case 107:
+            {
+                TREENODE caseStmt = (TREENODE) malloc(sizeof(tree_node));
+                caseStmt->name = "CASE_STMT";
+                TREENODE value = node->child->next;
+                TREENODE stmts = value->next->next;
+                TREENODE n7 = stmts->next->next->next;
+                free(node->child);
+                free(value->next);
+                free(stmts->next);
+                free(stmts->next->next);
+                n7->inh = node->inh;
+                caseStmt->child = generate_ast(value);
+                TREENODE statements_head = (TREENODE) malloc(sizeof(tree_node));
+                statements_head->name = "STATEMENTS_HEAD_OF_THIS_CASE";
+                stmts->inh = statements_head;
+                generate_ast(stmts);
+                caseStmt->child->next = statements_head;
+                appendAtEnd(node->inh, caseStmt);
+                generate_ast(n7);
+                return NULL;
+            }
+            case 112:
+            {
+                TREENODE temp = node->child->next->next;
+                free(node);
+                free(node->child);
+                free(node->child->next);
+                free(temp->next);
+                free(temp->next->next);
+                TREENODE default_stmts_head = (TREENODE) malloc(sizeof(tree_node));
+                default_stmts_head->name = "DEFAULT_STATEMENTS_HEAD";
+                temp->inh = default_stmts_head;
+                generate_ast(temp);
+                return default_stmts_head;
+            }
 
         case 33: // IOSTMT
         {
@@ -637,14 +694,58 @@ TREENODE generate_ast(TREENODE node)
             IO_OUTPUT->child = generate_ast(temp_var_bool);
             return IO_OUTPUT;
         }
-        }
-        case 43:
-        case 47:
+        case 114:
         {
-            TREENODE temp_second = node->child->next;
+            TREENODE ITERATIVESTMT_WHILE = (TREENODE)malloc(sizeof(tree_node));
+            ITERATIVESTMT_WHILE->name = "ITERATIVESTMT_WHILE";
+            TREENODE tempExpr = node->child->next->next;
+            TREENODE tempStmt = node->child->next->next->next->next->next;
+            free(node->child->next->next->next->next->next->next);
+            free(node->child->next->next->next->next);
+            free(node->child->next->next->next);
+            free(node->child->next);
             free(node->child);
-            free(temp_second->next);
-            return generate_ast(temp_second);
+            ITERATIVESTMT_WHILE->child = generate_ast(tempExpr);
+            TREENODE while_stmts_head = (TREENODE)malloc(sizeof(tree_node));
+            while_stmts_head->name = "WHILE_STMTS_HEAD";
+            tempStmt->inh = while_stmts_head;
+            generate_ast(tempStmt);
+            ITERATIVESTMT_WHILE->child->next = while_stmts_head;
+            return ITERATIVESTMT_WHILE;
+        }
+        case 120:
+        {
+            TREENODE ITERATIVESTMT_FOR = (TREENODE)malloc(sizeof(tree_node));
+            ITERATIVESTMT_FOR->name = "ITERATIVESTMT_FOR";
+            TREENODE tempId = node->child->next->next;
+            TREENODE tempRange = node->child->next->next->next->next;
+            TREENODE tempStmt = node->child->next->next->next->next->next->next->next;
+            free(node->child->next->next->next->next->next->next->next->next);
+            free(node->child->next->next->next->next->next->next);
+            free(node->child->next->next->next->next->next);
+            free(node->child->next->next->next);
+            free(node->child->next);
+            free(node->child);
+            ITERATIVESTMT_FOR->child = generate_ast(tempId);
+            ITERATIVESTMT_FOR->child->next = generate_ast(tempRange);
+            TREENODE for_stmts_head = (TREENODE)malloc(sizeof(tree_node));
+            for_stmts_head->name = "FOR_STMTS_HEAD";
+            tempStmt->inh = for_stmts_head;
+            generate_ast(tempStmt);
+            ITERATIVESTMT_FOR->child->next->next = for_stmts_head;
+            return ITERATIVESTMT_FOR;
+        }
+        case 116:
+        case 117:
+        {
+            return node->child;
+        }
+        case 115:
+        {
+            TREENODE temp = node->child->next->next;
+            free(node->child->next);
+            node->child->next = temp;
+            return node;
         }
         case 8:
         {
@@ -774,8 +875,7 @@ TREENODE generate_ast(TREENODE node)
     }
     else
     {
-        if (node != NULL)
-            node->next = NULL;
+        node->next = NULL;
         return node;
-    };
+    }
 }
