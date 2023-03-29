@@ -15,6 +15,7 @@ Chaitanya Iyer - 2020A7PS0012P
 
 TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent, int grammar_rule_number);
 TREENODE createNewTreeNode(TREENODE parent);
+TREENODE createNewTreeNode2();
 TREELIST createNewTree();
 void printTree(TREELIST tree, FILE* output_file);
 void printParseTree(TREENODE node, FILE* output_file);

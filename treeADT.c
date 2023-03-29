@@ -130,6 +130,24 @@ TREENODE createNewTreeNode(TREENODE parent){\
     return temp;
 }
 
+TREENODE createNewTreeNode2(){\
+    TREENODE temp = (TREENODE)malloc(sizeof(tree_node));
+    char* name = (char*)malloc(50*sizeof(char));
+    char* lexeme = (char*)malloc(50*sizeof(char));
+    temp->name = name;
+    temp->lexeme = lexeme;
+    strcpy(temp->name, "----");
+    strcpy(temp->lexeme, "----");
+    temp->line_number = -1;
+    temp->valueIfNum = 0;
+    temp->rule_number = -1;
+    temp->valueIfRNum = 0.0;
+    temp->child = NULL;
+    temp->parent = NULL;
+    temp->next = NULL;
+    return temp;
+}
+
 TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent, int grammar_rule_number){
     NODE temp = grammar_rule->head;
     int numberOfRHSElements=grammar_rule->count-1;
