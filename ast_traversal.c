@@ -92,6 +92,22 @@ void populate_function_and_symbol_tables(TREENODE root){
                 temp = temp->child;
             }
         }
+        else if(strcmp(root->name,"ITERATIVESTMT_WHILE")==0)
+        {
+            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER) malloc(sizeof(symbol_table_wrapper));
+            insertAtEnd(current_symbol_table_wrapper,temp);
+            current_symbol_table_wrapper = temp;
+        }
+        else if(strcmp(root->name,"ITERATIVESTMT_FOR")==0)
+        {
+            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER) malloc(sizeof(symbol_table_wrapper));
+            insertAtEnd(current_symbol_table_wrapper,temp);
+            current_symbol_table_wrapper = temp;
+            SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
+            value->symbol_table_value_union.not_array.isarray = false;
+            value->symbol_table_value_union.not_array.type = integer;
+            symbol_insert(current_symbol_table_wrapper->symbol_table, root->child->name, value);
+        }
     }
     populate_function_and_symbol_tables(root->child);
     populate_function_and_symbol_tables(root->next);
