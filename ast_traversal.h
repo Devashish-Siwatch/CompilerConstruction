@@ -5,3 +5,4 @@
 #include "function_hash.h"
 
 void populate_function_and_symbol_tables(TREENODE root);
+void addListtoSymbolTable(TREENODE root);
