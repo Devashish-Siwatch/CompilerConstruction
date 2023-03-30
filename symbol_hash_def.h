@@ -34,6 +34,8 @@ typedef struct symbol_table_value {
                 int top;
                 char* top_var;
             } top_range;
+            bool is_top_sign_plus;
+            bool is_bottom_sign_plus;
             bool is_top_dynamic;
             bool is_bottom_dynamic;
             valid_types element_type;

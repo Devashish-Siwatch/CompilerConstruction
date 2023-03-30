@@ -14,11 +14,15 @@ Chaitanya Iyer - 2020A7PS0012P
 #include "parser.h"
 #include <string.h>
 #include "astDef.h"
-
+#include "symbol_hash.h"
+#include "symbol_hash_def.h"
+#include "function_hash.h"
+#include "function_hash_def.h"
 #include "stack.h"
 #include "treeADT.h"
 #include "stack.h"
 #include <ctype.h>
+#include "ast_traversal.h"
 
 STACK stack;
 TREELIST parse_tree;
@@ -976,7 +980,10 @@ int parser_complete_functionality(FILE* input_file, FILE* output_file)
     printTree(parse_tree,output_file);
     
     printf("\n\n\n\n\n");
-    printAst(generate_ast(parse_tree->head));
+    TREENODE astHead = generate_ast(parse_tree->head);
+    printAst(astHead);
+    // populate_function_and_symbol_tables(astHead);
+    // print_function_table();
     // char** follow = get_follow_set("STATEMENTS");
     // for(int i=0 ; i<number_of_unique_terminals ; i++){
     //     printf("%s\n",follow[i]);

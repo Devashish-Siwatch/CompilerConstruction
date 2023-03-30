@@ -24,7 +24,7 @@ void init_symbolhashmap(symbol_table_hash_map map)
 
 void symbol_insert(symbol_table_hash_map map, char *key, SYMBOL_TABLE_VALUE type)
 {
-    int index = func_hash(key);
+    int index = symbol_hash(key);
     while (map[index].is_used)
     {
         index = (index + 1) % 100;
@@ -43,7 +43,7 @@ SYMBOL_TABLE_VALUE symbol_table_get(symbol_table_hash_map map, char *key, int si
         temp[i] = key[i];
     }
     // printf("\n***%s***", temp);
-    int index = hash(temp);
+    int index = symbol_hash(temp);
     while (map[index].is_used)
     {
         if (strcmp(map[index].variable_name, temp) == 0)

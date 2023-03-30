@@ -42,7 +42,7 @@ FUNCTION_TABLE_VALUE function_table_get(function_table_hash_map map, char *key, 
     {
         temp[i] = key[i];
     }
-    int index = hash(temp);
+    int index = func_hash(temp);
     while (map[index].is_used)
     {
         if (strcmp(map[index].function_name, temp) == 0)
@@ -52,4 +52,12 @@ FUNCTION_TABLE_VALUE function_table_get(function_table_hash_map map, char *key, 
         index = (index + 1) % 100;
     }
     return NULL;
+}
+
+void print_function_table(){
+    for(int i=0 ; i<FUNC_HASHMAP_SIZE ; i++){
+        if(function_table[i].is_used==true){
+            printf("FUNCTION at i=%d : %s\n",i,function_table[i].function_name);
+        }
+    }
 }

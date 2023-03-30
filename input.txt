@@ -1,18 +1,7 @@
-<<module square>>
-takes input [x:integer];
-returns [value:integer];
-start
-	value:= x*x;
-end
+
+<<module a>> takes input [] ;
 
 <<<driver program>>>
 start
-	declare a:integer;
-end
-
-<<module aaa>>
-takes input [x:integer];
-returns [value:integer];
-start
-	value:= x*x;
+	declare a: array[-2..+10] of integer;
 end

@@ -862,9 +862,10 @@ TREENODE generate_ast(TREENODE node)
             if(temp_sign==NULL){
                 free(node);
                 return temp_index;
+                temp_index->child = NULL;
             }else{
-                temp_sign->next = temp_index;
-                temp_index->next = NULL;
+                temp_sign->child = temp_index;
+                temp_index->child = NULL;
                 free(node);
                 return temp_sign;
             }
