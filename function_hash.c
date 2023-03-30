@@ -3,28 +3,7 @@
 #include <string.h>
 #include "treeADT.h"
 #include "treeADTDef.h"
-#include "symbolhashmap.c"
-
-#define FUNC_HASHMAP_SIZE 100
-
-typedef struct function_table_value
-{
-    SYMBOL_TABLE_WRAPPER symbol_table_wrapper;
-    TREENODE input_list;
-    TREENODE output_list;
-} function_table_value;
-
-typedef function_table_value * FUNCTION_TABLE_VALUE;
-
-typedef struct function_table_hash_node
-{
-    char function_name[100];
-    FUNCTION_TABLE_VALUE function_table_value;
-    bool is_used;
-} function_table_hash_node;
-
-typedef function_table_hash_node function_table_hash_map[FUNC_HASHMAP_SIZE];
-function_table_hash_map function_table;
+#include "function_hash.h"
 
 int func_hash(char *str)
 {
@@ -55,7 +34,7 @@ void function_table_insert(function_table_hash_map map, char *key, FUNCTION_TABL
     map[index].function_table_value=function_table_value;
 }
 
-FUNCTION_TABLE_VALUE get(function_table_hash_map map, char *key, int size)
+FUNCTION_TABLE_VALUE function_table_get(function_table_hash_map map, char *key, int size)
 {
     char temp[size];
     temp[size] = '\0';
