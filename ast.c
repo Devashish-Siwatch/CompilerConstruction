@@ -201,7 +201,10 @@ TREENODE generate_ast(TREENODE node)
                 free(node->child);
                 node->child = temp;
             }
-            return generate_ast(node->child);
+            TREENODE driver_module = createNewTreeNode2();
+            driver_module->name = "DRIVER_MODULE_STMTS";
+            driver_module->child = generate_ast(node->child)->child;
+            return driver_module;
         }
         case 25:
         {
@@ -226,16 +229,18 @@ TREENODE generate_ast(TREENODE node)
         }
         case 104:
         {
+            TREENODE declare_stmt = createNewTreeNode2();
+            declare_stmt->name = "DECLARESTMT";
             TREENODE idList = node->child->next;
             TREENODE dType = idList->next->next;
             free(node->child);  // free declare
             free(idList->next); // free :
             free(dType->next);  // free ;
-            node->child = generate_ast(idList);
-            node->child->next = generate_ast(dType);
-            node->child->next->next = NULL;
+            declare_stmt->child = generate_ast(idList);
+            declare_stmt->child->next = generate_ast(dType);
+            declare_stmt->child->next->next = NULL;
             free(idList);
-            return node;
+            return declare_stmt;
         }
         case 71:
         {

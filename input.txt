@@ -1,12 +1,18 @@
-**to check for lexemes greater than 20**
+<<module square>>
+takes input [x:integer];
+returns [value:integer];
+start
+	value:= x*x;
+end
 
-declare module compute;
 <<<driver program>>>
 start
-	declare var_1_, var_2_, var_3_:integer;
-	declare R1_abc: boolean;
-	var_2_:=10;
-	var_3_ := -(6);
-	[R1_abc, r2_ABC, R3_abc] := use module compute 
-with parameters var_1_, var_2_, var_34;
+	declare a:integer;
+end
+
+<<module aaa>>
+takes input [x:integer];
+returns [value:integer];
+start
+	value:= x*x;
 end
