@@ -8,6 +8,21 @@
 
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper;
 
+void insert_symbol_table_at_end(SYMBOL_TABLE_WRAPPER wrapper, SYMBOL_TABLE_WRAPPER temp){
+    if(wrapper->child==NULL){
+        wrapper->child = temp;
+        temp->parent = wrapper;
+    }else{
+        SYMBOL_TABLE_WRAPPER iter = wrapper->child;
+        while(iter->next!=NULL){
+            iter = iter->next;
+        }
+        iter->next = temp;
+        temp->next = NULL;
+        temp->parent = wrapper;
+    }
+}
+
 void populate_function_and_symbol_tables(TREENODE root)
 {
     if (root == NULL)
@@ -132,7 +147,6 @@ void populate_function_and_symbol_tables(TREENODE root)
                 symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 temp = temp->child;
             }
-           
         }
 
         else if (strcmp(root->name, "OutputPlistHead")==0)
@@ -237,7 +251,6 @@ void populate_function_and_symbol_tables(TREENODE root)
                 symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 temp = temp->child;
             }
-           
         }
 
 
@@ -354,13 +367,13 @@ void populate_function_and_symbol_tables(TREENODE root)
         else if(strcmp(root->name,"ITERATIVESTMT_WHILE")==0)
         {
             SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER) malloc(sizeof(symbol_table_wrapper));
-            insertAtEnd(current_symbol_table_wrapper,temp);
+            insert_symbol_table_at_end(current_symbol_table_wrapper,temp);
             current_symbol_table_wrapper = temp;
         }
         else if(strcmp(root->name,"ITERATIVESTMT_FOR")==0)
         {
             SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER) malloc(sizeof(symbol_table_wrapper));
-            insertAtEnd(current_symbol_table_wrapper,temp);
+            insert_symbol_table_at_end(current_symbol_table_wrapper,temp);
             current_symbol_table_wrapper = temp;
             SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
             value->symbol_table_value_union.not_array.isarray = false;
