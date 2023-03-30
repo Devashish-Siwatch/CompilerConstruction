@@ -53,12 +53,11 @@ typedef struct symbol_table_hash_node
 } symbol_table_hash_node;
 
 typedef symbol_table_hash_node symbol_table_hash_map[SYMBOL_HASHMAP_SIZE];
-
 typedef struct symbol_table_wrapper{
     symbol_table_hash_map symbol_table;
-    SYMBOL_TABLE_WRAPPER child;
-    SYMBOL_TABLE_WRAPPER parent;
-    SYMBOL_TABLE_WRAPPER next;
+    struct symbol_table_wrapper* child;
+    struct symbol_table_wrapper* parent;
+    struct symbol_table_wrapper* next;
 } symbol_table_wrapper;
 
 typedef symbol_table_wrapper * SYMBOL_TABLE_WRAPPER;
