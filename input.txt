@@ -1,15 +1,21 @@
-
-<<module a>> takes input [x:integer] ;
+<<module function1>> takes input [f1p:integer] ;
 start
 	print(true);
 end
+
 
 <<<driver program>>>
 start
-	declare a: array[-2..+10] of integer;
+	declare a,b:integer;
+	declare xyz:real;
+	declare praneet:boolean;
+	declare a: array[2..+10] of boolean;
+	declare a: array[-b..+zzz] of real;
 end
 
-<<module a>> takes input [x:integer] ;
+<<module function2>> takes input [f2p:integer] ;
 start
 	print(true);
 end
+
+

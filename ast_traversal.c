@@ -15,6 +15,7 @@ void populate_function_and_symbol_tables(TREENODE root){
         return;
     }else{
         if(strcmp(root->name,"DRIVER_MODULE_STMTS")==0){
+            printf("REACHED DRIVER NODE\n");
             FUNCTION_TABLE_VALUE value = (FUNCTION_TABLE_VALUE) malloc(sizeof(function_table_value));
             value->input_list = NULL;
             value->output_list = NULL;
@@ -24,7 +25,7 @@ void populate_function_and_symbol_tables(TREENODE root){
         }else if(strcmp(root->name,"DECLARESTMT")==0){
             TREENODE datatype = root->child->next;
             TREENODE idListHead = root->child;
-            TREENODE temp = idListHead->next; //points to first child in idList
+            TREENODE temp = idListHead->child; //points to first child in idList
             while(temp!=NULL){
                 SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
                 if(strcmp(datatype->name,"integer")==0){
@@ -40,23 +41,55 @@ void populate_function_and_symbol_tables(TREENODE root){
                     value->symbol_table_value_union.array.isarray = true;
                     TREENODE range1 = datatype->child;
                     TREENODE range2 = datatype->child->next;
-                    if(strcmp(range1->name,"plus")){
+                    TREENODE elementType = datatype->child->next->next;
+
+                    //bottom range
+                    if(strcmp(range1->name,"plus")==0){
                         range1 = range1->child;
                         value->symbol_table_value_union.array.is_bottom_sign_plus = true;
-                    }else if(strcmp(range1->name,"minus")){
+                    }else if(strcmp(range1->name,"minus")==0){
                         range1 = range1->child;
                         value->symbol_table_value_union.array.is_bottom_sign_plus = false;
                     }else{
                         value->symbol_table_value_union.array.is_bottom_sign_plus = true;
                     }
-                    if(strcmp(range1->name,"num")){
+                    if(strcmp(range1->name,"num")==0){
                         value->symbol_table_value_union.array.bottom_range.bottom = atoi(range1->lexeme);
                         value->symbol_table_value_union.array.is_bottom_dynamic = false;
                     }else{
                         value->symbol_table_value_union.array.bottom_range.bottom_var = range1->lexeme;
                         value->symbol_table_value_union.array.is_bottom_dynamic = true;
                     }
+
+                    //top range
+                    if(strcmp(range2->name,"plus")==0){
+                        range2 = range2->child;
+                        value->symbol_table_value_union.array.is_top_sign_plus = true;
+                    }else if(strcmp(range2->name,"minus")==0){
+                        range2 = range2->child;
+                        value->symbol_table_value_union.array.is_top_sign_plus = false;
+                    }else{
+                        value->symbol_table_value_union.array.is_top_sign_plus = true;
+                    }
+                    if(strcmp(range2->name,"num")==0){
+                        value->symbol_table_value_union.array.top_range.top = atoi(range2->lexeme);
+                        value->symbol_table_value_union.array.is_top_dynamic = false;
+                    }else{
+                        value->symbol_table_value_union.array.top_range.top_var = range2->lexeme;
+                        value->symbol_table_value_union.array.is_top_dynamic = true;
+                    }
+
+                    //element type
+                    if(strcmp(elementType->lexeme,"integer")==0){
+                        value->symbol_table_value_union.array.element_type = integer;
+                    }else if(strcmp(elementType->lexeme,"real")==0){
+                        value->symbol_table_value_union.array.element_type = real;
+                    }else{
+                        value->symbol_table_value_union.array.element_type = boolean;
+                    }
                 }
+                symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
+                temp = temp->child;
             }
         }
     }

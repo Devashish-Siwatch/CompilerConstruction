@@ -936,7 +936,7 @@ TREENODE generate_ast(TREENODE node)
             free(node->child);
             free(node);
             TREENODE range2 = generate_ast(tempRange2);
-            range2->next = generate_ast(tempType);
+            range2->child->next->next = generate_ast(tempType);
             return range2;
         }
         case 21:
