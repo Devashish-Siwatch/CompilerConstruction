@@ -53,11 +53,29 @@ FUNCTION_TABLE_VALUE function_table_get(function_table_hash_map map, char *key, 
     }
     return NULL;
 }
-
+void printChildren(TREENODE head){
+    if(head==NULL){
+        return;
+    }
+    if(head->child!=NULL){
+        printChildren(head->child);
+    }
+    printf("%s \n",head->lexeme);
+   
+}
 void print_function_table(){
     for(int i=0 ; i<FUNC_HASHMAP_SIZE ; i++){
         if(function_table[i].is_used==true){
             printf("FUNCTION at i=%d : %s\n",i,function_table[i].function_name);
+            if(function_table[i].function_table_value->input_list!=NULL){
+                printf("INPUT LIST : \n");
+                printChildren(function_table[i].function_table_value->input_list->child);
+              
+            }
+            if(function_table[i].function_table_value->output_list!=NULL){
+                printf("OUTPUT LIST : \n");
+                printChildren(function_table[i].function_table_value->output_list->child);
+            }
         }
     }
 }

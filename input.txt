@@ -1,8 +1,8 @@
 <<module function1>> takes input [f1p:integer] ;
 start
+	declare func1var1,func1var2:integer;
 	print(true);
 end
-
 
 <<<driver program>>>
 start
@@ -13,9 +13,9 @@ start
 	declare a: array[-b..+zzz] of real;
 end
 
-<<module function2>> takes input [f2p:integer] ;
+
+<<module function2>> takes input [f2p:integer]; returns [f2pret:integer,f2second:boolean];
 start
+	declare func2var1,func2var2:integer;
 	print(true);
 end
-
-
