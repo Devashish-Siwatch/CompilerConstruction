@@ -5,12 +5,12 @@
 #include "parser.h"
 #include "treeADT.h"
 
-
 // typedef struct ast_node_moduleDeclarations{
 void appendAtEndNextNotNULL(TREENODE head, TREENODE node, int step);
 void appendAtEnd(TREENODE head, TREENODE node);
 TREENODE generate_ast(TREENODE node);
 void printAst(TREENODE head);
+void setASTParent(TREENODE head);
 // } AST_NODE_MODULEDECLARATIONS;
 
 // typedef struct ast_node_otherModules{

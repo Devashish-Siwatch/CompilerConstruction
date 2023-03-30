@@ -115,7 +115,7 @@ void init_parser()
     parse_tree->head = head;
     push(stack, "S", head);
     pop(stack);
-    pushRuleToStackandTree(stack, grammar[0], head,0);
+    pushRuleToStackandTree(stack, grammar[0], head, 0);
 }
 
 int set_contains(char **arr, int arr_len, char *str)
@@ -253,10 +253,13 @@ int contains_epsilon(char **set)
     return 0;
 }
 
-int get_epsilon_rule_number(char* nonterminal){
-    for(int i=0 ; i<NUMBER_OF_RULES ; i++){
+int get_epsilon_rule_number(char *nonterminal)
+{
+    for (int i = 0; i < NUMBER_OF_RULES; i++)
+    {
         LIST rule = grammar[i];
-        if(strcmp(rule->head->data,nonterminal)==0 && strcmp(rule->head->next->data,"eps")==0){
+        if (strcmp(rule->head->data, nonterminal) == 0 && strcmp(rule->head->next->data, "eps") == 0)
+        {
             return i;
         }
     }
@@ -271,8 +274,9 @@ char **get_first_set(char *nonterminal)
         first[i] = (char *)malloc(sizeof(char) * MAX_LENGTH_OF_NONTERMINAL);
     }
     int index = 0;
-    //this is the case if get_first_set() is called on a terminal
-    if(getTypeOfData(nonterminal)==2){
+    // this is the case if get_first_set() is called on a terminal
+    if (getTypeOfData(nonterminal) == 2)
+    {
         first[index] = nonterminal;
         index++;
     }
@@ -433,29 +437,38 @@ char **get_follow_set(char *nonterminal)
     return follow;
 }
 
-char** get_synch_set(char* nonterminal){
+char **get_synch_set(char *nonterminal)
+{
     int size_of_synch = (MAX_NUMBER_OF_UNIQUE_TERMINALS + MAX_EXTRA_TERMINALS);
-    char** synch = (char**)malloc(size_of_synch*sizeof(char*));
-    for(int i=0 ; i<size_of_synch ; i++){
-        synch[i] = (char*)malloc(sizeof(char));
+    char **synch = (char **)malloc(size_of_synch * sizeof(char *));
+    for (int i = 0; i < size_of_synch; i++)
+    {
+        synch[i] = (char *)malloc(sizeof(char));
     }
-    char** follow = get_follow_set(nonterminal);
+    char **follow = get_follow_set(nonterminal);
     int index = 0;
-    for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
-        if(strcmp("-1",follow[i])!=0){
+    for (int i = 0; i < MAX_NUMBER_OF_UNIQUE_TERMINALS; i++)
+    {
+        if (strcmp("-1", follow[i]) != 0)
+        {
             synch[i] = follow[i];
             index++;
-        }else break;
+        }
+        else
+            break;
     }
-    if(strcmp("STATEMENTS",nonterminal)!=0){
+    if (strcmp("STATEMENTS", nonterminal) != 0)
+    {
         synch[index] = "semicol";
         index++;
     }
-    if(strcmp("MODULEDEF",nonterminal)!=0){
+    if (strcmp("MODULEDEF", nonterminal) != 0)
+    {
         synch[index] = "start";
         index++;
     }
-    if(strcmp("MODULEDEF",nonterminal)!=0){
+    if (strcmp("MODULEDEF", nonterminal) != 0)
+    {
         synch[index] = "end";
         index++;
     }
@@ -463,7 +476,8 @@ char** get_synch_set(char* nonterminal){
     return synch;
 }
 
-char*** all_synch_sets(){
+char ***all_synch_sets()
+{
     char ***synch_of_all = (char ***)malloc(number_of_unique_nonterminals * sizeof(char **));
     for (int i = 0; i < number_of_unique_nonterminals; i++)
     {
@@ -474,10 +488,10 @@ char*** all_synch_sets(){
         }
     }
 
-    for (int i = 0; i < number_of_unique_nonterminals; i++){
+    for (int i = 0; i < number_of_unique_nonterminals; i++)
+    {
         synch_of_all[i] = get_synch_set(arrayOfNonTerminals[i]);
     }
-
 }
 
 char ***all_first_sets()
@@ -604,20 +618,24 @@ void display_rules()
 void createParseTable(int row, int col)
 {
     parse_table = (int **)malloc(row * sizeof(int *));
-    for (int i = 0; i < row; i++){
+    for (int i = 0; i < row; i++)
+    {
         parse_table[i] = (int *)malloc(col * sizeof(int));
     }
-    for (int i = 0; i < row; i++){
-        for (int j = 0; j < col; j++){
+    for (int i = 0; i < row; i++)
+    {
+        for (int j = 0; j < col; j++)
+        {
             parse_table[i][j] = -1;
         }
     }
 
-    
-    for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-        //populating the columns found in the synch set
-        char** synch_set = get_synch_set(arrayOfNonTerminals[i]);
-        for (int j = 0; j < MAX_NUMBER_OF_UNIQUE_TERMINALS; j++){
+    for (int i = 0; i < number_of_unique_nonterminals; i++)
+    {
+        // populating the columns found in the synch set
+        char **synch_set = get_synch_set(arrayOfNonTerminals[i]);
+        for (int j = 0; j < MAX_NUMBER_OF_UNIQUE_TERMINALS; j++)
+        {
             if (strcmp(synch_set[j], "-1") == 0)
                 break;
             int column = searchForColIndex(synch_set[j]);
@@ -627,9 +645,8 @@ void createParseTable(int row, int col)
             //     printf("SYNCH POPULATING : NOT LL1 for row=%d ; col=%d", row, col);
             parse_table[i][column] = -2;
             // printf("row : %d, col : %d\n",row,col);
-        }    
+        }
     }
-
 }
 
 void init_parse_table()
@@ -661,7 +678,7 @@ int searchForColIndex(char *data)
             return i;
         }
     }
-    printf("ERROR : searchForColIndex couldn't find anything for : %s\n",data);
+    printf("ERROR : searchForColIndex couldn't find anything for : %s\n", data);
     return -1;
 }
 void fillParseTable()
@@ -765,12 +782,13 @@ void fillParseTable()
 
         first_set[index] = "-1";
 
-        //populating the columns found in the first_set
-        for (int j = 0; j < MAX_NUMBER_OF_UNIQUE_NONTERMINALS; j++){
+        // populating the columns found in the first_set
+        for (int j = 0; j < MAX_NUMBER_OF_UNIQUE_NONTERMINALS; j++)
+        {
             if (strcmp(first_set[j], "-1") == 0)
                 break;
             int col = searchForColIndex(first_set[j]);
-    
+
             // printf("comparison func : %s, actual : %s\n",first_set[j],arrayOfTerminals[col]);
             // printf("row : %d, col : %d\n",row,col);
             if (parse_table[row][col] != -1 && parse_table[row][col] != -2)
@@ -786,7 +804,7 @@ void parser(FILE *input_file_pointer)
     int error_flag = 0;
     init_parser();
     initialize_lexer_variables(input_file_pointer);
-    int errLine=-1;
+    int errLine = -1;
     Token current = get_next_token(input_file_pointer);
 
     while (current.token_name != EOFILE)
@@ -830,9 +848,10 @@ void parser(FILE *input_file_pointer)
                 treenode->child = NULL;
                 pop(stack);
                 error_flag = 1;
-                if(errLine!=current.line_no){
-                    printf("\033[31m\nSYNTACTIC ERROR :At line number :%d\n\033[0m",current.line_no);
-                    errLine=current.line_no;
+                if (errLine != current.line_no)
+                {
+                    printf("\033[31m\nSYNTACTIC ERROR :At line number :%d\n\033[0m", current.line_no);
+                    errLine = current.line_no;
                 }
             }
         }
@@ -847,17 +866,21 @@ void parser(FILE *input_file_pointer)
                 error_flag = 1;
                 // printf("Parse Table Khaali hai i.e. Error row : %s, col : %s\n", top_of_stack->name, currentTkLower);
                 // printf("\033[31m\nSYNTACTIC ERROR : We arrived at a case where the input token is not present in the parse table for the nonterminal at the top of the stack. So we move to the next token. LINE NUMBER : %d\n\033[0m",current.line_no);
-                if(errLine!=current.line_no){
-                    printf("\033[31m\nSYNTACTIC ERROR :At line number :%d\n\033[0m",current.line_no);
-                    errLine=current.line_no;
+                if (errLine != current.line_no)
+                {
+                    printf("\033[31m\nSYNTACTIC ERROR :At line number :%d\n\033[0m", current.line_no);
+                    errLine = current.line_no;
                 }
                 current = get_next_token(input_file_pointer);
-            }else if(parse_table[row][col] == -2){
+            }
+            else if (parse_table[row][col] == -2)
+            {
                 error_flag = 1;
                 // printf("\033[31m\nSYNTACTIC ERROR : We arrived at a case where the input token is in the synch set. So we pop the top of stack. LINE NUMBER : %d\n\033[0m",current.line_no);
-                if(errLine!=current.line_no){
-                    printf("\033[31m\nSYNTACTIC ERROR :At line number :%d\n\033[0m",current.line_no);
-                    errLine=current.line_no;
+                if (errLine != current.line_no)
+                {
+                    printf("\033[31m\nSYNTACTIC ERROR :At line number :%d\n\033[0m", current.line_no);
+                    errLine = current.line_no;
                 }
                 pop(stack);
             }
@@ -866,35 +889,44 @@ void parser(FILE *input_file_pointer)
                 int rule_no = parse_table[row][col];
                 // printf("RULE number : %d\n",rule_no);
                 LIST grammar_rule = grammar[rule_no];
-                pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer,rule_no);
+                pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer, rule_no);
             }
         }
     }
 
-    while(true){
+    while (true)
+    {
         STACKNODE top_of_stack = top(stack);
-        if(strcmp(top_of_stack->name,"dollar")==0){
+        if (strcmp(top_of_stack->name, "dollar") == 0)
+        {
             break;
-        }else if(getTypeOfData(top_of_stack->name)==2){
+        }
+        else if (getTypeOfData(top_of_stack->name) == 2)
+        {
             error_flag = 1;
             break;
-        }else{
-            char** first_of_top = get_first_set(top_of_stack->name);
-            if(contains_epsilon(first_of_top)==1){
-                //int rule_no = parse_table[row][col];
+        }
+        else
+        {
+            char **first_of_top = get_first_set(top_of_stack->name);
+            if (contains_epsilon(first_of_top) == 1)
+            {
+                // int rule_no = parse_table[row][col];
                 int rule_no = get_epsilon_rule_number(top_of_stack->name);
                 // printf("RULE number : %d\n",rule_no);
                 LIST grammar_rule = grammar[rule_no];
-                pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer,rule_no);
-            }else{
+                pushRuleToStackandTree(stack, grammar_rule, top(stack)->treepointer, rule_no);
+            }
+            else
+            {
                 error_flag = 1;
                 break;
             }
         }
     }
 
-
-    if(error_flag==0) printf("Input source code is syntactically correct...........\n");
+    if (error_flag == 0)
+        printf("Input source code is syntactically correct...........\n");
 
     // if(strcmp(top(stack)->name,"dollar")!=0){
     //     printf("\033[31m\nSYNTACTIC ERROR : We arrived at the case where the input tokens have ended but the stack has not ended.\n\033[0m");
@@ -903,7 +935,7 @@ void parser(FILE *input_file_pointer)
     // }
 }
 
-int parser_complete_functionality(FILE* input_file, FILE* output_file)
+int parser_complete_functionality(FILE *input_file, FILE *output_file)
 {
     grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
     for (int i = 0; i < NUMBER_OF_RULES; ++i)
@@ -917,13 +949,13 @@ int parser_complete_functionality(FILE* input_file, FILE* output_file)
     // printf("here\n");
     complete_first_sets = all_first_sets();   // populating first set
     complete_follow_sets = all_follow_sets(); // populating follow set
-    complete_synch_sets = all_synch_sets(); //populating synch set
+    complete_synch_sets = all_synch_sets();   // populating synch set
     // printf("here\n");
 
     init_parse_table();
-        // printf("here\n");
+    // printf("here\n");
     fillParseTable();
-        // printf("here\n");
+    // printf("here\n");
     // printParseTable();
 
     // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
@@ -976,11 +1008,11 @@ int parser_complete_functionality(FILE* input_file, FILE* output_file)
 
     parser(input_file);
 
-    
-    printTree(parse_tree,output_file);
-    
+    printTree(parse_tree, output_file);
+
     printf("\n\n\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
+    setASTParent(astHead);
     printAst(astHead);
     // populate_function_and_symbol_tables(astHead);
     // print_function_table();

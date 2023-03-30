@@ -1,7 +1,15 @@
 
-<<module a>> takes input [] ;
+<<module a>> takes input [x:integer] ;
+start
+	print(true);
+end
 
 <<<driver program>>>
 start
 	declare a: array[-2..+10] of integer;
+end
+
+<<module a>> takes input [x:integer] ;
+start
+	print(true);
 end
