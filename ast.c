@@ -19,6 +19,22 @@
 
 //     }
 // }
+void appendAtLast(TREENODE head, TREENODE node)
+{
+    if (node != NULL)
+        node->next = NULL;
+    if (head == NULL)
+        head = node;
+    else
+    {
+        TREENODE temp = head;
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        temp->next = node;
+    }
+}
 
 void appendAtEnd(TREENODE head, TREENODE node)
 {
@@ -202,7 +218,6 @@ TREENODE generate_ast(TREENODE node)
         case 6:
         case 13:
         case 16:
-        case 27:
         case 65:
         case 73:
         case 108:
@@ -241,10 +256,16 @@ TREENODE generate_ast(TREENODE node)
         }
         case 26:
         {
-            appendAtEnd(node->inh, generate_ast(node->child));
+            appendAtLast(node->inh, generate_ast(node->child));
             node->child->next->inh = node->inh;
             generate_ast(node->child->next);
             free(node);
+            return NULL;
+        }
+        case 27:
+        {
+            appendAtLast(node->inh, NULL);
+            free(node->child);
             return NULL;
         }
         case 104:
