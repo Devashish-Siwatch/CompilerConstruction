@@ -23,7 +23,7 @@ void init_symbolhashmap(symbol_table_hash_map map)
 }
 
 void print_symbol_table_value(SYMBOL_TABLE_VALUE value){
-    if(value->symbol_table_value_union.array.isarray){
+    if(value->isarray){
         //it is an array
         printf("<<<<<<<<ARRAY DEFN STARTS>>>>>>>>>>\n");
         if(value->symbol_table_value_union.array.is_bottom_dynamic){

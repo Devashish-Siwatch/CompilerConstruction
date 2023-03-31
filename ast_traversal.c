@@ -10,22 +10,22 @@ SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper;
 void populateSymboltabeValue(TREENODE datatype,SYMBOL_TABLE_VALUE value){
     if (strcmp(datatype->name, "integer") == 0)
         {
-            value->symbol_table_value_union.not_array.isarray = false;
+            value->isarray = false;
             value->symbol_table_value_union.not_array.type = integer;
         }
         else if (strcmp(datatype->name, "real") == 0)
         {
-            value->symbol_table_value_union.not_array.isarray = false;
+            value->isarray = false;
             value->symbol_table_value_union.not_array.type = real;
         }
         else if (strcmp(datatype->name, "boolean") == 0)
         {
-            value->symbol_table_value_union.not_array.isarray = false;
+            value->isarray = false;
             value->symbol_table_value_union.not_array.type = boolean;
         }
         else
         {
-            value->symbol_table_value_union.array.isarray = true;
+            value->isarray = true;
             TREENODE range1 = datatype->child;
             TREENODE range2 = datatype->child->next;
             TREENODE elementType = datatype->child->next->next;
@@ -201,7 +201,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
             SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
-            value->symbol_table_value_union.not_array.isarray = false;
+            value->isarray = false;
             value->symbol_table_value_union.not_array.type = integer;
             symbol_insert(current_symbol_table_wrapper->symbol_table, root->child->name, value);
         }

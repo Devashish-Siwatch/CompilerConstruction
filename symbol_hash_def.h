@@ -16,16 +16,17 @@ typedef enum valid_types {
 }valid_types;
 
 typedef struct symbol_table_value {
+    bool isarray;
     union  
     {  
         struct
         {  
-            bool isarray;
+           
             valid_types type;
         } not_array;  
         struct 
         {  
-            bool isarray;
+
             union {
                 int bottom;
                 char* bottom_var;

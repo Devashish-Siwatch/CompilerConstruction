@@ -173,8 +173,14 @@ f2p                  17         id                              INPUT_PLIST     
 :                    17         colon                           INPUT_PLIST          yes                             17         
 integer              17         integer                         DATATYPE             yes                             17         
 ----                 -1                                         INPUT_PLIST          no          DATATYPE             -1         
-----                 -1                                         N1                   yes                             -1         
+,                    17         comma                           N1                   yes                             17         
 ----                 -1                                         INPUT_PLIST          no          N1                   -1         
+f2aa                 17         id                              N1                   yes                             17         
+:                    17         colon                           N1                   yes                             17         
+boolean              17         boolean                         DATATYPE             yes                             17         
+----                 -1                                         N1                   no          DATATYPE             -1         
+----                 -1                                         N1                   yes                             -1         
+----                 -1                                         N1                   no          N1                   -1         
 ]                    17         sqbc                            MODULE1              yes                             17         
 ;                    17         semicol                         MODULE1              yes                             17         
 returns              17         returns                         RET                  yes                             17         
@@ -219,4 +225,14 @@ true                 20         true                            BOOL_CONST      
 ----                 -1                                         VAR_BOOL             no          BOOL_CONST           -1         
 ----                 -1                                         IOSTMT               no          VAR_BOOL             -1         
 )                    20         bc                              IOSTMT               yes                             20         
-;                    20         semicol                         IOSTM
+;                    20         semicol                         IOSTMT               yes                             20         
+----                 -1                                         STATEMENTS           no          STATEMENT            -1         
+----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+----                 -1                                         STATEMENTS           yes                             -1         
+----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+end                  21         end                             MODULEDEF            yes                             21         
+----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
+----                 -1                                         OTHERMODULES         yes                             -1         
+----                 -1                                         OTHERMODULES         no          OTHERMODULES         -1         
+----                 -1                                         ROOT                 no          S                    -1         
+----                 -1                                         S                    yes                             -1         
