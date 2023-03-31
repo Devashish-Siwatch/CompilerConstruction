@@ -299,6 +299,9 @@ TREENODE generate_ast(TREENODE node)
         }
         case 27:
         {
+            TREENODE stmts_end = (TREENODE)malloc(sizeof(tree_node));
+            stmts_end->name = "STMTS_END";
+            appendAtLast(node->inh, stmts_end);
             appendAtLast(node->inh, NULL);
             free(node->child);
             return NULL;

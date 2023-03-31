@@ -1019,8 +1019,7 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     for(int i=0 ; i<FUNC_HASHMAP_SIZE ; i++){
         if(function_table[i].is_used){
             SYMBOL_TABLE_WRAPPER symbol_table = function_table[i].function_table_value->symbol_table_wrapper;
-            print_symbol_table(symbol_table);
-            init_symbolhashmap(symbol_table->symbol_table);
+            printSymboltableDFS(symbol_table);
         }
     }
     init_functionhashmap(function_table);

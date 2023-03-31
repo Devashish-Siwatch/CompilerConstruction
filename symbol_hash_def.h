@@ -21,12 +21,10 @@ typedef struct symbol_table_value {
     {  
         struct
         {  
-           
             valid_types type;
         } not_array;  
         struct 
         {  
-
             union {
                 int bottom;
                 char* bottom_var;
@@ -59,6 +57,7 @@ typedef struct symbol_table_wrapper{
     struct symbol_table_wrapper* child;
     struct symbol_table_wrapper* parent;
     struct symbol_table_wrapper* next;
+    char* name;
 } symbol_table_wrapper;
 
 typedef symbol_table_wrapper * SYMBOL_TABLE_WRAPPER;

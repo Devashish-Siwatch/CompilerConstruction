@@ -46,6 +46,19 @@ void print_symbol_table_value(SYMBOL_TABLE_VALUE value){
     }
 }
 
+void printSymboltableDFS(SYMBOL_TABLE_WRAPPER wrapper){
+    if(wrapper==NULL){
+        return;
+    }
+    printSymboltableDFS(wrapper->child);
+    SYMBOL_TABLE_WRAPPER symboliter=wrapper;
+    while(symboliter!=NULL){
+        print_symbol_table(symboliter);
+        init_symbolhashmap(symboliter->symbol_table);
+        symboliter=symboliter->next;
+    }
+}
+
 void symbol_insert(symbol_table_hash_map map, char *key, SYMBOL_TABLE_VALUE type)
 {
     int index = symbol_hash(key);
@@ -81,11 +94,14 @@ SYMBOL_TABLE_VALUE symbol_table_get(symbol_table_hash_map map, char *key, int si
 }
 
 void print_symbol_table(SYMBOL_TABLE_WRAPPER wrapper){
+    printf("-----------------------------------\n");
+    printf("AT symbol table : %s\n",wrapper->name);
     for(int i=0 ; i<SYMBOL_HASHMAP_SIZE ; i++){
         if(wrapper->symbol_table[i].is_used==true){
             printf("SYMBOL at i=%d : %s\n",i,wrapper->symbol_table[i].variable_name);
             print_symbol_table_value(wrapper->symbol_table[i].symbol_table_value);
         }
     }
+    printf("-----------------------------------\n");
 }
 

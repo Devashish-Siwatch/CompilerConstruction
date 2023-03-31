@@ -1,21 +1,12 @@
-<<module function1>> takes input [f1p:integer] ;
-start
-	declare func1var1,func1var2:integer;
-	print(true);
-end
-
 <<<driver program>>>
 start
-	declare a,b:integer;
-	declare xyz:real;
-	declare praneet:boolean;
-	declare arr1: array[2..+10] of boolean;
-	declare arr2: array[-b..+zzz] of real;
-end
-
-
-<<module function2>> takes input [f2p:integer]; returns [f2pret:integer,f2second:boolean];
-start
-	declare func2var1,func2var2:integer;
-	print(true);
+	a1 := 444;
+	declare d1,d2:integer;
+	for(index in  -10..+15)
+	start
+		for(index_inner in  -10..+15)
+		start
+			print(print_var);
+		end
+	end
 end

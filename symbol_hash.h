@@ -11,4 +11,6 @@ void symbol_insert(symbol_table_hash_map map, char *key, SYMBOL_TABLE_VALUE type
 SYMBOL_TABLE_VALUE symbol_table_get(symbol_table_hash_map map, char *key, int size);
 void print_symbol_table(SYMBOL_TABLE_WRAPPER wrapper);
 void print_symbol_table_value(SYMBOL_TABLE_VALUE value);
+void printSymboltableDFS(SYMBOL_TABLE_WRAPPER wrapper);
+
 

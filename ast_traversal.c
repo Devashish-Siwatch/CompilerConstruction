@@ -7,6 +7,16 @@
 #include "ast_traversal.h"
 
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper;
+
+void go_back_to_parent_symbol_table(){
+    //going back to parent symbol table if statements have ended
+    if(current_symbol_table_wrapper->parent==NULL){
+        // no need to do anything as module has ended here and new module creates a new symbol table itself
+    }else{
+        current_symbol_table_wrapper = current_symbol_table_wrapper->parent;
+    }
+}
+
 void populateSymboltabeValue(TREENODE datatype,SYMBOL_TABLE_VALUE value){
     if (strcmp(datatype->name, "integer") == 0)
         {
@@ -152,6 +162,11 @@ void populate_function_and_symbol_tables(TREENODE root)
             else
                 value->output_list = NULL;
             value->symbol_table_wrapper = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            value->symbol_table_wrapper->name = root->child->name;
+            strcat(value->symbol_table_wrapper->name,"_symbol_table");
+            value->symbol_table_wrapper->parent = NULL;
+            value->symbol_table_wrapper->child = NULL;
+            value->symbol_table_wrapper->next = NULL;
             function_table_insert(function_table, root->child->lexeme, value);
             current_symbol_table_wrapper = value->symbol_table_wrapper;
         }
@@ -173,8 +188,15 @@ void populate_function_and_symbol_tables(TREENODE root)
             value->input_list = NULL;
             value->output_list = NULL;
             value->symbol_table_wrapper = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            value->symbol_table_wrapper->name = "driver_symbol_table";
+            value->symbol_table_wrapper->parent = NULL;
+            value->symbol_table_wrapper->child = NULL;
+            value->symbol_table_wrapper->next = NULL;
             function_table_insert(function_table, "driver", value);
             current_symbol_table_wrapper = value->symbol_table_wrapper;
+        }
+        else if(strcmp(root->name,"STMTS_END")==0){
+            go_back_to_parent_symbol_table();
         }
         else if (strcmp(root->name, "DECLARESTMT") == 0)
         {
@@ -192,18 +214,36 @@ void populate_function_and_symbol_tables(TREENODE root)
         else if (strcmp(root->name, "ITERATIVESTMT_WHILE") == 0)
         {
             SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            temp->name = "WHILE_symbol_table";
+            temp->parent = current_symbol_table_wrapper;
+            temp->child = NULL;
+            temp->next = NULL;
+            insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
+            current_symbol_table_wrapper = temp;
+        }
+        else if(strcmp(root->name,"CASE_STMT")==0 || strcmp(root->name,"DEFAULT_STMTS_HEAD")==0)
+        {
+            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            temp->name = "CASE_STMT_symbol_table";
+            temp->parent = current_symbol_table_wrapper;
+            temp->child = NULL;
+            temp->next = NULL;
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
         }
         else if (strcmp(root->name, "ITERATIVESTMT_FOR") == 0)
         {
             SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            temp->name = "FOR_symbol_table";
+            temp->parent = current_symbol_table_wrapper;
+            temp->child = NULL;
+            temp->next = NULL;
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
             SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
             value->isarray = false;
             value->symbol_table_value_union.not_array.type = integer;
-            symbol_insert(current_symbol_table_wrapper->symbol_table, root->child->name, value);
+            symbol_insert(current_symbol_table_wrapper->symbol_table, root->child->lexeme, value);
         }
     }
     populate_function_and_symbol_tables(root->child);
