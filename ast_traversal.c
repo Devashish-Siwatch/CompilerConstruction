@@ -7,18 +7,8 @@
 #include "ast_traversal.h"
 
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper;
-
-void addListtoSymbolTable(TREENODE root)
-{
-    //used when root->child is id and root->child->next is datatype
-    TREENODE ListHead = root;
-    TREENODE temp = ListHead->child; // points to first child in Listhead
-    while (temp != NULL)
-    {
-
-        TREENODE datatype = temp->next;
-        SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
-        if (strcmp(datatype->name, "integer") == 0)
+void populateSymboltabeValue(TREENODE datatype,SYMBOL_TABLE_VALUE value){
+    if (strcmp(datatype->name, "integer") == 0)
         {
             value->symbol_table_value_union.not_array.isarray = false;
             value->symbol_table_value_union.not_array.type = integer;
@@ -106,18 +96,35 @@ void addListtoSymbolTable(TREENODE root)
                 value->symbol_table_value_union.array.element_type = boolean;
             }
         }
+}
+void addListtoSymbolTable(TREENODE root)
+{
+    // used when root->child is id and root->child->next is datatype
+    TREENODE ListHead = root;
+    TREENODE temp = ListHead->child; // points to first child in Listhead
+    while (temp != NULL)
+    {
+
+        TREENODE datatype = temp->next;
+        SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
+        populateSymboltabeValue(datatype,value);
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
     }
 }
 
-void insert_symbol_table_at_end(SYMBOL_TABLE_WRAPPER wrapper, SYMBOL_TABLE_WRAPPER temp){
-    if(wrapper->child==NULL){
+void insert_symbol_table_at_end(SYMBOL_TABLE_WRAPPER wrapper, SYMBOL_TABLE_WRAPPER temp)
+{
+    if (wrapper->child == NULL)
+    {
         wrapper->child = temp;
         temp->parent = wrapper;
-    }else{
+    }
+    else
+    {
         SYMBOL_TABLE_WRAPPER iter = wrapper->child;
-        while(iter->next!=NULL){
+        while (iter->next != NULL)
+        {
             iter = iter->next;
         }
         iter->next = temp;
@@ -153,11 +160,11 @@ void populate_function_and_symbol_tables(TREENODE root)
             addListtoSymbolTable(root);
         }
 
-        else if (strcmp(root->name, "OutputPlistHead") == 0)
-        {
+        // else if (strcmp(root->name, "OutputPlistHead") == 0)
+        // {
 
-            addListtoSymbolTable(root);
-        }
+        //     addListtoSymbolTable(root);
+        // }
 
         else if (strcmp(root->name, "DRIVER_MODULE_STMTS") == 0)
         {
@@ -177,108 +184,21 @@ void populate_function_and_symbol_tables(TREENODE root)
             while (temp != NULL)
             {
                 SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
-                if (strcmp(datatype->name, "integer") == 0)
-                {
-                    value->symbol_table_value_union.not_array.isarray = false;
-                    value->symbol_table_value_union.not_array.type = integer;
-                }
-                else if (strcmp(datatype->name, "real") == 0)
-                {
-                    value->symbol_table_value_union.not_array.isarray = false;
-                    value->symbol_table_value_union.not_array.type = real;
-                }
-                else if (strcmp(datatype->name, "boolean") == 0)
-                {
-                    value->symbol_table_value_union.not_array.isarray = false;
-                    value->symbol_table_value_union.not_array.type = boolean;
-                }
-                else
-                {
-                    value->symbol_table_value_union.array.isarray = true;
-                    TREENODE range1 = datatype->child;
-                    TREENODE range2 = datatype->child->next;
-                    TREENODE elementType = datatype->child->next->next;
-
-                    // bottom range
-                    if (strcmp(range1->name, "plus") == 0)
-                    {
-                        range1 = range1->child;
-                        value->symbol_table_value_union.array.is_bottom_sign_plus = true;
-                    }
-                    else if (strcmp(range1->name, "minus") == 0)
-                    {
-                        range1 = range1->child;
-                        value->symbol_table_value_union.array.is_bottom_sign_plus = false;
-                    }
-                    else
-                    {
-                        value->symbol_table_value_union.array.is_bottom_sign_plus = true;
-                    }
-                    if (strcmp(range1->name, "num") == 0)
-                    {
-                        value->symbol_table_value_union.array.bottom_range.bottom = atoi(range1->lexeme);
-                        value->symbol_table_value_union.array.is_bottom_dynamic = false;
-                    }
-                    else
-                    {
-                        value->symbol_table_value_union.array.bottom_range.bottom_var = range1->lexeme;
-                        value->symbol_table_value_union.array.is_bottom_dynamic = true;
-                    }
-
-                    // top range
-                    if (strcmp(range2->name, "plus") == 0)
-                    {
-                        range2 = range2->child;
-                        value->symbol_table_value_union.array.is_top_sign_plus = true;
-                    }
-                    else if (strcmp(range2->name, "minus") == 0)
-                    {
-                        range2 = range2->child;
-                        value->symbol_table_value_union.array.is_top_sign_plus = false;
-                    }
-                    else
-                    {
-                        value->symbol_table_value_union.array.is_top_sign_plus = true;
-                    }
-                    if (strcmp(range2->name, "num") == 0)
-                    {
-                        value->symbol_table_value_union.array.top_range.top = atoi(range2->lexeme);
-                        value->symbol_table_value_union.array.is_top_dynamic = false;
-                    }
-                    else
-                    {
-                        value->symbol_table_value_union.array.top_range.top_var = range2->lexeme;
-                        value->symbol_table_value_union.array.is_top_dynamic = true;
-                    }
-
-                    // element type
-                    if (strcmp(elementType->lexeme, "integer") == 0)
-                    {
-                        value->symbol_table_value_union.array.element_type = integer;
-                    }
-                    else if (strcmp(elementType->lexeme, "real") == 0)
-                    {
-                        value->symbol_table_value_union.array.element_type = real;
-                    }
-                    else
-                    {
-                        value->symbol_table_value_union.array.element_type = boolean;
-                    }
-                }
+                populateSymboltabeValue(datatype,value);
                 symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 temp = temp->child;
             }
         }
-        else if(strcmp(root->name,"ITERATIVESTMT_WHILE")==0)
+        else if (strcmp(root->name, "ITERATIVESTMT_WHILE") == 0)
         {
-            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER) malloc(sizeof(symbol_table_wrapper));
-            insert_symbol_table_at_end(current_symbol_table_wrapper,temp);
+            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
         }
-        else if(strcmp(root->name,"ITERATIVESTMT_FOR")==0)
+        else if (strcmp(root->name, "ITERATIVESTMT_FOR") == 0)
         {
-            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER) malloc(sizeof(symbol_table_wrapper));
-            insert_symbol_table_at_end(current_symbol_table_wrapper,temp);
+            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
             SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
             value->symbol_table_value_union.not_array.isarray = false;

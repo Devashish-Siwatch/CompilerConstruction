@@ -101,7 +101,7 @@ boolean              11         boolean                         DATATYPE        
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
 declare              12         declare                         DECLARESTMT          yes                             12         
 ----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-a                    12         id                              IDLIST               yes                             12         
+arr1                 12         id                              IDLIST               yes                             12         
 ----                 -1                                         DECLARESTMT          no          IDLIST               -1         
 ----                 -1                                         N3                   yes                             -1         
 ----                 -1                                         IDLIST               no          N3                   -1         
@@ -130,7 +130,7 @@ boolean              12         boolean                         TYPE            
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
 declare              13         declare                         DECLARESTMT          yes                             13         
 ----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-a                    13         id                              IDLIST               yes                             13         
+arr2                 13         id                              IDLIST               yes                             13         
 ----                 -1                                         DECLARESTMT          no          IDLIST               -1         
 ----                 -1                                         N3                   yes                             -1         
 ----                 -1                                         IDLIST               no          N3                   -1         
@@ -219,14 +219,4 @@ true                 20         true                            BOOL_CONST      
 ----                 -1                                         VAR_BOOL             no          BOOL_CONST           -1         
 ----                 -1                                         IOSTMT               no          VAR_BOOL             -1         
 )                    20         bc                              IOSTMT               yes                             20         
-;                    20         semicol                         IOSTMT               yes                             20         
-----                 -1                                         STATEMENTS           no          STATEMENT            -1         
-----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-----                 -1                                         STATEMENTS           yes                             -1         
-----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-end                  21         end                             MODULEDEF            yes                             21         
-----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
-----                 -1                                         OTHERMODULES         yes                             -1         
-----                 -1                                         OTHERMODULES         no          OTHERMODULES         -1         
-----                 -1                                         ROOT                 no          S                    -1         
-----                 -1                                         S                    yes                             -1         
+;                    20         semicol                         IOSTM

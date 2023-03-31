@@ -9,8 +9,8 @@ start
 	declare a,b:integer;
 	declare xyz:real;
 	declare praneet:boolean;
-	declare a: array[2..+10] of boolean;
-	declare a: array[-b..+zzz] of real;
+	declare arr1: array[2..+10] of boolean;
+	declare arr2: array[-b..+zzz] of real;
 end
 
 
