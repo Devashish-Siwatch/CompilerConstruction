@@ -116,7 +116,7 @@ void addListtoSymbolTable(TREENODE root)
     {
 
         TREENODE datatype = temp->next;
-        SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
+        SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
         populateSymboltabeValue(datatype,value);
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
@@ -155,13 +155,13 @@ void populate_function_and_symbol_tables(TREENODE root)
         if (strcmp(root->name, "Module1") == 0)
         {
             printf("REACHED MODULE1 NODE\n");
-            FUNCTION_TABLE_VALUE value = (FUNCTION_TABLE_VALUE)malloc(sizeof(function_table_value));
+            FUNCTION_TABLE_VALUE value = create_function_value();
             value->input_list = root->child->next;
             if (strcmp(root->child->next->next->name, "OutputPlistHead") == 0)
                 value->output_list = root->child->next->next;
             else
                 value->output_list = NULL;
-            value->symbol_table_wrapper = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            value->symbol_table_wrapper = create_symbol_table_wrapper();
             value->symbol_table_wrapper->name = root->child->name;
             strcat(value->symbol_table_wrapper->name,"_symbol_table");
             value->symbol_table_wrapper->parent = NULL;
@@ -184,10 +184,10 @@ void populate_function_and_symbol_tables(TREENODE root)
         else if (strcmp(root->name, "DRIVER_MODULE_STMTS") == 0)
         {
             printf("REACHED DRIVER NODE\n");
-            FUNCTION_TABLE_VALUE value = (FUNCTION_TABLE_VALUE)malloc(sizeof(function_table_value));
+            FUNCTION_TABLE_VALUE value = create_function_value();
             value->input_list = NULL;
             value->output_list = NULL;
-            value->symbol_table_wrapper = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            value->symbol_table_wrapper = create_symbol_table_wrapper();
             value->symbol_table_wrapper->name = "driver_symbol_table";
             value->symbol_table_wrapper->parent = NULL;
             value->symbol_table_wrapper->child = NULL;
@@ -205,7 +205,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE temp = idListHead->child; // points to first child in idList
             while (temp != NULL)
             {
-                SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
+                SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
                 populateSymboltabeValue(datatype,value);
                 symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 temp = temp->child;
@@ -213,7 +213,8 @@ void populate_function_and_symbol_tables(TREENODE root)
         }
         else if (strcmp(root->name, "ITERATIVESTMT_WHILE") == 0)
         {
-            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
+            // init_symbolhashmap(temp->symbol_table);
             temp->name = "WHILE_symbol_table";
             temp->parent = current_symbol_table_wrapper;
             temp->child = NULL;
@@ -221,10 +222,22 @@ void populate_function_and_symbol_tables(TREENODE root)
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
         }
-        else if(strcmp(root->name,"CASE_STMT")==0 || strcmp(root->name,"DEFAULT_STMTS_HEAD")==0)
+        else if(strcmp(root->name,"CASE_STMT")==0)
         {
-            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
+            // init_symbolhashmap(temp->symbol_table);
             temp->name = "CASE_STMT_symbol_table";
+            temp->parent = current_symbol_table_wrapper;
+            temp->child = NULL;
+            temp->next = NULL;
+            insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
+            current_symbol_table_wrapper = temp;
+        }
+        else if(strcmp(root->name,"DEFAULT")==0)
+        {
+            SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
+            // init_symbolhashmap(temp->symbol_table);
+            temp->name = "DEFAULT_symbol_table";
             temp->parent = current_symbol_table_wrapper;
             temp->child = NULL;
             temp->next = NULL;
@@ -233,14 +246,15 @@ void populate_function_and_symbol_tables(TREENODE root)
         }
         else if (strcmp(root->name, "ITERATIVESTMT_FOR") == 0)
         {
-            SYMBOL_TABLE_WRAPPER temp = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+            SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
+            // init_symbolhashmap(temp->symbol_table);
             temp->name = "FOR_symbol_table";
             temp->parent = current_symbol_table_wrapper;
             temp->child = NULL;
             temp->next = NULL;
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
-            SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
+            SYMBOL_TABLE_VALUE value = create_new_symbol_node("integer");
             value->isarray = false;
             value->symbol_table_value_union.not_array.type = integer;
             symbol_insert(current_symbol_table_wrapper->symbol_table, root->child->lexeme, value);

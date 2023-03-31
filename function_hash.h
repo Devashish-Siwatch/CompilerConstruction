@@ -12,4 +12,5 @@ void init_functionhashmap(function_table_hash_map map);
 void function_table_insert(function_table_hash_map map, char *key, FUNCTION_TABLE_VALUE function_table_value);
 FUNCTION_TABLE_VALUE function_table_get(function_table_hash_map map, char *key, int size);
 void printChildren(TREENODE head);
+FUNCTION_TABLE_VALUE create_function_value();
 void print_function_table();

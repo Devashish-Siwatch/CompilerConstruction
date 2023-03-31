@@ -248,8 +248,7 @@ TREENODE generate_ast(TREENODE node)
         case 13:
         case 16:
         case 65:
-        case 73:
-        case 108:
+        case 73:        
         {
             appendAtEnd(node->inh, NULL);
             free(node->child);
@@ -292,6 +291,7 @@ TREENODE generate_ast(TREENODE node)
             return NULL;
         }
         case 6:
+        case 108:
         {
             appendAtLast(node->inh, NULL);
             free(node->child);
@@ -299,7 +299,7 @@ TREENODE generate_ast(TREENODE node)
         }
         case 27:
         {
-            TREENODE stmts_end = (TREENODE)malloc(sizeof(tree_node));
+            TREENODE stmts_end = createNewTreeNode2();
             stmts_end->name = "STMTS_END";
             appendAtLast(node->inh, stmts_end);
             appendAtLast(node->inh, NULL);
@@ -668,7 +668,10 @@ TREENODE generate_ast(TREENODE node)
         {
             TREENODE caseStmtsHead = createNewTreeNode2();
             caseStmtsHead->name = "CASE_STMTS_HEAD";
+            TREENODE caseStmtsHead2 = createNewTreeNode2();
+            caseStmtsHead2->name = "CASE_STMTS_HEAD2";
             TREENODE caseStmt = createNewTreeNode2();
+            caseStmtsHead->child = caseStmtsHead2;
             caseStmt->name = "CASE_STMT";
             TREENODE value = node->child->next;
             TREENODE stmts = value->next->next;
@@ -677,7 +680,7 @@ TREENODE generate_ast(TREENODE node)
             free(value->next);
             free(stmts->next);
             free(stmts->next->next);
-            n7->inh = caseStmtsHead;
+            n7->inh = caseStmtsHead2;
             caseStmt->child = generate_ast(value);
 
             TREENODE stmts_head = createNewTreeNode2();
@@ -685,7 +688,7 @@ TREENODE generate_ast(TREENODE node)
             stmts->inh = stmts_head;
             generate_ast(stmts);
             caseStmt->child->next = stmts_head;
-            appendAtEnd(caseStmtsHead, caseStmt);
+            appendAtLast(caseStmtsHead2, caseStmt);
             generate_ast(n7);
             return caseStmtsHead;
         }
@@ -707,7 +710,7 @@ TREENODE generate_ast(TREENODE node)
             stmts->inh = statements_head;
             generate_ast(stmts);
             caseStmt->child->next = statements_head;
-            appendAtEnd(node->inh, caseStmt);
+            appendAtLast(node->inh, caseStmt);
             generate_ast(n7);
             return NULL;
         }
@@ -719,11 +722,14 @@ TREENODE generate_ast(TREENODE node)
             free(node->child->next);
             free(temp->next);
             free(temp->next->next);
+            TREENODE default_stmts = createNewTreeNode2();
+            default_stmts->name = "DEFAULT";
             TREENODE default_stmts_head = createNewTreeNode2();
             default_stmts_head->name = "DEFAULT_STATEMENTS_HEAD";
+            default_stmts->child = default_stmts_head;
             temp->inh = default_stmts_head;
             generate_ast(temp);
-            return default_stmts_head;
+            return default_stmts;
         }
 
         case 33: // IOSTMT

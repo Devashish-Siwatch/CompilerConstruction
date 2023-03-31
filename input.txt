@@ -1,12 +1,5 @@
 <<<driver program>>>
 start
-	a1 := 444;
-	declare d1,d2:integer;
-	for(index in  -10..+15)
-	start
-		for(index_inner in  -10..+15)
-		start
-			print(print_var);
-		end
-	end
+	declare initial:boolean;
+	declare t:array [-2..10] of integer;
 end

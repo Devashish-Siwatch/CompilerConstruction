@@ -63,6 +63,15 @@ void printChildren(TREENODE head){
     printf("%s \n",head->lexeme);
    
 }
+
+FUNCTION_TABLE_VALUE create_function_value(){
+    FUNCTION_TABLE_VALUE value = (FUNCTION_TABLE_VALUE)malloc(sizeof(function_table_value));
+    value->input_list=NULL;
+    value->output_list=NULL;
+    value->symbol_table_wrapper=NULL;
+    return value;
+}
+
 void print_function_table(){
     for(int i=0 ; i<FUNC_HASHMAP_SIZE ; i++){
         if(function_table[i].is_used==true){

@@ -93,6 +93,39 @@ SYMBOL_TABLE_VALUE symbol_table_get(symbol_table_hash_map map, char *key, int si
     return NULL;
 }
 
+SYMBOL_TABLE_VALUE create_new_symbol_node(char* name)
+{
+    SYMBOL_TABLE_VALUE value = (SYMBOL_TABLE_VALUE)malloc(sizeof(symbol_table_value));
+    if(strcmp(name,"array")==0)
+    {
+        value->isarray = true;
+        value->symbol_table_value_union.array.is_bottom_dynamic=false;
+        value->symbol_table_value_union.array.is_bottom_sign_plus=false;
+        value->symbol_table_value_union.array.is_top_dynamic=false;
+        value->symbol_table_value_union.array.is_top_sign_plus=false;
+        value->symbol_table_value_union.array.top_range.top=0;
+        value->symbol_table_value_union.array.top_range.top_var="";
+        value->symbol_table_value_union.array.bottom_range.bottom=0;
+        value->symbol_table_value_union.array.bottom_range.bottom_var="";
+        value->symbol_table_value_union.array.element_type=integer;
+    }
+    else
+    {
+        value->isarray=true;
+        value->symbol_table_value_union.not_array.type=integer;
+    }
+    return value;
+}
+
+SYMBOL_TABLE_WRAPPER create_symbol_table_wrapper(){
+    SYMBOL_TABLE_WRAPPER wrapper = (SYMBOL_TABLE_WRAPPER)malloc(sizeof(symbol_table_wrapper));
+    init_symbolhashmap(wrapper->symbol_table);
+    wrapper->next=NULL;
+    wrapper->child=NULL;
+    wrapper->parent=NULL;
+    return wrapper;
+}
+
 void print_symbol_table(SYMBOL_TABLE_WRAPPER wrapper){
     printf("-----------------------------------\n");
     printf("AT symbol table : %s\n",wrapper->name);

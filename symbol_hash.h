@@ -12,5 +12,7 @@ SYMBOL_TABLE_VALUE symbol_table_get(symbol_table_hash_map map, char *key, int si
 void print_symbol_table(SYMBOL_TABLE_WRAPPER wrapper);
 void print_symbol_table_value(SYMBOL_TABLE_VALUE value);
 void printSymboltableDFS(SYMBOL_TABLE_WRAPPER wrapper);
+SYMBOL_TABLE_VALUE create_new_symbol_node(char* name);
+SYMBOL_TABLE_WRAPPER create_symbol_table_wrapper();
 
 
