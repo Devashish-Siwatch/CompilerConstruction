@@ -8,6 +8,19 @@
 
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper;
 
+bool check_if_declared_before(char* var){
+    SYMBOL_TABLE_WRAPPER temp_wrapper = current_symbol_table_wrapper;
+    while(true){
+        SYMBOL_TABLE_VALUE value = symbol_table_get(temp_wrapper->symbol_table,var,strlen(var));
+        if(value!=NULL) return true;
+        else{
+            if(temp_wrapper->parent==NULL) return false;
+            else temp_wrapper = temp_wrapper->parent;
+        }
+    }
+    
+}
+
 void go_back_to_parent_symbol_table(){
     //going back to parent symbol table if statements have ended
     if(current_symbol_table_wrapper->parent==NULL){
@@ -174,16 +187,15 @@ void populate_function_and_symbol_tables(TREENODE root)
         {
             addListtoSymbolTable(root);
         }
-
-        // else if (strcmp(root->name, "OutputPlistHead") == 0)
-        // {
-
-        //     addListtoSymbolTable(root);
-        // }
-
+        else if (strcmp(root->name, "ASSIGNMENTSTMT") ==0){
+            TREENODE lhs = root->child;
+            bool lhs_exists = check_if_declared_before(lhs->lexeme);
+            if(!lhs_exists){
+                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",lhs->lexeme);
+            }
+        }
         else if (strcmp(root->name, "DRIVER_MODULE_STMTS") == 0)
         {
-            printf("REACHED DRIVER NODE\n");
             FUNCTION_TABLE_VALUE value = create_function_value();
             value->input_list = NULL;
             value->output_list = NULL;

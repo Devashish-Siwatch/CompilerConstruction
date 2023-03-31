@@ -1,5 +1,4 @@
 <<<driver program>>>
 start
-	declare initial:boolean;
-	declare t:array [-2..10] of integer;
+	a := 1 AND 2 OR 3;
 end
