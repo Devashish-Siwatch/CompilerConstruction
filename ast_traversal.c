@@ -21,6 +21,27 @@ bool check_if_declared_before(char* var){
     
 }
 
+void check_expression_if_declared_before(TREENODE root)
+{
+    if(strcmp(root->name,"AND")==0 || strcmp(root->name,"OR")==0 || strcmp(root->name,"lt")==0  || 
+    strcmp(root->name,"gt")==0 || strcmp(root->name,"le")==0 || strcmp(root->name,"ge")==0 || 
+    strcmp(root->name,"ne")==0 || strcmp(root->name,"eq")==0 || strcmp(root->name,"plus")==0 || 
+    strcmp(root->name,"minus")==0 || strcmp(root->name,"mul")==0 || strcmp(root->name,"div")==0 )
+    {
+        check_expression_if_declared_before(root->child);
+        check_expression_if_declared_before(root->child->next);
+    }
+    else if(strcmp(root->name,"PLUS")==0 ||strcmp(root->name,"MINUS")==0 ){
+        check_expression_if_declared_before(root->child);
+    }
+    else if(strcmp(root->name,"id")==0 ){
+        bool is_present = check_if_declared_before(root->lexeme);
+            if(!is_present){
+                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",root->lexeme);
+            }
+    }
+}
+
 void go_back_to_parent_symbol_table(){
     //going back to parent symbol table if statements have ended
     if(current_symbol_table_wrapper->parent==NULL){
