@@ -17,8 +17,16 @@ bool check_if_declared_before(char* var){
             if(temp_wrapper->parent==NULL) return false;
             else temp_wrapper = temp_wrapper->parent;
         }
-    }
-    
+    }    
+}
+
+bool check_if_redeclared(char* var){
+    SYMBOL_TABLE_WRAPPER temp_wrapper = current_symbol_table_wrapper;
+        SYMBOL_TABLE_VALUE value = symbol_table_get(temp_wrapper->symbol_table,var,strlen(var));
+        if(value!=NULL) 
+            return true;
+        else
+            return false;
 }
 
 void check_expression_if_declared_before(TREENODE root)
@@ -241,10 +249,16 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE temp = idListHead->child; // points to first child in idList
             while (temp != NULL)
             {
+                bool id_exists = check_if_redeclared(temp->lexeme);
+                if(id_exists){
+                    printf("\033[31m\nERROR : %s has already been declared before.\n\033[0m",temp->lexeme);
+            }
+            else{
                 SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
                 populateSymboltabeValue(datatype,value);
                 symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
-                temp = temp->child;
+            }
+            temp = temp->child;
             }
         }
         else if (strcmp(root->name, "ITERATIVESTMT_WHILE") == 0)
