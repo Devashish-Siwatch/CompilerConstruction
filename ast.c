@@ -532,6 +532,20 @@ TREENODE generate_ast(TREENODE node)
             return generate_ast(temp);
         }
         case 75:
+        {
+            TREENODE logical_op = generate_ast(node->child);
+            logical_op->child = node->inh;
+            node->inh->parent = logical_op;
+            TREENODE newChild = generate_ast(node->child->next);
+            logical_op->child->next = newChild;
+            newChild->parent = logical_op;
+            node->child->next->next->inh = logical_op;
+            TREENODE be2 = node->child->next->next;
+            // free(node->child->next);
+            // free(node->child);
+            // free(node);
+            return generate_ast(be2);
+        }
         case 82:
         case 85:
         case 121:

@@ -271,6 +271,32 @@ void populate_function_and_symbol_tables(TREENODE root)
             value->symbol_table_value_union.not_array.type = integer;
             symbol_insert(current_symbol_table_wrapper->symbol_table, root->child->lexeme, value);
         }
+        else if(strcmp(root->name,"IO_INPUT")==0)
+        {
+            TREENODE var = root->child;
+            bool var_exists = check_if_declared_before(var->lexeme);
+            if(!var_exists){
+                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",var->lexeme);
+            }
+        }
+        else if(strcmp(root->name,"IO_OUTPUT")==0)
+        {
+            TREENODE var = root->child;
+            bool var_exists=true;
+            if(strcmp(var->name,"id")==0)
+                var_exists = check_if_declared_before(var->lexeme);
+            if(!var_exists){
+                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",var->lexeme);
+            }
+            if(var->next!=NULL)
+            {
+                var=var->next;
+                if((strcmp(var->name,"id")==0) && (!check_if_declared_before(var->lexeme)))
+                {
+                    printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",var->lexeme);
+                }
+            }
+        }
     }
     populate_function_and_symbol_tables(root->child);
     populate_function_and_symbol_tables(root->next);
