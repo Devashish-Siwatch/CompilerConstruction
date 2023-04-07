@@ -249,6 +249,8 @@ void populate_function_and_symbol_tables(TREENODE root)
         }
         else if (strcmp(root->name, "ITERATIVESTMT_WHILE") == 0)
         {
+            //checking if condition has expr has been declared before
+            check_expression_if_declared_before(root->child);
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
             // init_symbolhashmap(temp->symbol_table);
             temp->name = "WHILE_symbol_table";
@@ -257,9 +259,19 @@ void populate_function_and_symbol_tables(TREENODE root)
             temp->next = NULL;
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
+            
+        }
+        else if(strcmp(root->name,"CONDITIONALSTMT")==0){
+             //checking if condition has expr has been declared before
+             bool is_declared = check_if_declared_before(root->child->lexeme);
+            if(!is_declared){
+                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",root->child->lexeme);
+            }
+            // check_if_declared_before(root->child->lexeme);
         }
         else if(strcmp(root->name,"CASE_STMT")==0)
         {
+            
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
             // init_symbolhashmap(temp->symbol_table);
             temp->name = "CASE_STMT_symbol_table";

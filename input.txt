@@ -1,5 +1,9 @@
 <<<driver program>>>
 start
-	declare xx : integer;
-	a := x-7 AND 2+xx OR 3;
+	switch(y)
+	start
+		case 1:
+			a := x-7 AND 2+xx OR 3;
+			break;
+	end
 end
