@@ -178,14 +178,30 @@ TREENODE generate_ast(TREENODE node)
         case 50:
         case 67:
         case 68:
-        case 57:
-        case 58:
+        // case 57:
+        // case 58:
         case 60:
         case 61:
         {
             TREENODE temp = node->child;
             free(node);
             return generate_ast(temp);
+        }
+        case 57:
+        {
+            TREENODE temp = node->child;
+            free(node);
+            TREENODE result = generate_ast(temp);
+            result->name = "MINUS";
+            return result;
+        }
+        case 58:
+        {
+            TREENODE temp = node->child;
+            free(node);
+            TREENODE result = generate_ast(temp);
+            result->name = "PLUS";
+            return result;
         }
         case 43:
         case 47:
@@ -592,18 +608,31 @@ TREENODE generate_ast(TREENODE node)
             free(node);
             return temp;
         }
-        case 87:
+        // case 87:
         case 88:
-        case 126:
+        // case 126:
         case 127:
         {
             TREENODE factor2 = node->child->next;
             TREENODE sign = generate_ast(node->child);
-            sign->next = generate_ast(factor2);
+            sign->child = generate_ast(factor2);
+            sign->name = "MINUS";
             free(factor2);
             free(node);
             return sign;
         }
+        case 126:
+        case 87:
+        {
+            TREENODE factor2 = node->child->next;
+            TREENODE sign = generate_ast(node->child);
+            sign->child = generate_ast(factor2);
+            sign->name = "PLUS";
+            free(factor2);
+            free(node);
+            return sign;
+        }
+
         case 90:
         case 129:
         {
