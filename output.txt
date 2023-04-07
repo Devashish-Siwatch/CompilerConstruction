@@ -10,28 +10,52 @@ program              1          program                         DRIVERMODULE    
 >>>                  1          driverenddef                    DRIVERMODULE         yes                             1          
 start                2          start                           MODULEDEF            yes                             2          
 ----                 -1                                         DRIVERMODULE         no          MODULEDEF            -1         
-a                    3          id                              ASSIGNMENTSTMT       yes                             3          
+declare              3          declare                         DECLARESTMT          yes                             3          
+----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
+xx                   3          id                              IDLIST               yes                             3          
+----                 -1                                         DECLARESTMT          no          IDLIST               -1         
+----                 -1                                         N3                   yes                             -1         
+----                 -1                                         IDLIST               no          N3                   -1         
+:                    3          colon                           DECLARESTMT          yes                             3          
+integer              3          integer                         DATATYPE             yes                             3          
+----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
+;                    3          semicol                         DECLARESTMT          yes                             3          
+----                 -1                                         STATEMENTS           no          STATEMENT            -1         
+----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
+a                    4          id                              ASSIGNMENTSTMT       yes                             4          
 ----                 -1                                         SIMPLESTMT           no          ASSIGNMENTSTMT       -1         
-:=                   3          assignop                        LVALUEIDSTMT         yes                             3          
+:=                   4          assignop                        LVALUEIDSTMT         yes                             4          
 ----                 -1                                         WHICHSTMT            no          LVALUEIDSTMT         -1         
-1                    3          num                  1          VAR                  yes                             3          
+x                    4          id                              VAR                  yes                             4          
 ----                 -1                                         FACTOR2              no          VAR                  -1         
+----                 -1                                         WHICHID              yes                             -1         
+----                 -1                                         VAR                  no          WHICHID              -1         
 ----                 -1                                         FACTOR               no          FACTOR2              -1         
 ----                 -1                                         TERM                 no          FACTOR               -1         
 ----                 -1                                         ARITHMETICEXPR       no          TERM                 -1         
 ----                 -1                                         N6                   yes                             -1         
 ----                 -1                                         TERM                 no          N6                   -1         
 ----                 -1                                         BOOLEANEXPRESSION1   no          ARITHMETICEXPR       -1         
-----                 -1                                         N5                   yes                             -1         
+-                    4          minus                           OP1                  yes                             4          
+----                 -1                                         N5                   no          OP1                  -1         
 ----                 -1                                         ARITHMETICEXPR       no          N5                   -1         
+7                    4          num                  7          VAR                  yes                             4          
+----                 -1                                         FACTOR2              no          VAR                  -1         
+----                 -1                                         FACTOR               no          FACTOR2              -1         
+----                 -1                                         TERM                 no          FACTOR               -1         
+----                 -1                                         N5                   no          TERM                 -1         
+----                 -1                                         N6                   yes                             -1         
+----                 -1                                         TERM                 no          N6                   -1         
+----                 -1                                         N5                   yes                             -1         
+----                 -1                                         N5                   no          N5                   -1         
 ----                 -1                                         EXPRESSION           no          BOOLEANEXPRESSION1   -1         
 ----                 -1                                         N4                   yes                             -1         
 ----                 -1                                         BOOLEANEXPRESSION1   no          N4                   -1         
 ----                 -1                                         LVALUEIDSTMT         no          EXPRESSION           -1         
-AND                  3          and                             LOGICALOP            yes                             3          
+AND                  4          and                             LOGICALOP            yes                             4          
 ----                 -1                                         BOOLEANEXPRESSION2   no          LOGICALOP            -1         
 ----                 -1                                         EXPRESSION           no          BOOLEANEXPRESSION2   -1         
-2                    3          num                  2          VAR                  yes                             3          
+2                    4          num                  2          VAR                  yes                             4          
 ----                 -1                                         FACTOR2              no          VAR                  -1         
 ----                 -1                                         FACTOR               no          FACTOR2              -1         
 ----                 -1                                         TERM                 no          FACTOR               -1         
@@ -39,15 +63,27 @@ AND                  3          and                             LOGICALOP       
 ----                 -1                                         N6                   yes                             -1         
 ----                 -1                                         TERM                 no          N6                   -1         
 ----                 -1                                         BOOLEANEXPRESSION1   no          ARITHMETICEXPR       -1         
-----                 -1                                         N5                   yes                             -1         
++                    4          plus                            OP1                  yes                             4          
+----                 -1                                         N5                   no          OP1                  -1         
 ----                 -1                                         ARITHMETICEXPR       no          N5                   -1         
+xx                   4          id                              VAR                  yes                             4          
+----                 -1                                         FACTOR2              no          VAR                  -1         
+----                 -1                                         WHICHID              yes                             -1         
+----                 -1                                         VAR                  no          WHICHID              -1         
+----                 -1                                         FACTOR               no          FACTOR2              -1         
+----                 -1                                         TERM                 no          FACTOR               -1         
+----                 -1                                         N5                   no          TERM                 -1         
+----                 -1                                         N6                   yes                             -1         
+----                 -1                                         TERM                 no          N6                   -1         
+----                 -1                                         N5                   yes                             -1         
+----                 -1                                         N5                   no          N5                   -1         
 ----                 -1                                         BOOLEANEXPRESSION2   no          BOOLEANEXPRESSION1   -1         
 ----                 -1                                         N4                   yes                             -1         
 ----                 -1                                         BOOLEANEXPRESSION1   no          N4                   -1         
-OR                   3          or                              LOGICALOP            yes                             3          
+OR                   4          or                              LOGICALOP            yes                             4          
 ----                 -1                                         BOOLEANEXPRESSION2   no          LOGICALOP            -1         
 ----                 -1                                         BOOLEANEXPRESSION2   no          BOOLEANEXPRESSION2   -1         
-3                    3          num                  3          VAR                  yes                             3          
+3                    4          num                  3          VAR                  yes                             4          
 ----                 -1                                         FACTOR2              no          VAR                  -1         
 ----                 -1                                         FACTOR               no          FACTOR2              -1         
 ----                 -1                                         TERM                 no          FACTOR               -1         
@@ -62,14 +98,14 @@ OR                   3          or                              LOGICALOP       
 ----                 -1                                         BOOLEANEXPRESSION1   no          N4                   -1         
 ----                 -1                                         BOOLEANEXPRESSION2   yes                             -1         
 ----                 -1                                         BOOLEANEXPRESSION2   no          BOOLEANEXPRESSION2   -1         
-;                    3          semicol                         LVALUEIDSTMT         yes                             3          
+;                    4          semicol                         LVALUEIDSTMT         yes                             4          
 ----                 -1                                         ASSIGNMENTSTMT       no          WHICHSTMT            -1         
 ----                 -1                                         STATEMENT            no          SIMPLESTMT           -1         
 ----                 -1                                         STATEMENTS           no          STATEMENT            -1         
-----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
+----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-end                  4          end                             MODULEDEF            yes                             4          
+end                  5          end                             MODULEDEF            yes                             5          
 ----                 -1                                         OTHERMODULES         yes                             -1         
 ----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
 ----                 -1                                         ROOT                 no          S                    -1         

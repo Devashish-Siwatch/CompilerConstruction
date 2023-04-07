@@ -1,4 +1,5 @@
 <<<driver program>>>
 start
-	a := 1 AND 2 OR 3;
+	declare xx : integer;
+	a := x-7 AND 2+xx OR 3;
 end

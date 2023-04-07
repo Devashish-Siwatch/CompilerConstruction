@@ -23,7 +23,8 @@ bool check_if_declared_before(char* var){
 
 void check_expression_if_declared_before(TREENODE root)
 {
-    if(strcmp(root->name,"AND")==0 || strcmp(root->name,"OR")==0 || strcmp(root->name,"lt")==0  || 
+    // printf("CHECKING FOR %s------------------\n",root->name);
+    if(strcmp(root->name,"and")==0 || strcmp(root->name,"or")==0 || strcmp(root->name,"lt")==0  || 
     strcmp(root->name,"gt")==0 || strcmp(root->name,"le")==0 || strcmp(root->name,"ge")==0 || 
     strcmp(root->name,"ne")==0 || strcmp(root->name,"eq")==0 || strcmp(root->name,"plus")==0 || 
     strcmp(root->name,"minus")==0 || strcmp(root->name,"mul")==0 || strcmp(root->name,"div")==0 )
@@ -36,9 +37,9 @@ void check_expression_if_declared_before(TREENODE root)
     }
     else if(strcmp(root->name,"id")==0 ){
         bool is_present = check_if_declared_before(root->lexeme);
-            if(!is_present){
-                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",root->lexeme);
-            }
+        if(!is_present){
+            printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",root->lexeme);
+        }
     }
 }
 
@@ -210,10 +211,12 @@ void populate_function_and_symbol_tables(TREENODE root)
         }
         else if (strcmp(root->name, "ASSIGNMENTSTMT") ==0){
             TREENODE lhs = root->child;
+            TREENODE rhs = lhs->next;
             bool lhs_exists = check_if_declared_before(lhs->lexeme);
             if(!lhs_exists){
                 printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",lhs->lexeme);
             }
+            check_expression_if_declared_before(rhs);
         }
         else if (strcmp(root->name, "DRIVER_MODULE_STMTS") == 0)
         {
