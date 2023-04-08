@@ -1,4 +1,8 @@
-<<<driver program>>>
+declare module compute;
+<<module compute>> takes input [x:integer, y:integer, z:integer];
+start
+end
+<<module compute>> takes input [x:integer, y:integer, z:integer];
 start
 	declare x,y:integer;
 	for(x in 1..5)
@@ -13,4 +17,8 @@ returns [out:boolean];
 start
 	declare z:real;
 	print(z);
+end
+<<<driver program>>>
+start
+	[d,e]:= use module fun with parameters a[2], b[g],c ;
 end
