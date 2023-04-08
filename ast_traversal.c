@@ -19,7 +19,12 @@ bool check_if_declared_before(char* var){
         }
     }    
 }
-
+bool check_if_function_declared(char* var){
+    FUNCTION_TABLE_VALUE value = function_table_get(function_table,var,strlen(var));
+    if(value!=NULL)
+    return true;
+    else return false;
+}
 bool check_if_redeclared(char* var){
     SYMBOL_TABLE_WRAPPER temp_wrapper = current_symbol_table_wrapper;
         SYMBOL_TABLE_VALUE value = symbol_table_get(temp_wrapper->symbol_table,var,strlen(var));
@@ -345,6 +350,39 @@ void populate_function_and_symbol_tables(TREENODE root)
                 {
                     printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",var->lexeme);
                 }
+            }
+        }
+        else if(strcmp(root->name,"MODULE_REUSE_STMT")==0)
+        {
+            TREENODE temp = root->child;           
+            if(strcmp(temp->name,"id")!=0)
+            {
+                TREENODE temp2 = temp->child;
+                while(temp2!=NULL)
+                {
+                    bool dec_before = check_if_declared_before(temp2->lexeme);
+                    if(!dec_before)
+                    {
+                    printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",temp2->lexeme);
+                    }
+                    temp2 = temp2->child;
+                }
+                temp=temp->next;
+            }
+            if((!check_if_function_declared(temp->lexeme)))
+            {
+                printf("\033[31m\nERROR : Module %s has not been declared before.\n\033[0m",temp->lexeme);
+            }
+            temp=temp->next;
+            TREENODE temp2 = temp->child;
+            while(temp2!=NULL)
+            {
+                bool dec_before = check_if_declared_before(temp2->lexeme);
+                if(!dec_before)
+                {
+                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",temp2->lexeme);
+                }
+                temp2 = temp2->child;
             }
         }
     }
