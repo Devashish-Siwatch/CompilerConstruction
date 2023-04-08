@@ -192,7 +192,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp = node->child;
             free(node);
             TREENODE result = generate_ast(temp);
-            result->name = "MINUS";
+            result->name = "PLUS";
             return result;
         }
         case 58:
@@ -200,7 +200,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp = node->child;
             free(node);
             TREENODE result = generate_ast(temp);
-            result->name = "PLUS";
+            result->name = "MINUS";
             return result;
         }
         case 43:
