@@ -1,3 +1,10 @@
+declare module compute;
+<<module compute>> takes input [x:integer, y:integer, z:integer];
+start
+end
+<<module compute>> takes input [x:integer, y:integer, z:integer];
+start
+end
 <<<driver program>>>
 start
 	[d,e]:= use module fun with parameters a[2], b[g],c ;
