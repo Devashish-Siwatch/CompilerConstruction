@@ -259,18 +259,19 @@ void populate_function_and_symbol_tables(TREENODE root)
             printf("REACHED MODULE1 NODE\n");
             // checking for redeclarations
             bool redeclared = check_if_function_declared(root->child->lexeme);
-            FUNCTION_TABLE_VALUE value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
+            printf("here\n");
+            FUNCTION_TABLE_VALUE value;
             if (redeclared)
             {
-
                 //  printf("value->input_list:   %s", value->input_list);
+                value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
                 if (value->input_list != NULL)
-                    printf("\033[31m\nERROR : Function %s redeclared.\n\033[0m", root->child->lexeme);
+                    printf("\033[31m\nERROR : Module %s redeclared.\n\033[0m", root->child->lexeme);
+                    printf("here\n");
             }
             else
             {
-
-                FUNCTION_TABLE_VALUE value = create_function_value();
+                value = create_function_value();
             }
             value->input_list = root->child->next;
             if (strcmp(root->child->next->next->name, "OutputPlistHead") == 0)
@@ -297,7 +298,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 if (redeclared)
                 {
                     // printf("ERROR: Function %s redeclared\n", temp->lexeme);
-                    printf("\033[31m\nERROR : Function %s redeclared.\n\033[0m", temp->lexeme);
+                    printf("\033[31m\nERROR : Module %s redeclared.\n\033[0m", temp->lexeme);
                 }
                 else
                 {
