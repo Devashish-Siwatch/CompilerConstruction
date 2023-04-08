@@ -184,6 +184,7 @@ TREENODE generate_ast(TREENODE node)
         case 61:
         {
             TREENODE temp = node->child;
+            temp->line_number=node->line_number;
             free(node);
             return generate_ast(temp);
         }
@@ -287,19 +288,24 @@ TREENODE generate_ast(TREENODE node)
         }
         case 25:
         {
+            
             TREENODE temp = node->child->next;
+            int end_line_number=temp->next->line_number;
             free(node->child);
             free(temp->next);
             node->child = temp;
             TREENODE statementsHead = createNewTreeNode2();
             statementsHead->name = "STMTSHead";
             temp->inh = statementsHead;
+            temp->line_number=end_line_number;
             generate_ast(temp);
             free(node);
             return statementsHead;
         }
         case 26:
         {
+            node->child->next->line_number=node->line_number;
+            node->child->line_number=node->line_number;  //Changed
             appendAtLast(node->inh, generate_ast(node->child));
             node->child->next->inh = node->inh;
             generate_ast(node->child->next);
@@ -317,6 +323,7 @@ TREENODE generate_ast(TREENODE node)
         {
             TREENODE stmts_end = createNewTreeNode2();
             stmts_end->name = "STMTS_END";
+            stmts_end->line_number=node->line_number;
             appendAtLast(node->inh, stmts_end);
             appendAtLast(node->inh, NULL);
             free(node->child);
@@ -823,11 +830,13 @@ TREENODE generate_ast(TREENODE node)
         }
         case 120:
         {
+            int start_line_number=node->child->line_number;
             TREENODE ITERATIVESTMT_FOR = createNewTreeNode2();
             ITERATIVESTMT_FOR->name = "ITERATIVESTMT_FOR";
             TREENODE tempId = node->child->next->next;
             TREENODE tempRange = node->child->next->next->next->next;
             TREENODE tempStmt = node->child->next->next->next->next->next->next->next;
+            int end_line_number=tempStmt->next->line_number;
             free(node->child->next->next->next->next->next->next->next->next);
             free(node->child->next->next->next->next->next->next);
             free(node->child->next->next->next->next->next);
@@ -838,7 +847,9 @@ TREENODE generate_ast(TREENODE node)
             ITERATIVESTMT_FOR->child->next = generate_ast(tempRange);
             TREENODE for_stmts_head = createNewTreeNode2();
             for_stmts_head->name = "FOR_STMTS_HEAD";
+            for_stmts_head->line_number=start_line_number;
             tempStmt->inh = for_stmts_head;
+            tempStmt->line_number=end_line_number;
             generate_ast(tempStmt);
             ITERATIVESTMT_FOR->child->next->next = for_stmts_head;
             return ITERATIVESTMT_FOR;

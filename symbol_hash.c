@@ -23,6 +23,7 @@ void init_symbolhashmap(symbol_table_hash_map map)
 }
 
 void print_symbol_table_value(SYMBOL_TABLE_VALUE value){
+    printf("#################################################################\n");
     if(value->isarray){
         //it is an array
         printf("<<<<<<<<ARRAY DEFN STARTS>>>>>>>>>>\n");
@@ -44,6 +45,14 @@ void print_symbol_table_value(SYMBOL_TABLE_VALUE value){
         //not an array
         printf("Not array, its type is %d\n",value->symbol_table_value_union.not_array.type);
     }
+    printf("The function it belongs to is %s.\n",value->module_name);
+    printf("Its nesting level is %d.\n",value->nesting_level);
+    printf("Its width is %d.\n",value->width);
+    printf("Its offset is %d.\n",value->offset);
+    printf("Its start line is %d.\n",value->line_number_start);
+    printf("Its end line is %d.\n",value->line_number_end);
+
+    printf("#################################################################\n");
 }
 
 void printSymboltableDFS(SYMBOL_TABLE_WRAPPER wrapper){

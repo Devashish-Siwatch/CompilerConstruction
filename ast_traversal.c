@@ -7,6 +7,17 @@
 #include "ast_traversal.h"
 
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper;
+char* current_module_name;
+int current_offset_value=0;
+int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper){
+    SYMBOL_TABLE_WRAPPER temp = wrapper;
+    int count = 0;
+    while(temp->parent!=NULL){
+        temp = temp->parent;
+        count++;
+    }
+    return count;
+}
 
 bool check_if_declared_before(char* var){
     SYMBOL_TABLE_WRAPPER temp_wrapper = current_symbol_table_wrapper;
@@ -52,21 +63,28 @@ void go_back_to_parent_symbol_table(){
     }
 }
 
-void populateSymboltabeValue(TREENODE datatype,SYMBOL_TABLE_VALUE value){
+void populateSymboltableValue(TREENODE datatype,SYMBOL_TABLE_VALUE value, char* module_name, int nesting_level,int start_line_number){
+    value->module_name = module_name;
+    value->nesting_level = nesting_level;
+    value->line_number_start=start_line_number;
     if (strcmp(datatype->name, "integer") == 0)
         {
             value->isarray = false;
             value->symbol_table_value_union.not_array.type = integer;
+            value->width = 2;
+            
         }
         else if (strcmp(datatype->name, "real") == 0)
         {
             value->isarray = false;
             value->symbol_table_value_union.not_array.type = real;
+            value->width = 4;
         }
         else if (strcmp(datatype->name, "boolean") == 0)
         {
             value->isarray = false;
             value->symbol_table_value_union.not_array.type = boolean;
+            value->width = 1;
         }
         else
         {
@@ -140,9 +158,28 @@ void populateSymboltabeValue(TREENODE datatype,SYMBOL_TABLE_VALUE value){
             {
                 value->symbol_table_value_union.array.element_type = boolean;
             }
+
+            //width
+            if(!value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
+                printf("++++++++++++++++++++++++++++++++++\n");
+                int bottom = (value->symbol_table_value_union.array.bottom_range.bottom )*( value->symbol_table_value_union.array.is_bottom_sign_plus?1:-1);
+                int top = (value->symbol_table_value_union.array.top_range.top) * (value->symbol_table_value_union.array.is_top_sign_plus?1:-1);
+                value->width=abs(top-bottom)+1;
+                if(strcmp(elementType->lexeme, "integer") == 0){
+                    value->width=value->width*2+1;
+                }
+                else if(strcmp(elementType->lexeme, "real") == 0){
+                    value->width=value->width*4+1;
+                }
+                else{ //boolean
+                    value->width=value->width*1+1;
+                }
+            }
         }
+        value->offset=current_offset_value;
+        current_offset_value+=value->width;
 }
-void addListtoSymbolTable(TREENODE root)
+void addListtoSymbolTable(TREENODE root, int nesting_level)
 {
     // used when root->child is id and root->child->next is datatype
     TREENODE ListHead = root;
@@ -152,7 +189,7 @@ void addListtoSymbolTable(TREENODE root)
 
         TREENODE datatype = temp->next;
         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
-        populateSymboltabeValue(datatype,value);
+        populateSymboltableValue(datatype,value,current_module_name,nesting_level,temp->line_number);
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
     }
@@ -197,17 +234,17 @@ void populate_function_and_symbol_tables(TREENODE root)
             else
                 value->output_list = NULL;
             value->symbol_table_wrapper = create_symbol_table_wrapper();
-            value->symbol_table_wrapper->name = root->child->name;
-            strcat(value->symbol_table_wrapper->name,"_symbol_table");
+            value->symbol_table_wrapper->name = root->child->lexeme;
+            current_module_name = root->child->lexeme;
             value->symbol_table_wrapper->parent = NULL;
             value->symbol_table_wrapper->child = NULL;
             value->symbol_table_wrapper->next = NULL;
             function_table_insert(function_table, root->child->lexeme, value);
             current_symbol_table_wrapper = value->symbol_table_wrapper;
         }
-        else if (strcmp(root->name, "InputPlistHead") == 0)
+        else if (strcmp(root->name, "InputPlistHead") == 0 || strcmp(root->name, "OutputPlistHead") == 0)
         {
-            addListtoSymbolTable(root);
+            addListtoSymbolTable(root,0);
         }
         else if (strcmp(root->name, "ASSIGNMENTSTMT") ==0){
             TREENODE lhs = root->child;
@@ -224,11 +261,12 @@ void populate_function_and_symbol_tables(TREENODE root)
             value->input_list = NULL;
             value->output_list = NULL;
             value->symbol_table_wrapper = create_symbol_table_wrapper();
-            value->symbol_table_wrapper->name = "driver_symbol_table";
+            value->symbol_table_wrapper->name = "driver";
             value->symbol_table_wrapper->parent = NULL;
             value->symbol_table_wrapper->child = NULL;
             value->symbol_table_wrapper->next = NULL;
             function_table_insert(function_table, "driver", value);
+            current_module_name = "driver";
             current_symbol_table_wrapper = value->symbol_table_wrapper;
         }
         else if(strcmp(root->name,"STMTS_END")==0){
@@ -242,7 +280,8 @@ void populate_function_and_symbol_tables(TREENODE root)
             while (temp != NULL)
             {
                 SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
-                populateSymboltabeValue(datatype,value);
+                int nesting_level = get_nesting_level(current_symbol_table_wrapper)+1;
+                populateSymboltableValue(datatype,value,current_module_name,nesting_level,temp->line_number);
                 symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 temp = temp->child;
             }
@@ -259,11 +298,10 @@ void populate_function_and_symbol_tables(TREENODE root)
             temp->next = NULL;
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
-            
         }
         else if(strcmp(root->name,"CONDITIONALSTMT")==0){
              //checking if condition has expr has been declared before
-             bool is_declared = check_if_declared_before(root->child->lexeme);
+            bool is_declared = check_if_declared_before(root->child->lexeme);
             if(!is_declared){
                 printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",root->child->lexeme);
             }
@@ -305,6 +343,18 @@ void populate_function_and_symbol_tables(TREENODE root)
             SYMBOL_TABLE_VALUE value = create_new_symbol_node("integer");
             value->isarray = false;
             value->symbol_table_value_union.not_array.type = integer;
+            value->width = 2;
+            value->offset=current_offset_value;
+            current_offset_value+=value->width;
+            value->line_number_start=root->child->next->next->line_number;
+            // GOING TO STMTS_END
+            TREENODE stmts_end_node=root->child;
+            while(stmts_end_node->next!=NULL)
+                stmts_end_node=stmts_end_node->next;
+
+            value->line_number_end=stmts_end_node->line_number;
+            value->module_name = current_module_name;
+            value->nesting_level = get_nesting_level(current_symbol_table_wrapper)+1;
             symbol_insert(current_symbol_table_wrapper->symbol_table, root->child->lexeme, value);
         }
         else if(strcmp(root->name,"IO_INPUT")==0)

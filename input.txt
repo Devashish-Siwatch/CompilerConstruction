@@ -1,9 +1,16 @@
 <<<driver program>>>
 start
-	switch(y)
+	declare x,y:integer;
+	for(x in 1..5)
 	start
-		case 1:
-			a := x-7 AND 2+xx OR 3;
-			break;
+		declare inside:real;
 	end
+	print(x);
+end
+
+<<module praneet>> takes input [sam:real,arr1:array[1..5] of integer]; 
+returns [out:boolean];
+start
+	declare z:real;
+	print(z);
 end
