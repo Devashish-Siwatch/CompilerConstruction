@@ -6,18 +6,7 @@ start
 	for(x in 1..5)
 	start
 		declare aaa:integer;
-		switch(aaa)
-			start
-				case 1:
-					declare case1v:integer;
-					break;
-				case 2:
-					declare case2v:integer;
-					break;
-				default: 
-					declare defaultv:integer;
-					break;
-			end
+		
 	end
 	print(x);
 end
@@ -25,6 +14,8 @@ end
 <<module praneet>> takes input [sam:real,arr1:array[1..5] of integer]; 
 returns [out:boolean];
 start
+	declare sam:integer;
+	declare sam:boolean;
 	declare z:real;
 	print(z);
 end

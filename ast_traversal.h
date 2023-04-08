@@ -11,5 +11,5 @@ void check_expression_if_declared_before(TREENODE root);
 void go_back_to_parent_symbol_table();
 void populateSymboltabeValue(TREENODE datatype,SYMBOL_TABLE_VALUE value);
 void insert_symbol_table_at_end(SYMBOL_TABLE_WRAPPER wrapper, SYMBOL_TABLE_WRAPPER temp);
-void populateSymboltableValue(TREENODE datatype,SYMBOL_TABLE_VALUE value, char* module_name, int nesting_level,int start_line_number);
-void addListtoSymbolTable(TREENODE root, int nesting_level);
+void populateSymboltableValue(TREENODE datatype,SYMBOL_TABLE_VALUE value, char* module_name, int nesting_level,int start_line_number, bool isInputPlist);
+void addListtoSymbolTable(TREENODE root, int nesting_level,bool isInputParam);

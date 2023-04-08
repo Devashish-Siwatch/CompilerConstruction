@@ -7,12 +7,14 @@
 #include "ast_traversal.h"
 
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper;
-char* current_module_name;
-int current_offset_value=0;
-int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper){
+char *current_module_name;
+int current_offset_value = 0;
+int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper)
+{
     SYMBOL_TABLE_WRAPPER temp = wrapper;
     int count = 0;
-    while(temp->parent!=NULL){
+    while (temp->parent != NULL)
+    {
         temp = temp->parent;
         count++;
     }
@@ -94,10 +96,12 @@ void go_back_to_parent_symbol_table()
     }
 }
 
-void populateSymboltableValue(TREENODE datatype,SYMBOL_TABLE_VALUE value, char* module_name, int nesting_level,int start_line_number){
+void populateSymboltableValue(TREENODE datatype, SYMBOL_TABLE_VALUE value, char *module_name, int nesting_level, int start_line_number, bool isInputParameter)
+{
+    value->isInputParameter = isInputParameter;
     value->module_name = module_name;
     value->nesting_level = nesting_level;
-    value->line_number_start=start_line_number;
+    value->line_number_start = start_line_number;
     if (strcmp(datatype->name, "integer") == 0)
     {
         value->isarray = false;
@@ -175,58 +179,62 @@ void populateSymboltableValue(TREENODE datatype,SYMBOL_TABLE_VALUE value, char* 
             value->symbol_table_value_union.array.is_top_dynamic = true;
         }
 
-            // element type
+        // element type
+        if (strcmp(elementType->lexeme, "integer") == 0)
+        {
+            value->symbol_table_value_union.array.element_type = integer;
+        }
+        else if (strcmp(elementType->lexeme, "real") == 0)
+        {
+            value->symbol_table_value_union.array.element_type = real;
+        }
+        else
+        {
+            value->symbol_table_value_union.array.element_type = boolean;
+        }
+
+        // width
+        if (!value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic)
+        {
+            printf("++++++++++++++++++++++++++++++++++\n");
+            int bottom = (value->symbol_table_value_union.array.bottom_range.bottom) * (value->symbol_table_value_union.array.is_bottom_sign_plus ? 1 : -1);
+            int top = (value->symbol_table_value_union.array.top_range.top) * (value->symbol_table_value_union.array.is_top_sign_plus ? 1 : -1);
+            value->width = abs(top - bottom) + 1;
             if (strcmp(elementType->lexeme, "integer") == 0)
             {
-                value->symbol_table_value_union.array.element_type = integer;
+                value->width = value->width * 2 + 1;
             }
             else if (strcmp(elementType->lexeme, "real") == 0)
             {
-                value->symbol_table_value_union.array.element_type = real;
+                value->width = value->width * 4 + 1;
             }
             else
-            {
-                value->symbol_table_value_union.array.element_type = boolean;
-            }
-
-            //width
-            if(!value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
-                printf("++++++++++++++++++++++++++++++++++\n");
-                int bottom = (value->symbol_table_value_union.array.bottom_range.bottom )*( value->symbol_table_value_union.array.is_bottom_sign_plus?1:-1);
-                int top = (value->symbol_table_value_union.array.top_range.top) * (value->symbol_table_value_union.array.is_top_sign_plus?1:-1);
-                value->width=abs(top-bottom)+1;
-                if(strcmp(elementType->lexeme, "integer") == 0){
-                    value->width=value->width*2+1;
-                }
-                else if(strcmp(elementType->lexeme, "real") == 0){
-                    value->width=value->width*4+1;
-                }
-                else{ //boolean
-                    value->width=value->width*1+1;
-                }
+            { // boolean
+                value->width = value->width * 1 + 1;
             }
         }
-        value->offset=current_offset_value;
-        current_offset_value+=value->width;
+    }
+    value->offset = current_offset_value;
+    current_offset_value += value->width;
 }
-void addListtoSymbolTable(TREENODE root, int nesting_level)
+void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam)
 {
     // used when root->child is id and root->child->next is datatype
     TREENODE ListHead = root;
     TREENODE temp = ListHead->child; // points to first child in Listhead
-    //Going to stmts_end
-    TREENODE module1_node=root->parent;
-    TREENODE stmts_end_node=module1_node->child;
-    while(stmts_end_node->next!=NULL)
-        stmts_end_node=stmts_end_node->next;
-    int end_line_number=stmts_end_node->line_number;
+    // Going to stmts_end
+    TREENODE module1_node = root->parent;
+    TREENODE stmts_end_node = module1_node->child;
+    while (stmts_end_node->next != NULL)
+        stmts_end_node = stmts_end_node->next;
+    int end_line_number = stmts_end_node->line_number;
     while (temp != NULL)
     {
 
         TREENODE datatype = temp->next;
         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
-        value->line_number_end=end_line_number;
-        populateSymboltableValue(datatype,value,current_module_name,nesting_level,temp->line_number);
+        value->line_number_end = end_line_number;
+        populateSymboltableValue(datatype, value, current_module_name, nesting_level, temp->line_number, isInputParam);
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
     }
@@ -274,7 +282,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
                 if (value->input_list != NULL)
                     printf("\033[31m\nERROR : Module %s redeclared.\n\033[0m", root->child->lexeme);
-                    printf("here\n");
+                printf("here\n");
             }
             else
             {
@@ -324,10 +332,15 @@ void populate_function_and_symbol_tables(TREENODE root)
                 temp = temp->child;
             }
         }
-        else if (strcmp(root->name, "InputPlistHead" ) == 0 || strcmp(root->name, "OutputPlistHead") == 0)
+        else if (strcmp(root->name, "InputPlistHead") == 0)
         {
-            
-            addListtoSymbolTable(root,0);
+
+            addListtoSymbolTable(root, 0, true);
+        }
+        else if (strcmp(root->name, "OutputPlistHead") == 0)
+        {
+
+            addListtoSymbolTable(root, 0, false);
         }
         else if (strcmp(root->name, "ASSIGNMENTSTMT") == 0)
         {
@@ -338,7 +351,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             {
                 printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", lhs->lexeme);
             }
-            if(strcmp(rhs->name, "LVALUEARRSTMT") == 0)
+            if (strcmp(rhs->name, "LVALUEARRSTMT") == 0)
             {
                 check_expression_if_declared_before(rhs->child);
                 check_expression_if_declared_before(rhs->child->next);
@@ -346,7 +359,6 @@ void populate_function_and_symbol_tables(TREENODE root)
             else
             {
                 check_expression_if_declared_before(rhs);
-
             }
         }
         else if (strcmp(root->name, "DRIVER_MODULE_STMTS") == 0)
@@ -373,23 +385,36 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE idListHead = root->child;
             TREENODE temp = idListHead->child; // points to first child in idList
             // GOING TO STMTS_END
-            TREENODE stmts_end_node=root;
-            while(stmts_end_node->next!=NULL)
-                stmts_end_node=stmts_end_node->next;
-            int end_line_number=stmts_end_node->line_number;
+            TREENODE stmts_end_node = root;
+            while (stmts_end_node->next != NULL)
+                stmts_end_node = stmts_end_node->next;
+            int end_line_number = stmts_end_node->line_number;
             while (temp != NULL)
             {
                 bool id_exists = check_if_redeclared(temp->lexeme);
                 if (id_exists)
                 {
-                    printf("\033[31m\nERROR : %s has already been declared before.\n\033[0m", temp->lexeme);
+                    SYMBOL_TABLE_VALUE stv = symbol_table_get(current_symbol_table_wrapper->symbol_table, temp->lexeme, strlen(temp->lexeme));
+                    if (stv->isInputParameter)
+                    {
+                        stv->isInputParameter = false;
+                        SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
+                        int nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
+                        stv->line_number_end = end_line_number;
+                        populateSymboltableValue(datatype, stv, current_module_name, nesting_level, temp->line_number, false);
+                        // symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
+                    }
+                    else
+                    {
+                        printf("\033[31m\nERROR : %s has already been declared before.\n\033[0m", temp->lexeme);
+                    }
                 }
                 else
                 {
                     SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
-                    int nesting_level = get_nesting_level(current_symbol_table_wrapper)+1;
-                    value->line_number_end=end_line_number;
-                    populateSymboltableValue(datatype,value,current_module_name,nesting_level,temp->line_number);
+                    int nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
+                    value->line_number_end = end_line_number;
+                    populateSymboltableValue(datatype, value, current_module_name, nesting_level, temp->line_number, false);
                     symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 }
                 temp = temp->child;
@@ -408,11 +433,13 @@ void populate_function_and_symbol_tables(TREENODE root)
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
         }
-        else if(strcmp(root->name,"CONDITIONALSTMT")==0){
-             //checking if condition has expr has been declared before
+        else if (strcmp(root->name, "CONDITIONALSTMT") == 0)
+        {
+            // checking if condition has expr has been declared before
             bool is_declared = check_if_declared_before(root->child->lexeme);
-            if(!is_declared){
-                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",root->child->lexeme);
+            if (!is_declared)
+            {
+                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", root->child->lexeme);
             }
             // check_if_declared_before(root->child->lexeme);
         }
@@ -453,17 +480,17 @@ void populate_function_and_symbol_tables(TREENODE root)
             value->isarray = false;
             value->symbol_table_value_union.not_array.type = integer;
             value->width = 2;
-            value->offset=current_offset_value;
-            current_offset_value+=value->width;
-            value->line_number_start=root->child->next->next->line_number;
+            value->offset = current_offset_value;
+            current_offset_value += value->width;
+            value->line_number_start = root->child->next->next->line_number;
             // GOING TO STMTS_END
-            TREENODE stmts_end_node=root->child;
-            while(stmts_end_node->next!=NULL)
-                stmts_end_node=stmts_end_node->next;
+            TREENODE stmts_end_node = root->child;
+            while (stmts_end_node->next != NULL)
+                stmts_end_node = stmts_end_node->next;
 
-            value->line_number_end=stmts_end_node->line_number;
+            value->line_number_end = stmts_end_node->line_number;
             value->module_name = current_module_name;
-            value->nesting_level = get_nesting_level(current_symbol_table_wrapper)+1;
+            value->nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
             symbol_insert(current_symbol_table_wrapper->symbol_table, root->child->lexeme, value);
         }
         else if (strcmp(root->name, "IO_INPUT") == 0)
@@ -522,19 +549,19 @@ void populate_function_and_symbol_tables(TREENODE root)
                 if (strcmp(temp2->name, "PLUS") == 0 || strcmp(temp2->name, "MINUS") == 0)
                 {
                     TREENODE temp3 = temp2->next;
-                    if(strcmp(temp3->name,"id")==0)
+                    if (strcmp(temp3->name, "id") == 0)
                     {
-                        if(!check_if_declared_before(temp3->lexeme))
+                        if (!check_if_declared_before(temp3->lexeme))
                         {
-                            printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",temp3->lexeme);
+                            printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", temp3->lexeme);
                         }
                     }
-                    if(temp3->next!=NULL)
+                    if (temp3->next != NULL)
                     {
-                        temp3=temp3->next;
+                        temp3 = temp3->next;
                         check_expression_if_declared_before(temp3);
                     }
-                    //check_expression_if_declared_before(temp3);
+                    // check_expression_if_declared_before(temp3);
                     temp2 = temp2->child;
                     continue;
                 }
@@ -543,13 +570,13 @@ void populate_function_and_symbol_tables(TREENODE root)
                     bool dec_before = check_if_declared_before(temp2->lexeme);
                     if (!dec_before)
                     {
-                        printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",temp2->lexeme);
+                        printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", temp2->lexeme);
                     }
-                    if(temp2->next!=NULL)
+                    if (temp2->next != NULL)
                     {
                         check_expression_if_declared_before(temp2->next);
                     }
-                    //check_expression_if_declared_before(temp2);
+                    // check_expression_if_declared_before(temp2);
                 }
                 temp2 = temp2->child;
             }
