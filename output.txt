@@ -1,40 +1,120 @@
-----                 -1                                         MODULEDECLARATIONS   yes                             -1         
+declare              1          declare                         MODULEDECLARATION    yes                             1          
+----                 -1                                         MODULEDECLARATIONS   no          MODULEDECLARATION    -1         
+module               1          module                          MODULEDECLARATION    yes                             1          
+compute              1          id                              MODULEDECLARATION    yes                             1          
+;                    1          semicol                         MODULEDECLARATION    yes                             1          
 ----                 -1                                         PROGRAM              no          MODULEDECLARATIONS   -1         
+----                 -1                                         MODULEDECLARATIONS   yes                             -1         
+----                 -1                                         MODULEDECLARATIONS   no          MODULEDECLARATIONS   -1         
 ----                 -1                                         S                    no          PROGRAM              -1         
-----                 -1                                         OTHERMODULES         yes                             -1         
+<<                   2          def                             MODULE1              yes                             2          
+----                 -1                                         OTHERMODULES         no          MODULE1              -1         
+module               2          module                          MODULE1              yes                             2          
+compute              2          id                              MODULE1              yes                             2          
+>>                   2          enddef                          MODULE1              yes                             2          
+takes                2          takes                           MODULE1              yes                             2          
+input                2          input                           MODULE1              yes                             2          
+[                    2          sqbo                            MODULE1              yes                             2          
+x                    2          id                              INPUT_PLIST          yes                             2          
+----                 -1                                         MODULE1              no          INPUT_PLIST          -1         
+:                    2          colon                           INPUT_PLIST          yes                             2          
+integer              2          integer                         DATATYPE             yes                             2          
+----                 -1                                         INPUT_PLIST          no          DATATYPE             -1         
+,                    2          comma                           N1                   yes                             2          
+----                 -1                                         INPUT_PLIST          no          N1                   -1         
+y                    2          id                              N1                   yes                             2          
+:                    2          colon                           N1                   yes                             2          
+integer              2          integer                         DATATYPE             yes                             2          
+----                 -1                                         N1                   no          DATATYPE             -1         
+,                    2          comma                           N1                   yes                             2          
+----                 -1                                         N1                   no          N1                   -1         
+z                    2          id                              N1                   yes                             2          
+:                    2          colon                           N1                   yes                             2          
+integer              2          integer                         DATATYPE             yes                             2          
+----                 -1                                         N1                   no          DATATYPE             -1         
+----                 -1                                         N1                   yes                             -1         
+----                 -1                                         N1                   no          N1                   -1         
+]                    2          sqbc                            MODULE1              yes                             2          
+;                    2          semicol                         MODULE1              yes                             2          
+----                 -1                                         RET                  yes                             -1         
+----                 -1                                         MODULE1              no          RET                  -1         
+start                3          start                           MODULEDEF            yes                             3          
+----                 -1                                         MODULE1              no          MODULEDEF            -1         
+----                 -1                                         STATEMENTS           yes                             -1         
+----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
+end                  4          end                             MODULEDEF            yes                             4          
 ----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
-<<<                  1          driverdef                       DRIVERMODULE         yes                             1          
+<<                   5          def                             MODULE1              yes                             5          
+----                 -1                                         OTHERMODULES         no          MODULE1              -1         
+module               5          module                          MODULE1              yes                             5          
+compute              5          id                              MODULE1              yes                             5          
+>>                   5          enddef                          MODULE1              yes                             5          
+takes                5          takes                           MODULE1              yes                             5          
+input                5          input                           MODULE1              yes                             5          
+[                    5          sqbo                            MODULE1              yes                             5          
+x                    5          id                              INPUT_PLIST          yes                             5          
+----                 -1                                         MODULE1              no          INPUT_PLIST          -1         
+:                    5          colon                           INPUT_PLIST          yes                             5          
+integer              5          integer                         DATATYPE             yes                             5          
+----                 -1                                         INPUT_PLIST          no          DATATYPE             -1         
+,                    5          comma                           N1                   yes                             5          
+----                 -1                                         INPUT_PLIST          no          N1                   -1         
+y                    5          id                              N1                   yes                             5          
+:                    5          colon                           N1                   yes                             5          
+integer              5          integer                         DATATYPE             yes                             5          
+----                 -1                                         N1                   no          DATATYPE             -1         
+,                    5          comma                           N1                   yes                             5          
+----                 -1                                         N1                   no          N1                   -1         
+z                    5          id                              N1                   yes                             5          
+:                    5          colon                           N1                   yes                             5          
+integer              5          integer                         DATATYPE             yes                             5          
+----                 -1                                         N1                   no          DATATYPE             -1         
+----                 -1                                         N1                   yes                             -1         
+----                 -1                                         N1                   no          N1                   -1         
+]                    5          sqbc                            MODULE1              yes                             5          
+;                    5          semicol                         MODULE1              yes                             5          
+----                 -1                                         RET                  yes                             -1         
+----                 -1                                         MODULE1              no          RET                  -1         
+start                6          start                           MODULEDEF            yes                             6          
+----                 -1                                         MODULE1              no          MODULEDEF            -1         
+----                 -1                                         STATEMENTS           yes                             -1         
+----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
+end                  7          end                             MODULEDEF            yes                             7          
+----                 -1                                         OTHERMODULES         no          OTHERMODULES         -1         
+----                 -1                                         OTHERMODULES         yes                             -1         
+----                 -1                                         OTHERMODULES         no          OTHERMODULES         -1         
+<<<                  8          driverdef                       DRIVERMODULE         yes                             8          
 ----                 -1                                         PROGRAM              no          DRIVERMODULE         -1         
-driver               1          driver                          DRIVERMODULE         yes                             1          
-program              1          program                         DRIVERMODULE         yes                             1          
->>>                  1          driverenddef                    DRIVERMODULE         yes                             1          
-start                2          start                           MODULEDEF            yes                             2          
+driver               8          driver                          DRIVERMODULE         yes                             8          
+program              8          program                         DRIVERMODULE         yes                             8          
+>>>                  8          driverenddef                    DRIVERMODULE         yes                             8          
+start                9          start                           MODULEDEF            yes                             9          
 ----                 -1                                         DRIVERMODULE         no          MODULEDEF            -1         
-[                    3          sqbo                            OPTIONAL             yes                             3          
+[                    10         sqbo                            OPTIONAL             yes                             10         
 ----                 -1                                         MODULEREUSESTMT      no          OPTIONAL             -1         
-d                    3          id                              IDLIST               yes                             3          
+d                    10         id                              IDLIST               yes                             10         
 ----                 -1                                         OPTIONAL             no          IDLIST               -1         
-,                    3          comma                           N3                   yes                             3          
+,                    10         comma                           N3                   yes                             10         
 ----                 -1                                         IDLIST               no          N3                   -1         
-e                    3          id                              N3                   yes                             3          
+e                    10         id                              N3                   yes                             10         
 ----                 -1                                         N3                   yes                             -1         
 ----                 -1                                         N3                   no          N3                   -1         
-]                    3          sqbc                            OPTIONAL             yes                             3          
-:=                   3          assignop                        OPTIONAL             yes                             3          
+]                    10         sqbc                            OPTIONAL             yes                             10         
+:=                   10         assignop                        OPTIONAL             yes                             10         
 ----                 -1                                         SIMPLESTMT           no          MODULEREUSESTMT      -1         
-use                  3          use                             MODULEREUSESTMT      yes                             3          
-module               3          module                          MODULEREUSESTMT      yes                             3          
-fun                  3          id                              MODULEREUSESTMT      yes                             3          
-with                 3          with                            MODULEREUSESTMT      yes                             3          
-parameters           3          parameters                      MODULEREUSESTMT      yes                             3          
+use                  10         use                             MODULEREUSESTMT      yes                             10         
+module               10         module                          MODULEREUSESTMT      yes                             10         
+fun                  10         id                              MODULEREUSESTMT      yes                             10         
+with                 10         with                            MODULEREUSESTMT      yes                             10         
+parameters           10         parameters                      MODULEREUSESTMT      yes                             10         
 ----                 -1                                         SIGN                 yes                             -1         
 ----                 -1                                         ACTUALPARALIST       no          SIGN                 -1         
 ----                 -1                                         MODULEREUSESTMT      no          ACTUALPARALIST       -1         
-a                    3          id                              ACTUALPARALIST2      yes                             3          
+a                    10         id                              ACTUALPARALIST2      yes                             10         
 ----                 -1                                         ACTUALPARALIST       no          ACTUALPARALIST2      -1         
-[                    3          sqbo                            WHICHID              yes                             3          
+[                    10         sqbo                            WHICHID              yes                             10         
 ----                 -1                                         ACTUALPARALIST2      no          WHICHID              -1         
-2                    3          num                  2          VARALT               yes                             3          
+2                    10         num                  2          VARALT               yes                             10         
 ----                 -1                                         FACTOR2ALT           no          VARALT               -1         
 ----                 -1                                         FACTORALT            no          FACTOR2ALT           -1         
 ----                 -1                                         TERMALT              no          FACTORALT            -1         
@@ -44,16 +124,16 @@ a                    3          id                              ACTUALPARALIST2 
 ----                 -1                                         WHICHID              no          ARITHMETICEXPRALT    -1         
 ----                 -1                                         N5ALT                yes                             -1         
 ----                 -1                                         ARITHMETICEXPRALT    no          N5ALT                -1         
-]                    3          sqbc                            WHICHID              yes                             3          
-,                    3          comma                           N8                   yes                             3          
+]                    10         sqbc                            WHICHID              yes                             10         
+,                    10         comma                           N8                   yes                             10         
 ----                 -1                                         ACTUALPARALIST       no          N8                   -1         
 ----                 -1                                         SIGN                 yes                             -1         
 ----                 -1                                         N8                   no          SIGN                 -1         
-b                    3          id                              ACTUALPARALIST2      yes                             3          
+b                    10         id                              ACTUALPARALIST2      yes                             10         
 ----                 -1                                         N8                   no          ACTUALPARALIST2      -1         
-[                    3          sqbo                            WHICHID              yes                             3          
+[                    10         sqbo                            WHICHID              yes                             10         
 ----                 -1                                         ACTUALPARALIST2      no          WHICHID              -1         
-g                    3          id                              VARALT               yes                             3          
+g                    10         id                              VARALT               yes                             10         
 ----                 -1                                         FACTOR2ALT           no          VARALT               -1         
 ----                 -1                                         FACTORALT            no          FACTOR2ALT           -1         
 ----                 -1                                         TERMALT              no          FACTORALT            -1         
@@ -63,24 +143,24 @@ g                    3          id                              VARALT          
 ----                 -1                                         WHICHID              no          ARITHMETICEXPRALT    -1         
 ----                 -1                                         N5ALT                yes                             -1         
 ----                 -1                                         ARITHMETICEXPRALT    no          N5ALT                -1         
-]                    3          sqbc                            WHICHID              yes                             3          
-,                    3          comma                           N8                   yes                             3          
+]                    10         sqbc                            WHICHID              yes                             10         
+,                    10         comma                           N8                   yes                             10         
 ----                 -1                                         N8                   no          N8                   -1         
 ----                 -1                                         SIGN                 yes                             -1         
 ----                 -1                                         N8                   no          SIGN                 -1         
-c                    3          id                              ACTUALPARALIST2      yes                             3          
+c                    10         id                              ACTUALPARALIST2      yes                             10         
 ----                 -1                                         N8                   no          ACTUALPARALIST2      -1         
 ----                 -1                                         WHICHID              yes                             -1         
 ----                 -1                                         ACTUALPARALIST2      no          WHICHID              -1         
 ----                 -1                                         N8                   yes                             -1         
 ----                 -1                                         N8                   no          N8                   -1         
-;                    3          semicol                         MODULEREUSESTMT      yes                             3          
+;                    10         semicol                         MODULEREUSESTMT      yes                             10         
 ----                 -1                                         STATEMENT            no          SIMPLESTMT           -1         
 ----                 -1                                         STATEMENTS           no          STATEMENT            -1         
 ----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-end                  4          end                             MODULEDEF            yes                             4          
+end                  11         end                             MODULEDEF            yes                             11         
 ----                 -1                                         OTHERMODULES         yes                             -1         
 ----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
 ----                 -1                                         ROOT                 no          S                    -1         

@@ -222,7 +222,21 @@ void populate_function_and_symbol_tables(TREENODE root)
         if (strcmp(root->name, "Module1") == 0)
         {
             printf("REACHED MODULE1 NODE\n");
-            FUNCTION_TABLE_VALUE value = create_function_value();
+            // checking for redeclarations
+            bool redeclared = check_if_function_declared(root->child->lexeme);
+            FUNCTION_TABLE_VALUE value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
+            if (redeclared)
+            {
+
+                //  printf("value->input_list:   %s", value->input_list);
+                if (value->input_list != NULL)
+                    printf("\033[31m\nERROR : Function %s redeclared.\n\033[0m", root->child->lexeme);
+            }
+            else
+            {
+
+                FUNCTION_TABLE_VALUE value = create_function_value();
+            }
             value->input_list = root->child->next;
             if (strcmp(root->child->next->next->name, "OutputPlistHead") == 0)
                 value->output_list = root->child->next->next;
@@ -236,6 +250,36 @@ void populate_function_and_symbol_tables(TREENODE root)
             value->symbol_table_wrapper->next = NULL;
             function_table_insert(function_table, root->child->lexeme, value);
             current_symbol_table_wrapper = value->symbol_table_wrapper;
+        }
+        // checking for redeclaration of function
+        else if (strcmp(root->name, "MDSHead") == 0)
+        {
+            TREENODE temp = root->child;
+            while (temp)
+            {
+                bool redeclared = check_if_function_declared(temp->lexeme);
+                // printf("xdfsdfs %s\n", root->child->lexeme);
+                if (redeclared)
+                {
+                    // printf("ERROR: Function %s redeclared\n", temp->lexeme);
+                    printf("\033[31m\nERROR : Function %s redeclared.\n\033[0m", temp->lexeme);
+                }
+                else
+                {
+                    FUNCTION_TABLE_VALUE value = create_function_value();
+                    value->input_list = NULL;
+                    value->output_list = NULL;
+                    value->symbol_table_wrapper = create_symbol_table_wrapper();
+                    value->symbol_table_wrapper->name = root->child->name;
+                    strcat(value->symbol_table_wrapper->name, "_symbol_table");
+                    value->symbol_table_wrapper->parent = NULL;
+                    value->symbol_table_wrapper->child = NULL;
+                    value->symbol_table_wrapper->next = NULL;
+                    function_table_insert(function_table, root->child->lexeme, value);
+                    current_symbol_table_wrapper = value->symbol_table_wrapper;
+                }
+                temp = temp->child;
+            }
         }
         else if (strcmp(root->name, "InputPlistHead") == 0)
         {
@@ -435,7 +479,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 if (strcmp(temp2->name, "id") == 0)
                 {
                     bool dec_before = check_if_declared_before(temp2->lexeme);
-                    if(!dec_before)
+                    if (!dec_before)
                     {
                         printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m",temp2->lexeme);
                     }
