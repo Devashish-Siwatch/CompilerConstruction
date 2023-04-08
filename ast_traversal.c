@@ -214,11 +214,18 @@ void addListtoSymbolTable(TREENODE root, int nesting_level)
     // used when root->child is id and root->child->next is datatype
     TREENODE ListHead = root;
     TREENODE temp = ListHead->child; // points to first child in Listhead
+    //Going to stmts_end
+    TREENODE module1_node=root->parent;
+    TREENODE stmts_end_node=module1_node->child;
+    while(stmts_end_node->next!=NULL)
+        stmts_end_node=stmts_end_node->next;
+    int end_line_number=stmts_end_node->line_number;
     while (temp != NULL)
     {
 
         TREENODE datatype = temp->next;
         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
+        value->line_number_end=end_line_number;
         populateSymboltableValue(datatype,value,current_module_name,nesting_level,temp->line_number);
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
@@ -319,6 +326,7 @@ void populate_function_and_symbol_tables(TREENODE root)
         }
         else if (strcmp(root->name, "InputPlistHead" ) == 0 || strcmp(root->name, "OutputPlistHead") == 0)
         {
+            
             addListtoSymbolTable(root,0);
         }
         else if (strcmp(root->name, "ASSIGNMENTSTMT") == 0)
@@ -364,6 +372,11 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE datatype = root->child->next;
             TREENODE idListHead = root->child;
             TREENODE temp = idListHead->child; // points to first child in idList
+            // GOING TO STMTS_END
+            TREENODE stmts_end_node=root;
+            while(stmts_end_node->next!=NULL)
+                stmts_end_node=stmts_end_node->next;
+            int end_line_number=stmts_end_node->line_number;
             while (temp != NULL)
             {
                 bool id_exists = check_if_redeclared(temp->lexeme);
@@ -375,6 +388,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 {
                     SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
                     int nesting_level = get_nesting_level(current_symbol_table_wrapper)+1;
+                    value->line_number_end=end_line_number;
                     populateSymboltableValue(datatype,value,current_module_name,nesting_level,temp->line_number);
                     symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 }
