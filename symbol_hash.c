@@ -120,9 +120,16 @@ SYMBOL_TABLE_VALUE create_new_symbol_node(char* name)
     }
     else
     {
-        value->isarray=true;
+        value->isarray=false;
         value->symbol_table_value_union.not_array.type=integer;
     }
+    value->module_name = "----";
+    value->isInputParameter = false;
+    value->line_number_end = 0;
+    value->line_number_start =0;
+    value->nesting_level =0;
+    value->offset =0;
+    value->width =0;
     return value;
 }
 
