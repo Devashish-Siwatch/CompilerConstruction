@@ -1015,9 +1015,12 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     setASTParent(astHead);
     printAst(astHead);
     populate_function_and_symbol_tables(astHead);
+    ast_pass2(astHead);
     print_function_table();
-    for(int i=0 ; i<FUNC_HASHMAP_SIZE ; i++){
-        if(function_table[i].is_used){
+    for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
+    {
+        if (function_table[i].is_used)
+        {
             SYMBOL_TABLE_WRAPPER symbol_table = function_table[i].function_table_value->symbol_table_wrapper;
             printSymboltableDFS(symbol_table);
         }

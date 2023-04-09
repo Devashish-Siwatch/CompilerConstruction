@@ -259,7 +259,28 @@ void insert_symbol_table_at_end(SYMBOL_TABLE_WRAPPER wrapper, SYMBOL_TABLE_WRAPP
         temp->parent = wrapper;
     }
 }
-
+void ast_pass2(TREENODE root)
+{
+    if (root == NULL)
+    {
+        // printf("Currently at %s",head->name);
+        return;
+    }
+    else if (strcmp(root->name, "MODULE_REUSE_STMT") == 0)
+    {
+        printf("REACHED MODULE_REUSE_STMT NODE\n");
+        FUNCTION_TABLE_VALUE value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
+        if (value == NULL)
+        {
+            printf("ERROR: Module %s not declared\n", root->child->lexeme);
+        }
+        printf("value->input_list:   %s\n", value->input_list->child->lexeme);
+        printf("value->output_list:   %s\n", value->output_list->lexeme);
+        printf("%sasdasd", root->child->next->child->name);
+    }
+    ast_pass2(root->child);
+    ast_pass2(root->next);
+}
 void populate_function_and_symbol_tables(TREENODE root)
 {
     if (root == NULL)
@@ -274,7 +295,6 @@ void populate_function_and_symbol_tables(TREENODE root)
             printf("REACHED MODULE1 NODE\n");
             // checking for redeclarations
             bool redeclared = check_if_function_declared(root->child->lexeme);
-            printf("here\n");
             FUNCTION_TABLE_VALUE value;
             if (redeclared)
             {
@@ -282,7 +302,6 @@ void populate_function_and_symbol_tables(TREENODE root)
                 value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
                 if (value->input_list != NULL)
                     printf("\033[31m\nERROR : Module %s redeclared.\n\033[0m", root->child->lexeme);
-                printf("here\n");
             }
             else
             {
