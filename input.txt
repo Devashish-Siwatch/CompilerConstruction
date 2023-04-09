@@ -1,22 +1,24 @@
 
+**
+<<module praneet>> takes input [var1:real,var2:integer]; 
+returns [a:integer];
+start
+	print(x);
+end
+**
 
 <<<driver program>>>
 start
-	declare x,y:integer;
-	for(x in 1..5)
-	start
-		declare aaa:integer;
+	declare a: integer;
+	
+	switch(a)
+		start
+			case 1:
+				break;
+			default
+		end
 		
-	end
-	print(x);
 end
 
-<<module praneet>> takes input [sam:real,arr1:array[1..5] of integer]; 
-returns [out:boolean];
-start
-	declare sam:integer;
-	declare sam:boolean;
-	declare z:real;
-	print(z);
-end
+
 
