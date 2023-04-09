@@ -1,182 +1,210 @@
 ----                 -1                                         MODULEDECLARATIONS   yes                             -1         
 ----                 -1                                         PROGRAM              no          MODULEDECLARATIONS   -1         
 ----                 -1                                         S                    no          PROGRAM              -1         
-----                 -1                                         OTHERMODULES         yes                             -1         
-----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
-<<<                  3          driverdef                       DRIVERMODULE         yes                             3          
-----                 -1                                         PROGRAM              no          DRIVERMODULE         -1         
-driver               3          driver                          DRIVERMODULE         yes                             3          
-program              3          program                         DRIVERMODULE         yes                             3          
->>>                  3          driverenddef                    DRIVERMODULE         yes                             3          
-start                4          start                           MODULEDEF            yes                             4          
-----                 -1                                         DRIVERMODULE         no          MODULEDEF            -1         
-declare              5          declare                         DECLARESTMT          yes                             5          
+<<                   1          def                             MODULE1              yes                             1          
+----                 -1                                         OTHERMODULES         no          MODULE1              -1         
+module               1          module                          MODULE1              yes                             1          
+praneet              1          id                              MODULE1              yes                             1          
+>>                   1          enddef                          MODULE1              yes                             1          
+takes                1          takes                           MODULE1              yes                             1          
+input                1          input                           MODULE1              yes                             1          
+[                    1          sqbo                            MODULE1              yes                             1          
+sam                  1          id                              INPUT_PLIST          yes                             1          
+----                 -1                                         MODULE1              no          INPUT_PLIST          -1         
+:                    1          colon                           INPUT_PLIST          yes                             1          
+real                 1          real                            DATATYPE             yes                             1          
+----                 -1                                         INPUT_PLIST          no          DATATYPE             -1         
+,                    1          comma                           N1                   yes                             1          
+----                 -1                                         INPUT_PLIST          no          N1                   -1         
+arr1                 1          id                              N1                   yes                             1          
+:                    1          colon                           N1                   yes                             1          
+array                1          array                           DATATYPE             yes                             1          
+----                 -1                                         N1                   no          DATATYPE             -1         
+[                    1          sqbo                            DATATYPE             yes                             1          
+----                 -1                                         SIGN                 yes                             -1         
+----                 -1                                         INDEX                no          SIGN                 -1         
+----                 -1                                         RANGE2               no          INDEX                -1         
+1                    1          num                  1          INDEXELEMENTS        yes                             1          
+----                 -1                                         INDEX                no          INDEXELEMENTS        -1         
+----                 -1                                         DATATYPE             no          RANGE2               -1         
+..                   1          rangeop                         RANGE2               yes                             1          
+----                 -1                                         SIGN                 yes                             -1         
+----                 -1                                         INDEX                no          SIGN                 -1         
+----                 -1                                         RANGE2               no          INDEX                -1         
+5                    1          num                  5          INDEXELEMENTS        yes                             1          
+----                 -1                                         INDEX                no          INDEXELEMENTS        -1         
+]                    1          sqbc                            DATATYPE             yes                             1          
+of                   1          of                              DATATYPE             yes                             1          
+integer              1          integer                         TYPE                 yes                             1          
+----                 -1                                         DATATYPE             no          TYPE                 -1         
+----                 -1                                         N1                   yes                             -1         
+----                 -1                                         N1                   no          N1                   -1         
+]                    1          sqbc                            MODULE1              yes                             1          
+;                    1          semicol                         MODULE1              yes                             1          
+returns              2          returns                         RET                  yes                             2          
+----                 -1                                         MODULE1              no          RET                  -1         
+[                    2          sqbo                            RET                  yes                             2          
+out                  2          id                              OUTPUT_PLIST         yes                             2          
+----                 -1                                         RET                  no          OUTPUT_PLIST         -1         
+:                    2          colon                           OUTPUT_PLIST         yes                             2          
+boolean              2          boolean                         TYPE                 yes                             2          
+----                 -1                                         OUTPUT_PLIST         no          TYPE                 -1         
+----                 -1                                         N2                   yes                             -1         
+----                 -1                                         OUTPUT_PLIST         no          N2                   -1         
+]                    2          sqbc                            RET                  yes                             2          
+;                    2          semicol                         RET                  yes                             2          
+start                3          start                           MODULEDEF            yes                             3          
+----                 -1                                         MODULE1              no          MODULEDEF            -1         
+declare              4          declare                         DECLARESTMT          yes                             4          
 ----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-x                    5          id                              IDLIST               yes                             5          
+sam                  4          id                              IDLIST               yes                             4          
 ----                 -1                                         DECLARESTMT          no          IDLIST               -1         
-,                    5          comma                           N3                   yes                             5          
-----                 -1                                         IDLIST               no          N3                   -1         
-y                    5          id                              N3                   yes                             5          
 ----                 -1                                         N3                   yes                             -1         
-----                 -1                                         N3                   no          N3                   -1         
-:                    5          colon                           DECLARESTMT          yes                             5          
-integer              5          integer                         DATATYPE             yes                             5          
+----                 -1                                         IDLIST               no          N3                   -1         
+:                    4          colon                           DECLARESTMT          yes                             4          
+integer              4          integer                         DATATYPE             yes                             4          
 ----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
-;                    5          semicol                         DECLARESTMT          yes                             5          
+;                    4          semicol                         DECLARESTMT          yes                             4          
 ----                 -1                                         STATEMENTS           no          STATEMENT            -1         
 ----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
-for                  6          for                             ITERATIVESTMT        yes                             6          
-----                 -1                                         STATEMENT            no          ITERATIVESTMT        -1         
-(                    6          bo                              ITERATIVESTMT        yes                             6          
-x                    6          id                              ITERATIVESTMT        yes                             6          
-in                   6          in                              ITERATIVESTMT        yes                             6          
-1                    6          num                  1          NUM2                 yes                             6          
-----                 -1                                         RANGE                no          NUM2                 -1         
-----                 -1                                         ITERATIVESTMT        no          RANGE                -1         
-..                   6          rangeop                         RANGE                yes                             6          
-5                    6          num                  5          NUM2                 yes                             6          
-----                 -1                                         RANGE                no          NUM2                 -1         
-)                    6          bc                              ITERATIVESTMT        yes                             6          
-start                7          start                           ITERATIVESTMT        yes                             7          
-declare              8          declare                         DECLARESTMT          yes                             8          
+----                 -1                                         OPTIONAL             yes                             -1         
+----                 -1                                         MODULEREUSESTMT      no          OPTIONAL             -1         
+----                 -1                                         SIMPLESTMT           no          MODULEREUSESTMT      -1         
+use                  5          use                             MODULEREUSESTMT      yes                             5          
+module               5          module                          MODULEREUSESTMT      yes                             5          
+praneet              5          id                              MODULEREUSESTMT      yes                             5          
+with                 5          with                            MODULEREUSESTMT      yes                             5          
+----                 -9999                                      MODULEREUSESTMT      yes                             -9999      
+----                 -1                                         SIGN                 yes                             -1         
+----                 -1                                         ACTUALPARALIST       no          SIGN                 -1         
+----                 -1                                         MODULEREUSESTMT      no          ACTUALPARALIST       -1         
+sam                  5          id                              ACTUALPARALIST2      yes                             5          
+----                 -1                                         ACTUALPARALIST       no          ACTUALPARALIST2      -1         
+----                 -1                                         WHICHID              yes                             -1         
+----                 -1                                         ACTUALPARALIST2      no          WHICHID              -1         
+,                    5          comma                           N8                   yes                             5          
+----                 -1                                         ACTUALPARALIST       no          N8                   -1         
+----                 -1                                         SIGN                 yes                             -1         
+----                 -1                                         N8                   no          SIGN                 -1         
+arr1                 5          id                              ACTUALPARALIST2      yes                             5          
+----                 -1                                         N8                   no          ACTUALPARALIST2      -1         
+[                    5          sqbo                            WHICHID              yes                             5          
+----                 -1                                         ACTUALPARALIST2      no          WHICHID              -1         
+1                    5          num                  1          VARALT               yes                             5          
+----                 -1                                         FACTOR2ALT           no          VARALT               -1         
+----                 -1                                         FACTORALT            no          FACTOR2ALT           -1         
+----                 -1                                         TERMALT              no          FACTORALT            -1         
+----                 -1                                         ARITHMETICEXPRALT    no          TERMALT              -1         
+----                 -1                                         N6ALT                yes                             -1         
+----                 -1                                         TERMALT              no          N6ALT                -1         
+----                 -1                                         WHICHID              no          ARITHMETICEXPRALT    -1         
+----                 -1                                         N5ALT                yes                             -1         
+----                 -1                                         ARITHMETICEXPRALT    no          N5ALT                -1         
+]                    5          sqbc                            WHICHID              yes                             5          
+----                 -1                                         N8                   yes                             -1         
+----                 -1                                         N8                   no          N8                   -1         
+;                    5          semicol                         MODULEREUSESTMT      yes                             5          
+----                 -1                                         STATEMENT            no          SIMPLESTMT           -1         
+----                 -1                                         STATEMENTS           no          STATEMENT            -1         
+----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+declare              6          declare                         DECLARESTMT          yes                             6          
 ----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-aaa                  8          id                              IDLIST               yes                             8          
+z                    6          id                              IDLIST               yes                             6          
 ----                 -1                                         DECLARESTMT          no          IDLIST               -1         
 ----                 -1                                         N3                   yes                             -1         
 ----                 -1                                         IDLIST               no          N3                   -1         
-:                    8          colon                           DECLARESTMT          yes                             8          
-integer              8          integer                         DATATYPE             yes                             8          
+:                    6          colon                           DECLARESTMT          yes                             6          
+real                 6          real                            DATATYPE             yes                             6          
 ----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
-;                    8          semicol                         DECLARESTMT          yes                             8          
+;                    6          semicol                         DECLARESTMT          yes                             6          
+----                 -1                                         STATEMENTS           no          STATEMENT            -1         
+----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+print                7          print                           IOSTMT               yes                             7          
+----                 -1                                         STATEMENT            no          IOSTMT               -1         
+(                    7          bo                              IOSTMT               yes                             7          
+z                    7          id                              VAR2                 yes                             7          
+----                 -1                                         VAR_BOOL             no          VAR2                 -1         
+----                 -1                                         WHICHID2             yes                             -1         
+----                 -1                                         VAR2                 no          WHICHID2             -1         
+----                 -1                                         IOSTMT               no          VAR_BOOL             -1         
+)                    7          bc                              IOSTMT               yes                             7          
+;                    7          semicol                         IOSTMT               yes                             7          
+----                 -1                                         STATEMENTS           no          STATEMENT            -1         
+----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+----                 -1                                         STATEMENTS           yes                             -1         
+----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+end                  8          end                             MODULEDEF            yes                             8          
+----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
+----                 -1                                         OTHERMODULES         yes                             -1         
+----                 -1                                         OTHERMODULES         no          OTHERMODULES         -1         
+<<<                  10         driverdef                       DRIVERMODULE         yes                             10         
+----                 -1                                         PROGRAM              no          DRIVERMODULE         -1         
+driver               10         driver                          DRIVERMODULE         yes                             10         
+program              10         program                         DRIVERMODULE         yes                             10         
+>>>                  10         driverenddef                    DRIVERMODULE         yes                             10         
+start                11         start                           MODULEDEF            yes                             11         
+----                 -1                                         DRIVERMODULE         no          MODULEDEF            -1         
+declare              12         declare                         DECLARESTMT          yes                             12         
+----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
+x                    12         id                              IDLIST               yes                             12         
+----                 -1                                         DECLARESTMT          no          IDLIST               -1         
+,                    12         comma                           N3                   yes                             12         
+----                 -1                                         IDLIST               no          N3                   -1         
+y                    12         id                              N3                   yes                             12         
+----                 -1                                         N3                   yes                             -1         
+----                 -1                                         N3                   no          N3                   -1         
+:                    12         colon                           DECLARESTMT          yes                             12         
+integer              12         integer                         DATATYPE             yes                             12         
+----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
+;                    12         semicol                         DECLARESTMT          yes                             12         
+----                 -1                                         STATEMENTS           no          STATEMENT            -1         
+----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
+for                  13         for                             ITERATIVESTMT        yes                             13         
+----                 -1                                         STATEMENT            no          ITERATIVESTMT        -1         
+(                    13         bo                              ITERATIVESTMT        yes                             13         
+x                    13         id                              ITERATIVESTMT        yes                             13         
+in                   13         in                              ITERATIVESTMT        yes                             13         
+1                    13         num                  1          NUM2                 yes                             13         
+----                 -1                                         RANGE                no          NUM2                 -1         
+----                 -1                                         ITERATIVESTMT        no          RANGE                -1         
+..                   13         rangeop                         RANGE                yes                             13         
+5                    13         num                  5          NUM2                 yes                             13         
+----                 -1                                         RANGE                no          NUM2                 -1         
+)                    13         bc                              ITERATIVESTMT        yes                             13         
+start                14         start                           ITERATIVESTMT        yes                             14         
+declare              15         declare                         DECLARESTMT          yes                             15         
+----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
+aaa                  15         id                              IDLIST               yes                             15         
+----                 -1                                         DECLARESTMT          no          IDLIST               -1         
+----                 -1                                         N3                   yes                             -1         
+----                 -1                                         IDLIST               no          N3                   -1         
+:                    15         colon                           DECLARESTMT          yes                             15         
+integer              15         integer                         DATATYPE             yes                             15         
+----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
+;                    15         semicol                         DECLARESTMT          yes                             15         
 ----                 -1                                         STATEMENTS           no          STATEMENT            -1         
 ----                 -1                                         ITERATIVESTMT        no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-end                  10         end                             ITERATIVESTMT        yes                             10         
+end                  16         end                             ITERATIVESTMT        yes                             16         
 ----                 -1                                         STATEMENTS           no          STATEMENT            -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-print                11         print                           IOSTMT               yes                             11         
+print                17         print                           IOSTMT               yes                             17         
 ----                 -1                                         STATEMENT            no          IOSTMT               -1         
-(                    11         bo                              IOSTMT               yes                             11         
-x                    11         id                              VAR2                 yes                             11         
+(                    17         bo                              IOSTMT               yes                             17         
+x                    17         id                              VAR2                 yes                             17         
 ----                 -1                                         VAR_BOOL             no          VAR2                 -1         
 ----                 -1                                         WHICHID2             yes                             -1         
 ----                 -1                                         VAR2                 no          WHICHID2             -1         
 ----                 -1                                         IOSTMT               no          VAR_BOOL             -1         
-)                    11         bc                              IOSTMT               yes                             11         
-;                    11         semicol                         IOSTMT               yes                             11         
+)                    17         bc                              IOSTMT               yes                             17         
+;                    17         semicol                         IOSTMT               yes                             17         
 ----                 -1                                         STATEMENTS           no          STATEMENT            -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-end                  12         end                             MODULEDEF            yes                             12         
-<<                   14         def                             MODULE1              yes                             14         
-----                 -1                                         OTHERMODULES         no          MODULE1              -1         
-module               14         module                          MODULE1              yes                             14         
-praneet              14         id                              MODULE1              yes                             14         
->>                   14         enddef                          MODULE1              yes                             14         
-takes                14         takes                           MODULE1              yes                             14         
-input                14         input                           MODULE1              yes                             14         
-[                    14         sqbo                            MODULE1              yes                             14         
-sam                  14         id                              INPUT_PLIST          yes                             14         
-----                 -1                                         MODULE1              no          INPUT_PLIST          -1         
-:                    14         colon                           INPUT_PLIST          yes                             14         
-real                 14         real                            DATATYPE             yes                             14         
-----                 -1                                         INPUT_PLIST          no          DATATYPE             -1         
-,                    14         comma                           N1                   yes                             14         
-----                 -1                                         INPUT_PLIST          no          N1                   -1         
-arr1                 14         id                              N1                   yes                             14         
-:                    14         colon                           N1                   yes                             14         
-array                14         array                           DATATYPE             yes                             14         
-----                 -1                                         N1                   no          DATATYPE             -1         
-[                    14         sqbo                            DATATYPE             yes                             14         
-----                 -1                                         SIGN                 yes                             -1         
-----                 -1                                         INDEX                no          SIGN                 -1         
-----                 -1                                         RANGE2               no          INDEX                -1         
-1                    14         num                  1          INDEXELEMENTS        yes                             14         
-----                 -1                                         INDEX                no          INDEXELEMENTS        -1         
-----                 -1                                         DATATYPE             no          RANGE2               -1         
-..                   14         rangeop                         RANGE2               yes                             14         
-----                 -1                                         SIGN                 yes                             -1         
-----                 -1                                         INDEX                no          SIGN                 -1         
-----                 -1                                         RANGE2               no          INDEX                -1         
-5                    14         num                  5          INDEXELEMENTS        yes                             14         
-----                 -1                                         INDEX                no          INDEXELEMENTS        -1         
-]                    14         sqbc                            DATATYPE             yes                             14         
-of                   14         of                              DATATYPE             yes                             14         
-integer              14         integer                         TYPE                 yes                             14         
-----                 -1                                         DATATYPE             no          TYPE                 -1         
-----                 -1                                         N1                   yes                             -1         
-----                 -1                                         N1                   no          N1                   -1         
-]                    14         sqbc                            MODULE1              yes                             14         
-;                    14         semicol                         MODULE1              yes                             14         
-returns              15         returns                         RET                  yes                             15         
-----                 -1                                         MODULE1              no          RET                  -1         
-[                    15         sqbo                            RET                  yes                             15         
-out                  15         id                              OUTPUT_PLIST         yes                             15         
-----                 -1                                         RET                  no          OUTPUT_PLIST         -1         
-:                    15         colon                           OUTPUT_PLIST         yes                             15         
-boolean              15         boolean                         TYPE                 yes                             15         
-----                 -1                                         OUTPUT_PLIST         no          TYPE                 -1         
-----                 -1                                         N2                   yes                             -1         
-----                 -1                                         OUTPUT_PLIST         no          N2                   -1         
-]                    15         sqbc                            RET                  yes                             15         
-;                    15         semicol                         RET                  yes                             15         
-start                16         start                           MODULEDEF            yes                             16         
-----                 -1                                         MODULE1              no          MODULEDEF            -1         
-declare              17         declare                         DECLARESTMT          yes                             17         
-----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-sam                  17         id                              IDLIST               yes                             17         
-----                 -1                                         DECLARESTMT          no          IDLIST               -1         
-----                 -1                                         N3                   yes                             -1         
-----                 -1                                         IDLIST               no          N3                   -1         
-:                    17         colon                           DECLARESTMT          yes                             17         
-integer              17         integer                         DATATYPE             yes                             17         
-----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
-;                    17         semicol                         DECLARESTMT          yes                             17         
-----                 -1                                         STATEMENTS           no          STATEMENT            -1         
-----                 -1                                         MODULEDEF            no          STATEMENTS           -1         
-declare              18         declare                         DECLARESTMT          yes                             18         
-----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-sam                  18         id                              IDLIST               yes                             18         
-----                 -1                                         DECLARESTMT          no          IDLIST               -1         
-----                 -1                                         N3                   yes                             -1         
-----                 -1                                         IDLIST               no          N3                   -1         
-:                    18         colon                           DECLARESTMT          yes                             18         
-boolean              18         boolean                         DATATYPE             yes                             18         
-----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
-;                    18         semicol                         DECLARESTMT          yes                             18         
-----                 -1                                         STATEMENTS           no          STATEMENT            -1         
-----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-declare              19         declare                         DECLARESTMT          yes                             19         
-----                 -1                                         STATEMENT            no          DECLARESTMT          -1         
-z                    19         id                              IDLIST               yes                             19         
-----                 -1                                         DECLARESTMT          no          IDLIST               -1         
-----                 -1                                         N3                   yes                             -1         
-----                 -1                                         IDLIST               no          N3                   -1         
-:                    19         colon                           DECLARESTMT          yes                             19         
-real                 19         real                            DATATYPE             yes                             19         
-----                 -1                                         DECLARESTMT          no          DATATYPE             -1         
-;                    19         semicol                         DECLARESTMT          yes                             19         
-----                 -1                                         STATEMENTS           no          STATEMENT            -1         
-----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-print                20         print                           IOSTMT               yes                             20         
-----                 -1                                         STATEMENT            no          IOSTMT               -1         
-(                    20         bo                              IOSTMT               yes                             20         
-z                    20         id                              VAR2                 yes                             20         
-----                 -1                                         VAR_BOOL             no          VAR2                 -1         
-----                 -1                                         WHICHID2             yes                             -1         
-----                 -1                                         VAR2                 no          WHICHID2             -1         
-----                 -1                                         IOSTMT               no          VAR_BOOL             -1         
-)                    20         bc                              IOSTMT               yes                             20         
-;                    20         semicol                         IOSTMT               yes                             20         
-----                 -1                                         STATEMENTS           no          STATEMENT            -1         
-----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-----                 -1                                         STATEMENTS           yes                             -1         
-----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
-end                  21         end                             MODULEDEF            yes                             21         
-----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
+end                  18         end                             MODULEDEF            yes                             18         
 ----                 -1                                         OTHERMODULES         yes                             -1         
-----                 -1                                         OTHERMODULES         no          OTHERMODULES         -1         
+----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
 ----                 -1                                         ROOT                 no          S                    -1         
 ----                 -1                                         S                    yes                             -1         

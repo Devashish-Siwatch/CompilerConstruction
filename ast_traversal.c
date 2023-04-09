@@ -523,7 +523,11 @@ void populate_function_and_symbol_tables(TREENODE root)
         }
         else if (strcmp(root->name, "MODULE_REUSE_STMT") == 0)
         {
+
             TREENODE temp = root->child;
+            if (current_module_name != NULL)
+                if (strcmp(current_module_name, root->child->lexeme) == 0)
+                    printf("\033[31m\nERROR : Recursion found in Module %s.\n\033[0m", root->child->lexeme);
             if (strcmp(temp->name, "id") != 0)
             {
                 TREENODE temp2 = temp->child;

@@ -1,4 +1,11 @@
-
+<<module praneet>> takes input [sam:real,arr1:array[1..5] of integer]; 
+returns [out:boolean];
+start
+	declare sam:integer;
+	use module praneet with input [sam:real,arr1:array[1..5] of integer];
+	declare z:real;
+	print(z);
+end
 
 <<<driver program>>>
 start
@@ -6,17 +13,9 @@ start
 	for(x in 1..5)
 	start
 		declare aaa:integer;
-		
 	end
 	print(x);
 end
 
-<<module praneet>> takes input [sam:real,arr1:array[1..5] of integer]; 
-returns [out:boolean];
-start
-	declare sam:integer;
-	declare sam:boolean;
-	declare z:real;
-	print(z);
-end
+
 
