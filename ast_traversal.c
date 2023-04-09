@@ -336,11 +336,12 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE temp = root->child;
             while (temp)
             {
+                //printf("%s\n",temp->lexeme);
                 bool redeclared = check_if_function_declared(temp->lexeme);
                 // printf("xdfsdfs %s\n", root->child->lexeme);
                 if (redeclared)
                 {
-                    // printf("ERROR: Function %s redeclared\n", temp->lexeme);
+                     //printf("ERROR: Function %s redeclared\n", temp->lexeme);
                     printf("\033[31m\nERROR : Module %s redeclared.\n\033[0m", temp->lexeme);
                 }
                 else
@@ -349,12 +350,12 @@ void populate_function_and_symbol_tables(TREENODE root)
                     value->input_list = NULL;
                     value->output_list = NULL;
                     value->symbol_table_wrapper = create_symbol_table_wrapper();
-                    value->symbol_table_wrapper->name = root->child->name;
+                    value->symbol_table_wrapper->name = temp->name;
                     strcat(value->symbol_table_wrapper->name, "_symbol_table");
                     value->symbol_table_wrapper->parent = NULL;
                     value->symbol_table_wrapper->child = NULL;
                     value->symbol_table_wrapper->next = NULL;
-                    function_table_insert(function_table, root->child->lexeme, value);
+                    function_table_insert(function_table, temp->lexeme, value);
                     current_symbol_table_wrapper = value->symbol_table_wrapper;
                 }
                 temp = temp->child;
@@ -578,8 +579,18 @@ void populate_function_and_symbol_tables(TREENODE root)
 
             TREENODE temp = root->child;
             if (current_module_name != NULL)
-                if (strcmp(current_module_name, root->child->lexeme) == 0)
-                    printf("\033[31m\nERROR : Recursion found in Module %s.\n\033[0m", root->child->lexeme);
+            {
+                if(strcmp(temp->next->name,"id")!=0)
+                {
+                    if (strcmp(current_module_name, root->child->lexeme) == 0)
+                        printf("\033[31m\nERROR : Recursion found in Module %s.\n\033[0m", root->child->lexeme);
+                }
+                else
+                {
+                    if (strcmp(current_module_name, root->child->next->lexeme) == 0)
+                        printf("\033[31m\nERROR : Recursion found in Module %s.\n\033[0m", root->child->next->lexeme);
+                }
+            }
             if (strcmp(temp->name, "id") != 0)
             {
                 TREENODE temp2 = temp->child;

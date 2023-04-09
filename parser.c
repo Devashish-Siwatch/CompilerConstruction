@@ -1015,7 +1015,7 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     setASTParent(astHead);
     printAst(astHead);
     populate_function_and_symbol_tables(astHead);
-    ast_pass2(astHead);
+    //ast_pass2(astHead);
     print_function_table();
     for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
     {
