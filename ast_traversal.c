@@ -20,6 +20,15 @@ int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper)
     }
     return count;
 }
+int get_type_of_variable(char* lexeme){
+       SYMBOL_TABLE_VALUE stv = symbol_table_get(current_symbol_table_wrapper->symbol_table,lexeme, strlen(lexeme));
+        if(stv->symbol_table_value_union.not_array.type==integer)
+            return 0;
+        else if(stv->symbol_table_value_union.not_array.type==real)
+         return 1;
+    return 2;
+    
+}
 
 bool check_if_declared_before(char *var)
 {
@@ -456,6 +465,19 @@ void populate_function_and_symbol_tables(TREENODE root)
         {
             // checking if condition has expr has been declared before
             bool is_declared = check_if_declared_before(root->child->lexeme);
+            if(get_type_of_variable(root->child->lexeme)==2){
+                if(root->child->next->next!=NULL)
+                    printf("\033[31m\nERROR : Default statement not expected in boolean switch case\n\033[0m");  
+            }
+            else if(get_type_of_variable(root->child->lexeme)==0){
+
+             
+                if(root->child->next->next==NULL)
+                    printf("\033[31m\nERROR : Default statement is expected in integer switch case\n\033[0m");
+            }
+            if(get_type_of_variable(root->child->lexeme)==1){
+                printf("\033[31m\nERROR : %s has type real, expected integer or boolean\n\033[0m", root->child->lexeme);   
+            }
             if (!is_declared)
             {
                 printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", root->child->lexeme);
@@ -463,8 +485,16 @@ void populate_function_and_symbol_tables(TREENODE root)
             // check_if_declared_before(root->child->lexeme);
         }
         else if (strcmp(root->name, "CASE_STMT") == 0)
-        {
+        {   
+            
+            int type_of_switch_variable=get_type_of_variable(root->parent->parent->child->lexeme);
+            if(type_of_switch_variable==0 && (strcmp(root->child->lexeme,"true")==0 || strcmp(root->child->lexeme,"false")==0)){
+                printf("\033[31m\nERROR : Case value is expected to have type Integer.\n\033[0m");
+            }
+            if(type_of_switch_variable==2 && !(strcmp(root->child->lexeme,"true")==0 || strcmp(root->child->lexeme,"false")==0)){
+                printf("\033[31m\nERROR : Case value is expected to have type boolean.\n\033[0m");
 
+            }
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
             // init_symbolhashmap(temp->symbol_table);
             temp->name = "CASE_STMT_symbol_table";
