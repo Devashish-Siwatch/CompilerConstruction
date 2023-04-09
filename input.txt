@@ -4,7 +4,6 @@ returns [out:boolean];
 start
 	print(x);
 end
-**
 
 <<<driver program>>>
 start
