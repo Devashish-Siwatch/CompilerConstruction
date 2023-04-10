@@ -20,9 +20,30 @@ int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper)
     }
     return count;
 }
+
+SYMBOL_TABLE_VALUE get_symbol_table_value_in_above_table(char *var)
+{
+    SYMBOL_TABLE_WRAPPER temp_wrapper = current_symbol_table_wrapper;
+    while (true)
+    {
+        if(temp_wrapper==NULL)
+            return NULL;
+        SYMBOL_TABLE_VALUE value = symbol_table_get(temp_wrapper->symbol_table, var, strlen(var));
+        if (value != NULL)
+            return value;
+        else
+        {       
+                temp_wrapper = temp_wrapper->parent;
+        }
+    }
+}
+
+
 int get_type_of_variable(char *lexeme)
 {
-    SYMBOL_TABLE_VALUE stv = symbol_table_get(current_symbol_table_wrapper->symbol_table, lexeme, strlen(lexeme));
+    printf("Hi");
+    SYMBOL_TABLE_VALUE stv = get_symbol_table_value_in_above_table(lexeme);
+    printf("%s\n",stv->module_name);
     if (stv->symbol_table_value_union.not_array.type == integer)
         return 0;
     else if (stv->symbol_table_value_union.not_array.type == real)
@@ -137,12 +158,12 @@ void populateSymboltableValue(TREENODE datatype, SYMBOL_TABLE_VALUE value, char 
         TREENODE elementType = datatype->child->next->next;
 
         // bottom range
-        if (strcmp(range1->name, "plus") == 0)
+        if (strcmp(range1->name, "PLUS") == 0)
         {
             range1 = range1->child;
             value->symbol_table_value_union.array.is_bottom_sign_plus = true;
         }
-        else if (strcmp(range1->name, "minus") == 0)
+        else if (strcmp(range1->name, "MINUS") == 0)
         {
             range1 = range1->child;
             value->symbol_table_value_union.array.is_bottom_sign_plus = false;
@@ -163,12 +184,12 @@ void populateSymboltableValue(TREENODE datatype, SYMBOL_TABLE_VALUE value, char 
         }
 
         // top range
-        if (strcmp(range2->name, "plus") == 0)
+        if (strcmp(range2->name, "PLUS") == 0)
         {
             range2 = range2->child;
             value->symbol_table_value_union.array.is_top_sign_plus = true;
         }
-        else if (strcmp(range2->name, "minus") == 0)
+        else if (strcmp(range2->name, "MINUS") == 0)
         {
             range2 = range2->child;
             value->symbol_table_value_union.array.is_top_sign_plus = false;
@@ -278,15 +299,242 @@ void ast_pass2(TREENODE root)
     else if (strcmp(root->name, "MODULE_REUSE_STMT") == 0)
     {
         printf("REACHED MODULE_REUSE_STMT NODE\n");
-        FUNCTION_TABLE_VALUE value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
-        if (value == NULL)
-        {
-            printf("ERROR: Module %s not declared\n", root->child->lexeme);
+        TREENODE module_id_node;
+        FUNCTION_TABLE_VALUE value;
+        TREENODE optional=NULL;
+        if(strcmp(root->child->name,"id")==0){
+            module_id_node=root->child;
+
+            value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
         }
-        printf("value->input_list:   %s\n", value->input_list->child->lexeme);
-        printf("value->output_list:   %s\n", value->output_list->lexeme);
+        else{
+            optional=root->child;
+            module_id_node=root->child->next;
+            value = function_table_get(function_table, module_id_node->lexeme, strlen(module_id_node->lexeme));
+        }
+        TREENODE input_plist_iterator=value->input_list->child;
+        TREENODE apl_iter=module_id_node->next->child;
+        while(input_plist_iterator!=NULL && apl_iter!=NULL){
+            // printf("value->input_list:   %s\n", input_plist_iterator->lexeme);
+            
+            //printf("type of input list parameter is %s\n", input_plist_iterator->next->name);
+            
+
+            TREENODE apl_id_node;
+            if(strcmp(apl_iter->name,"PLUS")==0 || strcmp(apl_iter->name,"MINUS")==0 ){
+                apl_id_node=apl_iter->next;
+            }
+            else
+                apl_id_node=apl_iter;
+            //printf("APL ids: %s\n",apl_id_node->lexeme);
+            if(strcmp(apl_id_node->name,"num")==0){
+             
+                if(strcmp(input_plist_iterator->next->name,"integer")!=0){
+                    printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", apl_id_node->lexeme);
+                }
+            }
+            else if(strcmp(apl_id_node->name,"rnum")==0){
+                if(strcmp(input_plist_iterator->next->name,"real")!=0){
+                    printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", apl_id_node->lexeme);
+                }
+            }
+            else{
+                
+                SYMBOL_TABLE_VALUE sym_val= get_symbol_table_value_in_above_table(apl_id_node->lexeme);
+                if(sym_val!=NULL){
+                    
+                    if(sym_val->isarray==false){
+                        if(strcmp(input_plist_iterator->next->name,"RANGE2")==0){
+                            printf("\033[31m\nERROR : %s should be an array.\n\033[0m", apl_id_node->lexeme);
+                        }
+                        else if(sym_val->symbol_table_value_union.not_array.type==integer){
+                            if(strcmp(input_plist_iterator->next->name,"integer")!=0){
+                                printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", apl_id_node->lexeme);
+                            }
+                        }
+                        else if(sym_val->symbol_table_value_union.not_array.type==real){
+                            if(strcmp(input_plist_iterator->next->name,"real")!=0){
+                                printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", apl_id_node->lexeme);
+                            }
+                        }
+                        else{
+                            if(strcmp(input_plist_iterator->next->name,"boolean")!=0){
+                                printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", apl_id_node->lexeme);
+                            }
+                        }
+
+                    }
+                    else{
+                        if(strcmp(input_plist_iterator->next->name,"RANGE2")!=0){
+                            printf("\033[31m\nERROR : %s should not be an array.\n\033[0m", apl_id_node->lexeme);
+                        }
+                        else{
+                            
+                            if(sym_val->symbol_table_value_union.array.element_type==integer){
+                                
+                                //printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
+                               if(strcmp(input_plist_iterator->next->child->next->next->name,"integer")!=0){
+                                    printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", apl_id_node->lexeme);
+                               } 
+                            }
+                            else if(sym_val->symbol_table_value_union.array.element_type==real){
+                                
+                                //printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
+                               if(strcmp(input_plist_iterator->next->child->next->next->name,"real")!=0){
+                                    printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", apl_id_node->lexeme);
+                               } 
+                            }
+                            else if(sym_val->symbol_table_value_union.array.element_type==boolean){
+                                
+                                //printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
+                               if(strcmp(input_plist_iterator->next->child->next->next->name,"boolean")!=0){
+                                    printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", apl_id_node->lexeme);
+                               } 
+                            }
+                            // printf("%d here",sym_val->symbol_table_value_union.array.bottom_range.bottom);
+                            if(sym_val->symbol_table_value_union.array.is_bottom_dynamic==false && sym_val->symbol_table_value_union.array.is_top_dynamic==false){
+                                int lower_bound_apl=sym_val->symbol_table_value_union.array.bottom_range.bottom;
+                                if(sym_val->symbol_table_value_union.array.is_bottom_sign_plus==false)
+                                    lower_bound_apl*=-1;
+                                
+                                int upper_bound_apl=sym_val->symbol_table_value_union.array.top_range.top;
+                                if(sym_val->symbol_table_value_union.array.is_top_sign_plus==false)
+                                    upper_bound_apl*=-1;
+
+                                int lower_bound_ipl;
+                                int upper_bound_ipl;
+                                TREENODE lower_bound_ipl_node = input_plist_iterator->next->child;
+                                TREENODE upper_bound_ipl_node = input_plist_iterator->next->child->next;
+                                
+
+                                // bottom range
+                                if (strcmp(lower_bound_ipl_node->name, "PLUS") == 0)
+                                {
+                                    lower_bound_ipl_node = lower_bound_ipl_node->child;
+                                    lower_bound_ipl=1;
+                                }
+                                else if (strcmp(lower_bound_ipl_node->name, "MINUS") == 0)
+                                {
+                                    lower_bound_ipl=-1;
+                                    lower_bound_ipl_node = lower_bound_ipl_node->child;
+                                }
+                                else
+                                {
+                                    lower_bound_ipl=1;
+                                }
+                                lower_bound_ipl*=(atoi(lower_bound_ipl_node->lexeme));
+                                
+
+                                // top range
+                                if (strcmp(upper_bound_ipl_node->name, "PLUS") == 0)
+                                {
+                                    upper_bound_ipl_node = upper_bound_ipl_node->child;
+                                    upper_bound_ipl=1;
+                                }
+                                else if (strcmp(upper_bound_ipl_node->name, "MINUS") == 0)
+                                {
+                                    upper_bound_ipl=-1;
+                                    upper_bound_ipl_node = upper_bound_ipl_node->child;
+                                }
+                                else
+                                {
+                                    upper_bound_ipl=1;
+                                }
+                                upper_bound_ipl*=(atoi(upper_bound_ipl_node->lexeme));
+
+                                // int upper_bound_apl=sym_val->symbol_table_value_union.array.top_range.top;
+                                // if(strcmp(input_plist_iterator->next->child->name,"PLUS")==0)
+                                // printf("lower bound %d upper bound %d of apl \n",lower_bound_apl,upper_bound_apl);
+                                // printf("lower bound %d upper bound %d of ipl \n",lower_bound_ipl,upper_bound_ipl);
+                                int size_of_array_apl=abs(upper_bound_apl-lower_bound_apl);
+                                int size_of_array_ipl=abs(upper_bound_ipl-lower_bound_ipl);
+                                if(size_of_array_apl!=size_of_array_ipl){
+                                    printf("\033[31m\nERROR : %s array size does not match with input parameter array size.\n\033[0m", apl_id_node->lexeme);
+                                }
+
+                            }
+                            
+                            
+                            
+                        }
+                    }
+                    // if(strcmp(input_plist_iterator->next->name,"integer")==0){
+                    
+                    //  }
+
+                }
+            }
+            
+            
+
+
+            input_plist_iterator=input_plist_iterator->child;
+            apl_iter=apl_iter->child;
+
+        }
+        
+        if(input_plist_iterator==NULL && apl_iter!=NULL){
+            printf("\033[31m\nERROR : Too many arguments in calling module: %s.\n\033[0m",module_id_node->lexeme);
+        }
+        if(input_plist_iterator!=NULL && apl_iter==NULL){
+            printf("\033[31m\nERROR : Too few arguments in calling module: %s.\n\033[0m",module_id_node->lexeme);
+        }
+        
+        //printf("value->input_list:   %s\n", value->input_list->child->next->name);
+        // SYMBOL_TABLE_VALUE sym_val=symbol_table_get(value->symbol_table_wrapper->symbol_table,value->input_list->child->lexeme,strlen(value->input_list->child->lexeme));
+        // printf("Module Name of input list parameter : %s\n", sym_val->symbol_table_value_union.not_array.type);
+        if(optional==NULL && value->output_list!=NULL){
+            printf("\033[31m\nERROR : Expected return parameters while calling module : %s.\n\033[0m",module_id_node->lexeme);
+        }
+        if(optional!=NULL && value->output_list==NULL){
+            printf("\033[31m\nERROR : No return parameter expected while calling module: %s.\n\033[0m",module_id_node->lexeme);
+        }
+        else if(optional!=NULL && value->output_list->child!=NULL){
+            TREENODE optional_itr=optional->child;
+            TREENODE output_itr=value->output_list->child;
+            while(optional_itr!=NULL && output_itr!=NULL){
+
+                SYMBOL_TABLE_VALUE sym_val= get_symbol_table_value_in_above_table(optional_itr->lexeme);
+                if(sym_val->isarray==true){
+                    printf("\033[31m\nERROR : Array not allowed in output parameter while calling module %s.\n\033[0m",module_id_node->lexeme);
+                }
+                else{
+                    if(sym_val->symbol_table_value_union.not_array.type==integer){
+                        if(strcmp(output_itr->next->name,"integer")!=0){
+                            printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", optional_itr->lexeme);
+                        }
+                    }
+                    else if(sym_val->symbol_table_value_union.not_array.type==real){
+                        if(strcmp(output_itr->next->name,"real")!=0){
+                            printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", optional_itr->lexeme);
+                        }
+                    }
+                    else if(sym_val->symbol_table_value_union.not_array.type==boolean){
+                        if(strcmp(output_itr->next->name,"boolean")!=0){
+                            printf("\033[31m\nERROR : %s is of unexpected type.\n\033[0m", optional_itr->lexeme);
+                        }
+                    }
+                }
+
+                optional_itr=optional_itr->child;
+                output_itr=output_itr->child;
+            }
+            if(optional_itr==NULL && output_itr!=NULL){
+            printf("\033[31m\nERROR : Too many output parameters are returned while calling module: %s.\n\033[0m",module_id_node->lexeme);
+            }
+            if(optional_itr!=NULL && output_itr==NULL){
+                printf("\033[31m\nERROR : Too few output parameters are returned while calling module: %s.\n\033[0m",module_id_node->lexeme);
+            }
+
+        }
+       
+
+
+
+        //printf("value->output_list:   %s\n", value->output_list->lexeme);
         // printf("%dasdasd", get_type_of_variable(root->child->next->child->name));
     }
+    
     ast_pass2(root->child);
     ast_pass2(root->next);
 }
@@ -327,7 +575,8 @@ void populate_function_and_symbol_tables(TREENODE root)
             value->symbol_table_wrapper->parent = NULL;
             value->symbol_table_wrapper->child = NULL;
             value->symbol_table_wrapper->next = NULL;
-            function_table_insert(function_table, root->child->lexeme, value);
+            if(!redeclared)
+                function_table_insert(function_table, root->child->lexeme, value);
             current_symbol_table_wrapper = value->symbol_table_wrapper;
         }
         // checking for redeclaration of function
@@ -466,8 +715,15 @@ void populate_function_and_symbol_tables(TREENODE root)
         {
             // checking if condition has expr has been declared before
             bool is_declared = check_if_declared_before(root->child->lexeme);
-            if (get_type_of_variable(root->child->lexeme) == 2)
+            if (!is_declared)
             {
+                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", root->child->lexeme);
+            }
+            else
+            {
+            //printf("Hi");
+            if (get_type_of_variable(root->child->lexeme) == 2)
+            {                  
                 if (root->child->next->next != NULL)
                     printf("\033[31m\nERROR : Default statement not expected in boolean switch case\n\033[0m");
             }
@@ -479,17 +735,19 @@ void populate_function_and_symbol_tables(TREENODE root)
             }
             if (get_type_of_variable(root->child->lexeme) == 1)
             {
+
+                root->child->next=NULL;
                 printf("\033[31m\nERROR : %s has type real, expected integer or boolean\n\033[0m", root->child->lexeme);
             }
-            if (!is_declared)
-            {
-                printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", root->child->lexeme);
             }
             // check_if_declared_before(root->child->lexeme);
         }
         else if (strcmp(root->name, "CASE_STMT") == 0)
         {
-
+            bool is_declared = check_if_declared_before(root->parent->parent->child->lexeme);
+            printf("HI");
+            if(is_declared)
+            {
             int type_of_switch_variable = get_type_of_variable(root->parent->parent->child->lexeme);
             if (type_of_switch_variable == 0 && (strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
             {
@@ -498,6 +756,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             if (type_of_switch_variable == 2 && !(strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
             {
                 printf("\033[31m\nERROR : Case value is expected to have type boolean.\n\033[0m");
+            }
             }
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
             // init_symbolhashmap(temp->symbol_table);
