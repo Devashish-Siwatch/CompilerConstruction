@@ -20,6 +20,143 @@ int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper)
     }
     return count;
 }
+
+SYMBOL_TABLE_VALUE get_symbol_table_value_in_above_table(char *var)
+{
+    SYMBOL_TABLE_WRAPPER temp_wrapper = current_symbol_table_wrapper;
+    while (true)
+    {
+        if(temp_wrapper==NULL)
+            return NULL;
+        SYMBOL_TABLE_VALUE value = symbol_table_get(temp_wrapper->symbol_table, var, strlen(var));
+        if (value != NULL)
+            return value;
+        else
+        {       
+                temp_wrapper = temp_wrapper->parent;
+        }
+    }
+}
+SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root){
+    SYMBOL_TABLE_VALUE type = create_new_symbol_node("type");
+    if (strcmp(root->name, "and") == 0 || strcmp(root->name, "or") == 0 || strcmp(root->name, "lt") == 0 ||
+        strcmp(root->name, "gt") == 0 || strcmp(root->name, "le") == 0 || strcmp(root->name, "ge") == 0 ||
+        strcmp(root->name, "ne") == 0 || strcmp(root->name, "eq") == 0 || strcmp(root->name, "plus") == 0 ||
+        strcmp(root->name, "minus") == 0 || strcmp(root->name, "mul") == 0 || strcmp(root->name, "div") == 0)
+    {   
+        SYMBOL_TABLE_VALUE a = get_type_of_expression(root->child);
+        SYMBOL_TABLE_VALUE b = get_type_of_expression(root->child->next);
+        if(!a->isarray&&!b->isarray){
+            int type_a =  a->symbol_table_value_union.not_array.type;
+        int type_b = b->symbol_table_value_union.not_array.type;
+        if(strcmp(root->name, "plus") == 0 ||
+        strcmp(root->name, "minus") == 0 || strcmp(root->name, "mul") == 0 ){
+            
+            if(type_a ==0&&type_b==0){
+                type->symbol_table_value_union.not_array.type= 0;
+            }
+            else if(type_a==1&&type_b==1)
+            type->symbol_table_value_union.not_array.type= 1;
+            else{
+                type->symbol_table_value_union.not_array.type= -1;
+                // printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
+            }
+        }
+        else if(strcmp(root->name, "div") == 0){
+            if(type_a==0&&type_b==0){
+                type->symbol_table_value_union.not_array.type= 1;//real in all cases
+            }
+            else if(type_a==0&&type_b==1||type_a==1&&type_b==0){
+                type->symbol_table_value_union.not_array.type= 1;
+            }
+            else if(type_a==1&&type_b==1){
+                type->symbol_table_value_union.not_array.type= 1;
+            }
+            else{
+                type->symbol_table_value_union.not_array.type= -1;
+                // printf("TYPE MISMATCH IN EXPRESSION");
+            }
+        }
+        else if( strcmp(root->name, "lt") == 0 ||
+        strcmp(root->name, "gt") == 0 || strcmp(root->name, "le") == 0 || strcmp(root->name, "ge") == 0 ||
+        strcmp(root->name, "ne") == 0 || strcmp(root->name, "eq") == 0 ){
+            if(type_a==0&&type_b==0){
+                type->symbol_table_value_union.not_array.type= 2;//relational on int
+            }
+            else if(type_a==1&&type_b==1){
+                type->symbol_table_value_union.not_array.type= 2;//relational on real
+            }
+            else{
+                type->symbol_table_value_union.not_array.type= -1;
+                // printf("TYPE MISMATCH IN EXPRESSION");
+            }
+        }
+        else if(strcmp(root->name, "and") == 0 || strcmp(root->name, "or") == 0 ){
+            if(type_a==2&&type_b==2){
+                type->symbol_table_value_union.not_array.type= 2;//logical on bool
+            }
+            else{
+                type->symbol_table_value_union.not_array.type= -1;
+                // printf("TYPE MISMATCH IN EXPRESSION");
+            }
+        }
+        return type;
+        }
+        else if(a->isarray&&b->isarray){
+            if(root->child->child==NULL||root->child->next->child==NULL){
+                printf("\033[31m\nERROR : TYPE MISMATCH.\n\033[0m");
+            }
+            else{
+                if(a->symbol_table_value_union.array.element_type == b->symbol_table_value_union.array.element_type){
+                    return a;
+                }
+            }
+        }
+        
+    }
+    else if (strcmp(root->name, "PLUS") == 0 || strcmp(root->name, "MINUS") == 0)
+    {
+        get_type_of_expression(root->child);
+    }
+    else if (strcmp(root->name, "id") == 0)
+    {
+        printf("id: %s\n",root->lexeme);
+        SYMBOL_TABLE_VALUE stv =  get_symbol_table_value_in_above_table(root->lexeme);
+        if(!stv->isarray)
+        return stv;
+        else{
+            
+            // int x = get_type_of_expression(root->child);
+            // if(x!=0){
+            //     printf("Array range expression not integer");
+            // }
+            return stv;
+        }
+        // bool is_present = check_if_declared_before(root->lexeme);
+        // if (!is_present)
+        // {
+        //     printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", root->lexeme);
+        // }
+        // if (root->next != NULL)
+        //     check_expression_if_declared_before(root->next);
+    }
+    else if (strcmp(root->name, "num") == 0)
+    {
+        type->symbol_table_value_union.not_array.type=0;
+        return type;
+    }
+    else if (strcmp(root->name, "rnum") == 0)
+    {
+        type->symbol_table_value_union.not_array.type=1;
+        return type;
+    } 
+    else if (strcmp(root->name, "true") == 0|| strcmp(root->name, "false") == 0)
+    {   
+        type->symbol_table_value_union.not_array.type=2;
+        return type;
+    }
+}
+
 int get_type_of_variable(char *lexeme)
 {
     SYMBOL_TABLE_VALUE stv = symbol_table_get(current_symbol_table_wrapper->symbol_table, lexeme, strlen(lexeme));
@@ -403,18 +540,23 @@ void populate_function_and_symbol_tables(TREENODE root)
         {
             TREENODE lhs = root->child;
             TREENODE rhs = lhs->next;
+            SYMBOL_TABLE_VALUE l_type=get_type_of_expression(lhs);
+            SYMBOL_TABLE_VALUE r_type=get_type_of_expression(rhs);
+            
             bool lhs_exists = check_if_declared_before(lhs->lexeme);
 
             if (!lhs_exists){
                 printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", lhs->lexeme);
             }else{
-
+                
                 //checking if lhs is for loop variable
                 SYMBOL_TABLE_VALUE value = symbol_table_get(current_symbol_table_wrapper->symbol_table, lhs->lexeme, strlen(lhs->lexeme));
                 if(value!=NULL && value->isLoopVariable){
                     printf("\033[31m\nERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", lhs->lexeme);
                 }
-
+                if(l_type->symbol_table_value_union.not_array.type!=r_type->symbol_table_value_union.not_array.type){//type checking
+                printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", lhs->lexeme,rhs->lexeme);
+                }
                 //checking if lhs is while loop variable
                 if(current_symbol_table_wrapper->while_variables!=NULL && !current_symbol_table_wrapper->while_condition_fulfilled){
                     if(data_exists(lhs->lexeme,current_symbol_table_wrapper->while_variables)){
