@@ -61,7 +61,6 @@ void printChildren(TREENODE head){
         printChildren(head->child);
     }
     printf("%s \n",head->lexeme);
-   
 }
 
 FUNCTION_TABLE_VALUE create_function_value(){
@@ -69,6 +68,8 @@ FUNCTION_TABLE_VALUE create_function_value(){
     value->input_list=NULL;
     value->output_list=NULL;
     value->symbol_table_wrapper=NULL;
+    value->isDeclared = false;
+    value->needsChecking = false;
     return value;
 }
 
@@ -79,12 +80,13 @@ void print_function_table(){
             if(function_table[i].function_table_value->input_list!=NULL){
                 printf("INPUT LIST : \n");
                 printChildren(function_table[i].function_table_value->input_list->child);
-              
             }
             if(function_table[i].function_table_value->output_list!=NULL){
                 printf("OUTPUT LIST : \n");
                 printChildren(function_table[i].function_table_value->output_list->child);
             }
+            printf("isDeclared : %s\n",function_table[i].function_table_value->isDeclared?"YES":"NO");
+            printf("needsChecking : %s\n",function_table[i].function_table_value->needsChecking?"YES":"NO");
         }
     }
 }

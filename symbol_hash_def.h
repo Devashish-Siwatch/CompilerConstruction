@@ -18,7 +18,7 @@ typedef enum valid_types {
 typedef struct symbol_table_value {
     char* module_name;
     int nesting_level, width, offset, line_number_start, line_number_end;
-    bool isInputParameter;
+    bool isInputParameter, isLoopVariable;
     bool isarray;
     union  
     {  
@@ -61,6 +61,8 @@ typedef struct symbol_table_wrapper{
     struct symbol_table_wrapper* parent;
     struct symbol_table_wrapper* next;
     char* name;
+    LIST while_variables;
+    bool while_condition_fulfilled;
 } symbol_table_wrapper;
 
 typedef symbol_table_wrapper * SYMBOL_TABLE_WRAPPER;

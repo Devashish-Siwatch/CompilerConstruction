@@ -8,6 +8,7 @@ Chaitanya Iyer - 2020A7PS0012P
 */
 
 #include "stdbool.h"
+#include <string.h>
 #include <stdlib.h>
 #include<stdio.h>
 #include "linkedlist.h"
@@ -75,4 +76,14 @@ void destroyList(LIST list)
     }
     free(temp);
     free(list);
+}
+bool data_exists(char* data, LIST list){
+    NODE temp = list->head;
+    while(temp!=NULL){
+        if(strcmp(data,temp->data)==0){
+            return true;
+        }
+        temp = temp->next;
+    }
+    return false;
 }

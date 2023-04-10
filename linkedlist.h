@@ -34,4 +34,5 @@ void removeFirstNode(LIST list);
 // This function inserts a node at the end of the list.
 void display(LIST list);
 void destroyList(LIST list);
+bool data_exists(char* data, LIST list);
 #endif
