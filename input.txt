@@ -7,6 +7,15 @@ start
 	end
 end
 
+
+<<module compute>>
+takes input [x:integer];
+returns [fop1:real]
+
+start
+	
+end
+
 <<<driver program>>>
 start
 	declare a,b:integer;
@@ -14,4 +23,3 @@ start
 	start
 	end
 
-end
