@@ -88,7 +88,7 @@ bool check_if_redeclared(char *var)
 
 void appendWhileVariables(TREENODE root, LIST list)
 {
-    printf("CHECKING FOR %s------------------\n", root->name);
+    // printf("CHECKING FOR %s------------------\n", root->name);
     if (strcmp(root->name, "and") == 0 || strcmp(root->name, "or") == 0 || strcmp(root->name, "lt") == 0 ||
         strcmp(root->name, "gt") == 0 || strcmp(root->name, "le") == 0 || strcmp(root->name, "ge") == 0 ||
         strcmp(root->name, "ne") == 0 || strcmp(root->name, "eq") == 0 || strcmp(root->name, "plus") == 0 ||
@@ -131,8 +131,27 @@ void check_expression_if_declared_before(TREENODE root)
         {
             printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", root->lexeme);
         }
-        // if (root->next != NULL)
-        //     check_expression_if_declared_before(root->next);
+        else{
+            //checking type bound for a[5] like terms
+            if(root->child!=NULL && strcmp(root->child->name,"num")==0){
+                printf("a\n");
+                int index = atoi(root->child->lexeme);
+                SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(root->lexeme);
+                printf("%s\n",root->lexeme);
+                if(value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
+                    printf("b\n");
+                    int lower = value->symbol_table_value_union.array.bottom_range.bottom * value->symbol_table_value_union.array.is_bottom_sign_plus?1:-1;
+                    int upper = value->symbol_table_value_union.array.top_range.top * value->symbol_table_value_union.array.is_top_sign_plus?1:-1;
+                    printf("%d %d %d\n",index,lower,upper);
+                    if(!(index>=lower && index<=upper)){
+                        printf("c\n");
+                        printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m",root->line_number);
+                    }
+                }
+            }
+        }
+        if (root->child != NULL)
+            check_expression_if_declared_before(root->child);
     }
 }
 
@@ -681,8 +700,8 @@ void populate_function_and_symbol_tables(TREENODE root)
             }
             if (strcmp(rhs->name, "LVALUEARRSTMT") == 0)
             {
-                check_expression_if_declared_before(rhs->child);
-                check_expression_if_declared_before(rhs->child->next);
+                check_expression_if_declared_before(rhs->child->child);
+                check_expression_if_declared_before(rhs->child->next->child);
             }
             else
             {

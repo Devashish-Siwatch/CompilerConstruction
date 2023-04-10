@@ -1,5 +1,5 @@
 <<module ab>>
-takes input [a:integer]
+takes input [a:integer];
 start
 	declare x,y:integer;
 	while(x<y)
@@ -7,19 +7,22 @@ start
 	end
 end
 
-
+**
 <<module compute>>
 takes input [x:integer];
-returns [fop1:real]
+returns [fop1:real];
 
 start
 	
-end
+end**
 
 <<<driver program>>>
 start
 	declare a,b:integer;
+	declare arr:array [+1..+5] of integer;
 	while(a<b)
 	start
+		b[77+bbbx] := arr[100]+c[z];
 	end
+end
 

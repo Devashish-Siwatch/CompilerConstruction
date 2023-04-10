@@ -276,6 +276,7 @@ TREENODE generate_ast(TREENODE node)
         }
         case 7:
         {
+            int line_number = node->child->line_number;
             for (int i = 0; i < 4; i++)
             {
                 TREENODE temp = node->child->next;
@@ -284,7 +285,7 @@ TREENODE generate_ast(TREENODE node)
             }
             TREENODE driver_module = createNewTreeNode2();
             driver_module->name = "DRIVER_MODULE_STMTS";
-            driver_module->line_number = node->child->line_number;
+            driver_module->line_number = line_number;
             driver_module->child = generate_ast(node->child)->next;
             return driver_module;
         }
@@ -685,8 +686,14 @@ TREENODE generate_ast(TREENODE node)
             TREENODE expr = aexplt->next->next->next;
             TREENODE arrstmt = createNewTreeNode2();
             arrstmt->name = "LVALUEARRSTMT";
-            arrstmt->child = generate_ast(aexplt);
-            arrstmt->child->next = generate_ast(expr);
+            TREENODE index = createNewTreeNode2();
+            index->name = "INDEX";
+            index->child = generate_ast(aexplt);
+            TREENODE expression = createNewTreeNode2();
+            expression->name = "EXPRESSION";
+            expression->child = generate_ast(expr);
+            arrstmt->child = index;
+            arrstmt->child->next = expression;
             // free(node->child);        // //free [
             // free(aexplt->next->next); // //free ]
             // free(aexplt->next);       // //free:=
@@ -1047,7 +1054,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp = node->child;
             TREENODE temp1 = node->child->next;
             temp = generate_ast(node->child);
-            temp->next = generate_ast(temp1);
+            temp->child = generate_ast(temp1);
             // free(node);
             return temp;
         }
