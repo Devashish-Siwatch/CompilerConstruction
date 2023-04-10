@@ -125,7 +125,7 @@ TREENODE generate_ast(TREENODE node)
         {
         case 0:
         {
-            //free(node->child->next);
+            // free(node->child->next);
             node->child->next = NULL;
             node->child = generate_ast(node->child);
             return node;
@@ -192,7 +192,7 @@ TREENODE generate_ast(TREENODE node)
         case 57:
         {
             TREENODE temp = node->child;
-            //free(node);
+            // free(node);
             TREENODE result = generate_ast(temp);
             result->name = "PLUS";
             return result;
@@ -200,7 +200,7 @@ TREENODE generate_ast(TREENODE node)
         case 58:
         {
             TREENODE temp = node->child;
-            //free(node);
+            // free(node);
             TREENODE result = generate_ast(temp);
             result->name = "MINUS";
             return result;
@@ -209,8 +209,8 @@ TREENODE generate_ast(TREENODE node)
         case 47:
         {
             TREENODE temp_second = node->child->next;
-            //free(node->child);
-            //free(temp_second->next);
+            // free(node->child);
+            // free(temp_second->next);
             return generate_ast(temp_second);
         }
         case 1:
@@ -220,7 +220,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp_dm = node->child->next->next;
             TREENODE temp_oms2 = node->child->next->next->next;
 
-            //free(node);
+            // free(node);
 
             TREENODE moduleDeclarations = createNewTreeNode2();
             moduleDeclarations->name = "MDS";
@@ -269,9 +269,9 @@ TREENODE generate_ast(TREENODE node)
         case 73:
         {
             appendAtEnd(node->inh, NULL);
-            //free(node->child);
-            // node->child = NULL;
-            //free(node);
+            // free(node->child);
+            //  node->child = NULL;
+            // free(node);
             return NULL;
         }
         case 7:
@@ -279,11 +279,12 @@ TREENODE generate_ast(TREENODE node)
             for (int i = 0; i < 4; i++)
             {
                 TREENODE temp = node->child->next;
-                //free(node->child);
+                // free(node->child);
                 node->child = temp;
             }
             TREENODE driver_module = createNewTreeNode2();
             driver_module->name = "DRIVER_MODULE_STMTS";
+            driver_module->line_number = node->child->line_number;
             driver_module->child = generate_ast(node->child)->next;
             return driver_module;
         }
@@ -292,15 +293,15 @@ TREENODE generate_ast(TREENODE node)
 
             TREENODE temp = node->child->next;
             int end_line_number = temp->next->line_number;
-            //free(node->child);
-            //free(temp->next);
+            // free(node->child);
+            // free(temp->next);
             node->child = temp;
             TREENODE statementsHead = createNewTreeNode2();
             statementsHead->name = "STMTSHead";
             temp->inh = statementsHead;
             temp->line_number = end_line_number;
             generate_ast(temp);
-            //free(node);
+            // free(node);
             return statementsHead;
         }
         case 26:
@@ -310,14 +311,14 @@ TREENODE generate_ast(TREENODE node)
             appendAtLast(node->inh, generate_ast(node->child));
             node->child->next->inh = node->inh;
             generate_ast(node->child->next);
-            //free(node);
+            // free(node);
             return NULL;
         }
         case 6:
         case 108:
         {
             appendAtLast(node->inh, NULL);
-            //free(node->child);
+            // free(node->child);
             return NULL;
         }
         case 27:
@@ -336,13 +337,13 @@ TREENODE generate_ast(TREENODE node)
             declare_stmt->name = "DECLARESTMT";
             TREENODE idList = node->child->next;
             TREENODE dType = idList->next->next;
-            //free(node->child);  // //free declare
-            //free(idList->next); // //free :
-            //free(dType->next);  // //free ;
+            // free(node->child);  // //free declare
+            // free(idList->next); // //free :
+            // free(dType->next);  // //free ;
             declare_stmt->child = generate_ast(idList);
             declare_stmt->child->next = generate_ast(dType);
             declare_stmt->child->next->next = NULL;
-            //free(idList);
+            // free(idList);
             return declare_stmt;
         }
         case 71:
@@ -353,20 +354,20 @@ TREENODE generate_ast(TREENODE node)
             appendAtEnd(idListHead, node->child);
             temp_N3->inh = idListHead;
             generate_ast(temp_N3);
-            //free(node);
+            // free(node);
             return idListHead;
         }
         case 72:
         {
             TREENODE temp = node->child->next;
-            //free(node->child);
+            // free(node->child);
             node->child = temp;
             TREENODE temp_N3 = node->child->next;
             appendAtEnd(node->inh, node->child);
             temp_N3->inh = node->inh;
             generate_ast(temp_N3);
             node = NULL;
-            //free(node);
+            // free(node);
             return NULL;
         }
         case 62: // MODULEREUSESTMT
@@ -375,11 +376,11 @@ TREENODE generate_ast(TREENODE node)
             opt = node->child;
             id = opt->next->next->next;
             aplist = id->next->next->next;
-            //free(opt->next->next);
-            //free(opt->next);
-            //free(id->next->next);
-            //free(id->next);
-            //free(aplist->next);
+            // free(opt->next->next);
+            // free(opt->next);
+            // free(id->next->next);
+            // free(id->next);
+            // free(aplist->next);
             TREENODE module_reuse = createNewTreeNode2();
             module_reuse->name = "MODULE_REUSE_STMT";
             TREENODE temp_opt = generate_ast(opt);
@@ -403,11 +404,11 @@ TREENODE generate_ast(TREENODE node)
         case 69:
         {
             TREENODE temp_idlist = node->child->next;
-            //free(node->child);
-            //free(temp_idlist->next->next);
-            //free(temp_idlist->next);
+            // free(node->child);
+            // free(temp_idlist->next->next);
+            // free(temp_idlist->next);
             node->child = generate_ast(temp_idlist);
-            //free(temp_idlist);
+            // free(temp_idlist);
             return node->child;
         }
         case 10:
@@ -416,7 +417,7 @@ TREENODE generate_ast(TREENODE node)
         case 59:
         case 70:
         {
-            //free(node->child);
+            // free(node->child);
             return NULL;
         }
         case 63:
@@ -471,7 +472,7 @@ TREENODE generate_ast(TREENODE node)
         {
             TREENODE temp_comma = node->child;
             node->child = node->child->next;
-            //free(temp_comma);
+            // free(temp_comma);
             TREENODE temp_sign = generate_ast(node->child);
             if (temp_sign != NULL)
             {
@@ -484,7 +485,7 @@ TREENODE generate_ast(TREENODE node)
                     appendAtEndNextNotNULL(node->inh, temp_sign, 2);
                     node->child->next->next->inh = node->inh;
                     generate_ast(node->child->next->next);
-                    //free(node);
+                    // free(node);
                     return NULL;
                 }
                 else
@@ -494,7 +495,7 @@ TREENODE generate_ast(TREENODE node)
                     appendAtEndNextNotNULL(node->inh, temp_sign, 3);
                     node->child->next->next->inh = node->inh;
                     generate_ast(node->child->next->next);
-                    //free(node);
+                    // free(node);
                     return NULL;
                 }
             }
@@ -507,7 +508,7 @@ TREENODE generate_ast(TREENODE node)
                     appendAtEnd(node->inh, temp_apl2);
                     node->child->next->next->inh = node->inh;
                     generate_ast(node->child->next->next);
-                    //free(node);
+                    // free(node);
                     return NULL;
                 }
                 else
@@ -516,7 +517,7 @@ TREENODE generate_ast(TREENODE node)
                     appendAtEndNextNotNULL(node->inh, temp_apl2, 2);
                     node->child->next->next->inh = node->inh;
                     generate_ast(node->child->next->next);
-                    //free(node);
+                    // free(node);
                     return NULL;
                 }
             }
@@ -538,7 +539,7 @@ TREENODE generate_ast(TREENODE node)
                 TREENODE id = generate_ast(node->child);
                 id->next = temp;
                 id->next->next = NULL;
-                //free(node);
+                // free(node);
                 return id;
             }
         }
@@ -551,8 +552,8 @@ TREENODE generate_ast(TREENODE node)
             // node->child->next->inh = generate_ast(node->child);
             TREENODE temp = node->child->next;
             temp->inh = generate_ast(node->child);
-            //free(node->child);
-            //free(node);
+            // free(node->child);
+            // free(node);
             return generate_ast(temp);
         }
         case 75:
@@ -579,9 +580,9 @@ TREENODE generate_ast(TREENODE node)
             logical_op->child = node->inh;
             node->child->next->next->inh = generate_ast(node->child->next);
             logical_op->child->next = generate_ast(node->child->next->next);
-            //free(node->child->next);
-            //free(node->child);
-            //free(node);
+            // free(node->child->next);
+            // free(node->child);
+            // free(node);
             return logical_op;
         }
         case 76:
@@ -597,7 +598,7 @@ TREENODE generate_ast(TREENODE node)
         {
             node->child->next->inh = generate_ast(node->child);
             TREENODE temp = node->child->next;
-            //free(node);
+            // free(node);
             return generate_ast(temp);
         }
         case 79:
@@ -605,15 +606,15 @@ TREENODE generate_ast(TREENODE node)
             TREENODE relational_op = generate_ast(node->child);
             relational_op->child = node->inh;
             relational_op->child->next = generate_ast(node->child->next);
-            //free(node->child->next);
-            //free(node->child);
-            //free(node);
+            // free(node->child->next);
+            // free(node->child);
+            // free(node);
             return relational_op;
         }
         case 80:
         {
             TREENODE temp = node->inh;
-            //free(node);
+            // free(node);
             return temp;
         }
         // case 87:
@@ -625,8 +626,8 @@ TREENODE generate_ast(TREENODE node)
             TREENODE sign = generate_ast(node->child);
             sign->child = generate_ast(factor2);
             sign->name = "MINUS";
-            //free(factor2);
-            //free(node);
+            // free(factor2);
+            // free(node);
             return sign;
         }
         case 126:
@@ -636,8 +637,8 @@ TREENODE generate_ast(TREENODE node)
             TREENODE sign = generate_ast(node->child);
             sign->child = generate_ast(factor2);
             sign->name = "PLUS";
-            //free(factor2);
-            //free(node);
+            // free(factor2);
+            // free(node);
             return sign;
         }
 
@@ -645,11 +646,11 @@ TREENODE generate_ast(TREENODE node)
         case 129:
         {
             TREENODE expr = node->child->next;
-            //free(node->child); // //free (
+            // free(node->child); // //free (
             node->child = expr;
-            //free(node->child->next); // //free )
+            // free(node->child->next); // //free )
             TREENODE temp = node->child;
-            //free(node);
+            // free(node);
             return generate_ast(temp);
         }
         case 51:
@@ -660,17 +661,17 @@ TREENODE generate_ast(TREENODE node)
             ass->name = "ASSIGNMENTSTMT";
             ass->child = generate_ast(id);
             ass->child->next = generate_ast(whichstmt);
-            //free(whichstmt);
-            //free(node);
+            // free(whichstmt);
+            // free(node);
             return ass;
         }
         case 54:
         {
             TREENODE expr = node->child->next;
-            //free(node->child); // //free :=
-            //free(expr->next);  // //free ;
+            // free(node->child); // //free :=
+            // free(expr->next);  // //free ;
             return generate_ast(expr);
-            //free(expr);
+            // free(expr);
         }
         case 55:
         {
@@ -686,33 +687,33 @@ TREENODE generate_ast(TREENODE node)
             arrstmt->name = "LVALUEARRSTMT";
             arrstmt->child = generate_ast(aexplt);
             arrstmt->child->next = generate_ast(expr);
-            //free(node->child);        // //free [
-            //free(aexplt->next->next); // //free ]
-            //free(aexplt->next);       // //free:=
-            //free(expr->next);         // //free ;
-            //free(aexplt);
-            //free(expr);
+            // free(node->child);        // //free [
+            // free(aexplt->next->next); // //free ]
+            // free(aexplt->next);       // //free:=
+            // free(expr->next);         // //free ;
+            // free(aexplt);
+            // free(expr);
             return arrstmt;
         }
         // TODO : VERIFY AND UNCOMMENT
         case 105:
         {
             TREENODE id = node->child->next->next;
-            //free(node->child);       // //free switch
-            //free(node->child->next); // //free (
+            // free(node->child);       // //free switch
+            // free(node->child->next); // //free (
             TREENODE cstmts = id->next->next->next;
-            //free(id->next);       // //free )
-            //free(id->next->next); // //free start
+            // free(id->next);       // //free )
+            // free(id->next->next); // //free start
             TREENODE deflt = cstmts->next;
-            //free(deflt->next);
+            // free(deflt->next);
             TREENODE conditionalstmt = createNewTreeNode2();
             conditionalstmt->name = "CONDITIONALSTMT";
             conditionalstmt->child = generate_ast(id);
             conditionalstmt->child->next = generate_ast(cstmts);
             conditionalstmt->child->next->next = generate_ast(deflt);
-            //free(cstmts);
-            //free(deflt);
-            //free(node);
+            // free(cstmts);
+            // free(deflt);
+            // free(node);
             return conditionalstmt;
         }
         case 106:
@@ -724,13 +725,14 @@ TREENODE generate_ast(TREENODE node)
             TREENODE caseStmt = createNewTreeNode2();
             caseStmtsHead->child = caseStmtsHead2;
             caseStmt->name = "CASE_STMT";
+            caseStmt->line_number = node->child->line_number;
             TREENODE value = node->child->next;
             TREENODE stmts = value->next->next;
             TREENODE n7 = stmts->next->next->next;
-            //free(node->child);
-            //free(value->next);
-            //free(stmts->next);
-            //free(stmts->next->next);
+            // free(node->child);
+            // free(value->next);
+            // free(stmts->next);
+            // free(stmts->next->next);
             n7->inh = caseStmtsHead2;
             caseStmt->child = generate_ast(value);
 
@@ -748,14 +750,15 @@ TREENODE generate_ast(TREENODE node)
         {
             TREENODE caseStmt = createNewTreeNode2();
             caseStmt->name = "CASE_STMT";
+            caseStmt->line_number = node->child->line_number;
             TREENODE value = node->child->next;
             TREENODE stmts = value->next->next;
             stmts->line_number = stmts->next->line_number;
             TREENODE n7 = stmts->next->next->next;
-            //free(node->child);
-            //free(value->next);
-            //free(stmts->next);
-            //free(stmts->next->next);
+            // free(node->child);
+            // free(value->next);
+            // free(stmts->next);
+            // free(stmts->next->next);
             n7->inh = node->inh;
             caseStmt->child = generate_ast(value);
             TREENODE statements_head = createNewTreeNode2();
@@ -770,13 +773,14 @@ TREENODE generate_ast(TREENODE node)
         case 112:
         {
             TREENODE temp = node->child->next->next;
-            //free(node);
-            //free(node->child);
-            //free(node->child->next);
-            //free(temp->next);
-            //free(temp->next->next);
+            // free(node);
+            // free(node->child);
+            // free(node->child->next);
+            // free(temp->next);
+            // free(temp->next->next);
             TREENODE default_stmts = createNewTreeNode2();
             default_stmts->name = "DEFAULT";
+            default_stmts->line_number = node->child->line_number;
             TREENODE default_stmts_head = createNewTreeNode2();
             default_stmts_head->name = "DEFAULT_STATEMENTS_HEAD";
             default_stmts->child = default_stmts_head;
@@ -791,10 +795,10 @@ TREENODE generate_ast(TREENODE node)
             TREENODE IO_INPUT = createNewTreeNode2();
             IO_INPUT->name = "IO_INPUT";
             TREENODE temp = node->child->next->next;
-            //free(node->child->next->next->next->next);
-            //free(node->child->next->next->next);
-            //free(node->child->next);
-            //free(node->child);
+            // free(node->child->next->next->next->next);
+            // free(node->child->next->next->next);
+            // free(node->child->next);
+            // free(node->child);
             temp->next = NULL;
             IO_INPUT->child = generate_ast(temp);
             return IO_INPUT;
@@ -805,10 +809,10 @@ TREENODE generate_ast(TREENODE node)
             TREENODE IO_OUTPUT = createNewTreeNode2();
             IO_OUTPUT->name = "IO_OUTPUT";
             TREENODE temp_var_bool = node->child->next->next;
-            //free(node->child->next->next->next->next);
-            //free(node->child->next->next->next);
-            //free(node->child->next);
-            //free(node->child);
+            // free(node->child->next->next->next->next);
+            // free(node->child->next->next->next);
+            // free(node->child->next);
+            // free(node->child);
             temp_var_bool->next = NULL;
             IO_OUTPUT->child = generate_ast(temp_var_bool);
             return IO_OUTPUT;
@@ -817,14 +821,15 @@ TREENODE generate_ast(TREENODE node)
         {
             TREENODE ITERATIVESTMT_WHILE = createNewTreeNode2();
             ITERATIVESTMT_WHILE->name = "ITERATIVESTMT_WHILE";
+            ITERATIVESTMT_WHILE->line_number = node->child->line_number;
             TREENODE tempExpr = node->child->next->next;
             TREENODE tempStmt = node->child->next->next->next->next->next;
             int end_line_number = tempStmt->next->line_number;
-            //free(node->child->next->next->next->next->next->next);
-            //free(node->child->next->next->next->next);
-            //free(node->child->next->next->next);
-            //free(node->child->next);
-            //free(node->child);
+            // free(node->child->next->next->next->next->next->next);
+            // free(node->child->next->next->next->next);
+            // free(node->child->next->next->next);
+            // free(node->child->next);
+            // free(node->child);
             ITERATIVESTMT_WHILE->child = generate_ast(tempExpr);
             TREENODE while_stmts_head = createNewTreeNode2();
             while_stmts_head->name = "WHILE_STMTS_HEAD";
@@ -839,16 +844,17 @@ TREENODE generate_ast(TREENODE node)
             int start_line_number = node->child->line_number;
             TREENODE ITERATIVESTMT_FOR = createNewTreeNode2();
             ITERATIVESTMT_FOR->name = "ITERATIVESTMT_FOR";
+            ITERATIVESTMT_FOR->line_number = start_line_number;
             TREENODE tempId = node->child->next->next;
             TREENODE tempRange = node->child->next->next->next->next;
             TREENODE tempStmt = node->child->next->next->next->next->next->next->next;
             int end_line_number = tempStmt->next->line_number;
-            //free(node->child->next->next->next->next->next->next->next->next);
-            //free(node->child->next->next->next->next->next->next);
-            //free(node->child->next->next->next->next->next);
-            //free(node->child->next->next->next);
-            //free(node->child->next);
-            //free(node->child);
+            // free(node->child->next->next->next->next->next->next->next->next);
+            // free(node->child->next->next->next->next->next->next);
+            // free(node->child->next->next->next->next->next);
+            // free(node->child->next->next->next);
+            // free(node->child->next);
+            // free(node->child);
             ITERATIVESTMT_FOR->child = generate_ast(tempId);
             ITERATIVESTMT_FOR->child->next = generate_ast(tempRange);
             TREENODE for_stmts_head = createNewTreeNode2();
@@ -868,27 +874,28 @@ TREENODE generate_ast(TREENODE node)
         case 115:
         {
             TREENODE temp = node->child->next->next;
-            //free(node->child->next);
+            // free(node->child->next);
             node->child->next = temp;
             return node;
         }
         case 8:
         {
             TREENODE id = node->child->next->next;
-            //free(node->child->next);
-            //free(node->child);
-            //free(node);
+            // free(node->child->next);
+            // free(node->child);
+            // free(node);
             TREENODE iplist = id->next->next->next->next->next;
-            //free(id->next->next->next->next);
-            //free(id->next->next->next);
-            //free(id->next->next);
-            //free(id->next);
+            // free(id->next->next->next->next);
+            // free(id->next->next->next);
+            // free(id->next->next);
+            // free(id->next);
             TREENODE ret = iplist->next->next->next;
-            //free(iplist->next->next);
-            //free(iplist->next);
+            // free(iplist->next->next);
+            // free(iplist->next);
             TREENODE mdef = ret->next;
             TREENODE MODULE1 = createNewTreeNode2();
             MODULE1->name = "Module1";
+            MODULE1->line_number = node->child->line_number;
             MODULE1->child = generate_ast(id);
             MODULE1->child->next = generate_ast(iplist);
             TREENODE temp_ret = generate_ast(ret);
@@ -906,11 +913,11 @@ TREENODE generate_ast(TREENODE node)
         case 9:
         {
             TREENODE opl = node->child->next->next;
-            //free(node->child->next);
-            //free(node->child);
-            //free(opl->next->next);
-            //free(opl->next);
-            //free(node);
+            // free(node->child->next);
+            // free(node->child);
+            // free(opl->next->next);
+            // free(opl->next);
+            // free(node);
             return generate_ast(opl);
         }
 
@@ -922,7 +929,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp_id = node->child;
             TREENODE temp_N1 = node->child->next->next->next;
             TREENODE temp_datatype = node->child->next->next;
-            //free(temp_id->next);
+            // free(temp_id->next);
 
             TREENODE inputPlistElement = generate_ast(temp_id);
             inputPlistElement->next = generate_ast(temp_datatype);
@@ -930,7 +937,7 @@ TREENODE generate_ast(TREENODE node)
 
             temp_N1->inh = inputPlistHead;
             generate_ast(temp_N1);
-            //free(node);
+            // free(node);
             return inputPlistHead;
         }
         case 14:
@@ -941,7 +948,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp_id = node->child;
             TREENODE temp_N1 = node->child->next->next->next;
             TREENODE temp_datatype = node->child->next->next;
-            //free(temp_id->next);
+            // free(temp_id->next);
 
             TREENODE outputPlistElement = generate_ast(temp_id);
             outputPlistElement->next = generate_ast(temp_datatype);
@@ -949,7 +956,7 @@ TREENODE generate_ast(TREENODE node)
 
             temp_N1->inh = outputPlistHead;
             generate_ast(temp_N1);
-            //free(node);
+            // free(node);
             return outputPlistHead;
         }
         case 12:
@@ -957,7 +964,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp_id = node->child->next;
             TREENODE temp_datatype = temp_id->next->next;
             TREENODE temp_N1 = temp_datatype->next;
-            //free(temp_id->next);
+            // free(temp_id->next);
 
             TREENODE inputPlistElement = generate_ast(temp_id);
             inputPlistElement->next = generate_ast(temp_datatype);
@@ -965,8 +972,8 @@ TREENODE generate_ast(TREENODE node)
             temp_N1->inh = node->inh;
 
             generate_ast(temp_N1);
-            //free(node);
-            //free(temp_datatype);
+            // free(node);
+            // free(temp_datatype);
             return NULL;
         }
         case 15:
@@ -974,7 +981,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp_id = node->child->next;
             TREENODE temp_datatype = temp_id->next->next;
             TREENODE temp_N1 = temp_datatype->next;
-            //free(temp_id->next);
+            // free(temp_id->next);
 
             TREENODE outputPlistElement = generate_ast(temp_id);
             outputPlistElement->next = generate_ast(temp_datatype);
@@ -982,8 +989,8 @@ TREENODE generate_ast(TREENODE node)
             temp_N1->inh = node->inh;
 
             generate_ast(temp_N1);
-            //free(node);
-            //free(temp_datatype);
+            // free(node);
+            // free(temp_datatype);
             return NULL;
         }
         case 5:
@@ -991,19 +998,19 @@ TREENODE generate_ast(TREENODE node)
             appendAtLast(node->inh, generate_ast(node->child));
             node->child->next->inh = node->inh;
             generate_ast(node->child->next);
-            //free(node->child);
-            //free(node);
+            // free(node->child);
+            // free(node);
             return NULL;
         }
         case 20:
         {
             TREENODE tempRange2 = node->child->next->next;
             TREENODE tempType = node->child->next->next->next->next->next;
-            //free(node->child->next->next->next->next);
-            //free(node->child->next->next->next);
-            //free(node->child->next);
-            //free(node->child);
-            //free(node);
+            // free(node->child->next->next->next->next);
+            // free(node->child->next->next->next);
+            // free(node->child->next);
+            // free(node->child);
+            // free(node);
             TREENODE range2 = generate_ast(tempRange2);
             range2->child->next->next = generate_ast(tempType);
             return range2;
@@ -1011,7 +1018,7 @@ TREENODE generate_ast(TREENODE node)
         case 21:
         {
             TREENODE tempIndex2 = node->child->next->next;
-            //free(node->child->next);
+            // free(node->child->next);
             node->child = generate_ast(node->child);
             node->child->next = generate_ast(tempIndex2);
             return node;
@@ -1022,7 +1029,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp_sign = generate_ast(node->child);
             if (temp_sign == NULL)
             {
-                //free(node);
+                // free(node);
                 return temp_index;
                 temp_index->child = NULL;
             }
@@ -1030,7 +1037,7 @@ TREENODE generate_ast(TREENODE node)
             {
                 temp_sign->child = temp_index;
                 temp_index->child = NULL;
-                //free(node);
+                // free(node);
                 return temp_sign;
             }
         }
@@ -1041,16 +1048,16 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp1 = node->child->next;
             temp = generate_ast(node->child);
             temp->next = generate_ast(temp1);
-            //free(node);
+            // free(node);
             return temp;
         }
         case 4:
         {
             TREENODE temp = node->child->next->next;
-            //free(node->child->next->next->next);
-            //free(node->child->next);
-            //free(node->child);
-            //free(node);
+            // free(node->child->next->next->next);
+            // free(node->child->next);
+            // free(node->child);
+            // free(node);
             return generate_ast(temp);
         }
         case 2:

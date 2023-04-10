@@ -67,23 +67,23 @@ bool check_if_redeclared(char *var)
 
 void appendWhileVariables(TREENODE root, LIST list)
 {
-    printf("CHECKING FOR %s------------------\n",root->name);
+    printf("CHECKING FOR %s------------------\n", root->name);
     if (strcmp(root->name, "and") == 0 || strcmp(root->name, "or") == 0 || strcmp(root->name, "lt") == 0 ||
         strcmp(root->name, "gt") == 0 || strcmp(root->name, "le") == 0 || strcmp(root->name, "ge") == 0 ||
         strcmp(root->name, "ne") == 0 || strcmp(root->name, "eq") == 0 || strcmp(root->name, "plus") == 0 ||
         strcmp(root->name, "minus") == 0 || strcmp(root->name, "mul") == 0 || strcmp(root->name, "div") == 0)
     {
-        appendWhileVariables(root->child,list);
-        appendWhileVariables(root->child->next,list);
+        appendWhileVariables(root->child, list);
+        appendWhileVariables(root->child->next, list);
     }
     else if (strcmp(root->name, "PLUS") == 0 || strcmp(root->name, "MINUS") == 0)
     {
-        appendWhileVariables(root->child,list);
+        appendWhileVariables(root->child, list);
     }
     else if (strcmp(root->name, "id") == 0)
     {
         NODE node = createNewNode(root->lexeme);
-        insertNodeIntoList(node,list);
+        insertNodeIntoList(node, list);
         return;
     }
 }
@@ -267,7 +267,7 @@ void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam)
         TREENODE datatype = temp->next;
         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
         value->line_number_end = end_line_number;
-        populateSymboltableValue(datatype, value, current_module_name, nesting_level, temp->line_number, isInputParam,false);
+        populateSymboltableValue(datatype, value, current_module_name, nesting_level, temp->line_number, isInputParam, false);
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
     }
@@ -348,6 +348,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             else
                 value->output_list = NULL;
             value->symbol_table_wrapper = create_symbol_table_wrapper();
+            value->symbol_table_wrapper->starting_line_number = root->line_number;
             value->symbol_table_wrapper->name = root->child->lexeme;
             current_module_name = root->child->lexeme;
             value->symbol_table_wrapper->parent = NULL;
@@ -362,12 +363,12 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE temp = root->child;
             while (temp)
             {
-                //printf("%s\n",temp->lexeme);
+                // printf("%s\n",temp->lexeme);
                 bool redeclared = check_if_function_declared(temp->lexeme);
                 // printf("xdfsdfs %s\n", root->child->lexeme);
                 if (redeclared)
                 {
-                     //printf("ERROR: Function %s redeclared\n", temp->lexeme);
+                    // printf("ERROR: Function %s redeclared\n", temp->lexeme);
                     printf("\033[31m\nERROR : Module %s redeclared.\n\033[0m", temp->lexeme);
                 }
                 else
@@ -378,6 +379,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     value->input_list = NULL;
                     value->output_list = NULL;
                     value->symbol_table_wrapper = create_symbol_table_wrapper();
+                    value->symbol_table_wrapper->starting_line_number = temp->line_number;
                     value->symbol_table_wrapper->name = temp->name;
                     strcat(value->symbol_table_wrapper->name, "_symbol_table");
                     value->symbol_table_wrapper->parent = NULL;
@@ -405,19 +407,25 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE rhs = lhs->next;
             bool lhs_exists = check_if_declared_before(lhs->lexeme);
 
-            if (!lhs_exists){
+            if (!lhs_exists)
+            {
                 printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", lhs->lexeme);
-            }else{
+            }
+            else
+            {
 
-                //checking if lhs is for loop variable
+                // checking if lhs is for loop variable
                 SYMBOL_TABLE_VALUE value = symbol_table_get(current_symbol_table_wrapper->symbol_table, lhs->lexeme, strlen(lhs->lexeme));
-                if(value!=NULL && value->isLoopVariable){
+                if (value != NULL && value->isLoopVariable)
+                {
                     printf("\033[31m\nERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", lhs->lexeme);
                 }
 
-                //checking if lhs is while loop variable
-                if(current_symbol_table_wrapper->while_variables!=NULL && !current_symbol_table_wrapper->while_condition_fulfilled){
-                    if(data_exists(lhs->lexeme,current_symbol_table_wrapper->while_variables)){
+                // checking if lhs is while loop variable
+                if (current_symbol_table_wrapper->while_variables != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
+                {
+                    if (data_exists(lhs->lexeme, current_symbol_table_wrapper->while_variables))
+                    {
                         current_symbol_table_wrapper->while_condition_fulfilled = true;
                     }
                 }
@@ -440,6 +448,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             value->input_list = NULL;
             value->output_list = NULL;
             value->symbol_table_wrapper = create_symbol_table_wrapper();
+            value->symbol_table_wrapper->starting_line_number = root->line_number;
             value->symbol_table_wrapper->name = "driver";
             value->symbol_table_wrapper->parent = NULL;
             value->symbol_table_wrapper->child = NULL;
@@ -450,7 +459,8 @@ void populate_function_and_symbol_tables(TREENODE root)
         }
         else if (strcmp(root->name, "STMTS_END") == 0)
         {
-            if(current_symbol_table_wrapper->while_variables!=NULL && !current_symbol_table_wrapper->while_condition_fulfilled){
+            if (current_symbol_table_wrapper->while_variables != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
+            {
                 printf("\033[31m\nERROR : None of the variables in the while condition have been assigned in the while statements.\n\033[0m");
             }
             go_back_to_parent_symbol_table();
@@ -477,7 +487,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
                         int nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
                         stv->line_number_end = end_line_number;
-                        populateSymboltableValue(datatype, stv, current_module_name, nesting_level, temp->line_number, false,false);
+                        populateSymboltableValue(datatype, stv, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, false, false);
                         // symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                     }
                     else
@@ -490,7 +500,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
                     int nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
                     value->line_number_end = end_line_number;
-                    populateSymboltableValue(datatype, value, current_module_name, nesting_level, temp->line_number, false,false);
+                    populateSymboltableValue(datatype, value, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, false, false);
                     symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 }
                 temp = temp->child;
@@ -501,6 +511,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             // checking if condition has expr has been declared before
             check_expression_if_declared_before(root->child);
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
+            temp->starting_line_number = root->line_number;
             // init_symbolhashmap(temp->symbol_table);
             temp->name = "WHILE_symbol_table";
             temp->parent = current_symbol_table_wrapper;
@@ -509,11 +520,10 @@ void populate_function_and_symbol_tables(TREENODE root)
             LIST while_variables_list = createNewList();
 
             TREENODE expression = root->child;
-            appendWhileVariables(expression,while_variables_list);
+            appendWhileVariables(expression, while_variables_list);
             temp->while_variables = while_variables_list;
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
             current_symbol_table_wrapper = temp;
-
         }
         else if (strcmp(root->name, "CONDITIONALSTMT") == 0)
         {
@@ -555,6 +565,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
             // init_symbolhashmap(temp->symbol_table);
             temp->name = "CASE_STMT_symbol_table";
+            temp->starting_line_number = root->line_number;
             temp->parent = current_symbol_table_wrapper;
             temp->child = NULL;
             temp->next = NULL;
@@ -566,6 +577,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
             // init_symbolhashmap(temp->symbol_table);
             temp->name = "DEFAULT_symbol_table";
+            temp->starting_line_number = root->line_number;
             temp->parent = current_symbol_table_wrapper;
             temp->child = NULL;
             temp->next = NULL;
@@ -578,6 +590,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             // init_symbolhashmap(temp->symbol_table);
             temp->name = "FOR_symbol_table";
             temp->parent = current_symbol_table_wrapper;
+            temp->starting_line_number = root->line_number;
             temp->child = NULL;
             temp->next = NULL;
             insert_symbol_table_at_end(current_symbol_table_wrapper, temp);
@@ -634,7 +647,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE temp = root->child;
             if (current_module_name != NULL)
             {
-                if(strcmp(temp->next->name,"id")!=0)
+                if (strcmp(temp->next->name, "id") != 0)
                 {
                     if (strcmp(current_module_name, root->child->lexeme) == 0)
                         printf("\033[31m\nERROR : Recursion found in Module %s.\n\033[0m", root->child->lexeme);
@@ -662,12 +675,16 @@ void populate_function_and_symbol_tables(TREENODE root)
             if ((!check_if_function_declared(temp->lexeme)))
             {
                 printf("\033[31m\nERROR : Module %s has not been declared before.\n\033[0m", temp->lexeme);
-            }else{
+            }
+            else
+            {
                 FUNCTION_TABLE_VALUE value = function_table_get(function_table, temp->lexeme, strlen(temp->lexeme));
-                if(value->needsChecking){
+                if (value->needsChecking)
+                {
                     value->needsChecking = false;
-                    if(value->isDeclared && value->input_list!=NULL){
-                        printf("\033[31m\nERROR : Module %s has been both declared and defined before the first module reuse statement.\n\033[0m", temp->lexeme);                        
+                    if (value->isDeclared && value->input_list != NULL)
+                    {
+                        printf("\033[31m\nERROR : Module %s has been both declared and defined before the first module reuse statement.\n\033[0m", temp->lexeme);
                     }
                 }
             }

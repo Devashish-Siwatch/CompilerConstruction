@@ -1,8 +1,15 @@
-
+<<module ab>>
+takes input [a:integer]
+start
+	declare x,y:integer;
+	while(x<y)
+	start
+	end
+end
 
 <<<driver program>>>
 start
-	declare a:integer;
+	declare a,b:integer;
 	while(a<b)
 	start
 	end
