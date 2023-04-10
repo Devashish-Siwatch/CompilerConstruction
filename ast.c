@@ -276,6 +276,7 @@ TREENODE generate_ast(TREENODE node)
         }
         case 7:
         {
+            int start_line_number=node->child->line_number;
             for (int i = 0; i < 4; i++)
             {
                 TREENODE temp = node->child->next;
@@ -284,7 +285,8 @@ TREENODE generate_ast(TREENODE node)
             }
             TREENODE driver_module = createNewTreeNode2();
             driver_module->name = "DRIVER_MODULE_STMTS";
-            driver_module->line_number = node->child->line_number;
+
+            driver_module->line_number = start_line_number;
             driver_module->child = generate_ast(node->child)->next;
             return driver_module;
         }

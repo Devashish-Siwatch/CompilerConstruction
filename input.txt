@@ -1,25 +1,14 @@
-<<module ab>>
-takes input [a:integer]
-start
-	declare x,y:integer;
-	while(x<y)
-	start
-	end
-end
-
-
 <<module compute>>
-takes input [x:integer];
-returns [fop1:real]
+takes input [x:integer,var8:array [-2..-5] of integer];
+returns [fop1:real];
 
 start
-	
 end
 
 <<<driver program>>>
 start
 	declare a,b:integer;
-	while(a<b)
-	start
-	end
+	declare arr:array [1..-5] of integer;
+	declare var2:boolean;
+end
 

@@ -38,7 +38,6 @@ SYMBOL_TABLE_VALUE get_symbol_table_value_in_above_table(char *var)
     }
 }
 
-
 int get_type_of_variable(char *lexeme)
 {
     printf("Hi");
@@ -232,7 +231,18 @@ void populateSymboltableValue(TREENODE datatype, SYMBOL_TABLE_VALUE value, char 
             value->symbol_table_value_union.array.top_range.top_var = range2->lexeme;
             value->symbol_table_value_union.array.is_top_dynamic = true;
         }
-
+        if(!value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic){
+            int top_range=value->symbol_table_value_union.array.top_range.top;
+            int bottom_range=value->symbol_table_value_union.array.bottom_range.bottom;
+            if(!(value->symbol_table_value_union.array.is_top_sign_plus))
+                top_range*=-1;
+            if(!(value->symbol_table_value_union.array.is_bottom_sign_plus))
+                bottom_range*=-1;
+            if((bottom_range)>(top_range)){
+                printf("\033[31m\nERROR : Upper range is less than lower range of the array .\n\033[0m" );
+             
+            }
+        }
         // element type
         if (strcmp(elementType->lexeme, "integer") == 0)
         {
@@ -248,6 +258,9 @@ void populateSymboltableValue(TREENODE datatype, SYMBOL_TABLE_VALUE value, char 
         }
 
         // width
+        if(value->symbol_table_value_union.array.is_bottom_dynamic || value->symbol_table_value_union.array.is_top_dynamic){
+            value->width=1;
+        }
         if (!value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic)
         {
             printf("++++++++++++++++++++++++++++++++++\n");
