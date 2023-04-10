@@ -334,17 +334,18 @@ void check_expression_if_declared_before(TREENODE root)
         else{
             //checking type bound for a[5] like terms
             if(root->child!=NULL && strcmp(root->child->name,"num")==0){
-                printf("a\n");
+                // printf("a\n");
                 int index = atoi(root->child->lexeme);
                 SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(root->lexeme);
-                printf("%s\n",root->lexeme);
+                // printf("%s\n",root->lexeme);
+                // printf("%d line gooo %s\n",root->line_number,value->module_name);
                 if(value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
-                    printf("b\n");
-                    int lower = value->symbol_table_value_union.array.bottom_range.bottom * value->symbol_table_value_union.array.is_bottom_sign_plus?1:-1;
-                    int upper = value->symbol_table_value_union.array.top_range.top * value->symbol_table_value_union.array.is_top_sign_plus?1:-1;
+                    // printf("b\n");
+                    int lower = value->symbol_table_value_union.array.bottom_range.bottom * ((value->symbol_table_value_union.array.is_bottom_sign_plus)?1:-1);
+                    int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus)?1:-1);
                     printf("%d %d %d\n",index,lower,upper);
                     if(!(index>=lower && index<=upper)){
-                        printf("c\n");
+                        // printf("c\n");
                         printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m",root->line_number);
                     }
                 }
@@ -633,7 +634,8 @@ void ast_pass2(TREENODE root)
                                     
                                     //printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
                                 if(strcmp(input_plist_iterator->next->child->next->next->name,"integer")!=0){
-                                        printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+
+                                        printf("\033[31m\n Line %d ERROR : %s is of uenxpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 } 
                                 }
                                 else if(sym_val->symbol_table_value_union.array.element_type==real){
@@ -935,8 +937,10 @@ void populate_function_and_symbol_tables(TREENODE root)
                     }
                 }
             }
+            
             if (strcmp(rhs->name, "LVALUEARRSTMT") == 0)
             {
+                
                 check_expression_if_declared_before(rhs->child->child);
                 check_expression_if_declared_before(rhs->child->next->child);
             }
