@@ -125,7 +125,11 @@ a                    22         id                              ACTUALPARALIST2 
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
 ----                 -1                                         STATEMENTS           yes                             -1         
 ----                 -1                                         STATEMENTS           no          STATEMENTS           -1         
+<<<<<<< HEAD
 end                  23         end                             MODULEDEF            yes                             23         
+=======
+end                  10         end                             MODULEDEF            yes                             10         
+>>>>>>> adc056a4c74ccaad4269f518de3995d1e09940ed
 ----                 -1                                         OTHERMODULES         yes                             -1         
 ----                 -1                                         PROGRAM              no          OTHERMODULES         -1         
 ----                 -1                                         ROOT                 no          S                    -1         

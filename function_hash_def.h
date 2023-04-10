@@ -15,6 +15,8 @@ typedef struct function_table_value
     SYMBOL_TABLE_WRAPPER symbol_table_wrapper;
     TREENODE input_list;
     TREENODE output_list;
+    bool isDeclared;
+    bool needsChecking;
 } function_table_value;
 
 typedef function_table_value * FUNCTION_TABLE_VALUE;

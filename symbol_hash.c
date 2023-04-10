@@ -130,6 +130,7 @@ SYMBOL_TABLE_VALUE create_new_symbol_node(char* name)
     value->nesting_level =0;
     value->offset =0;
     value->width =0;
+    value->isLoopVariable = false;
     return value;
 }
 
@@ -139,6 +140,8 @@ SYMBOL_TABLE_WRAPPER create_symbol_table_wrapper(){
     wrapper->next=NULL;
     wrapper->child=NULL;
     wrapper->parent=NULL;
+    wrapper->while_variables = NULL;
+    wrapper->while_condition_fulfilled = false;
     return wrapper;
 }
 
