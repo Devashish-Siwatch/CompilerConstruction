@@ -661,6 +661,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE ass = createNewTreeNode2();
             ass->name = "ASSIGNMENTSTMT";
             ass->child = generate_ast(id);
+            whichstmt->line_number = id->line_number;
             ass->child->next = generate_ast(whichstmt);
             // free(whichstmt);
             // free(node);
@@ -686,6 +687,7 @@ TREENODE generate_ast(TREENODE node)
             TREENODE expr = aexplt->next->next->next;
             TREENODE arrstmt = createNewTreeNode2();
             arrstmt->name = "LVALUEARRSTMT";
+            arrstmt->line_number = node->line_number;
             TREENODE index = createNewTreeNode2();
             index->name = "INDEX";
             index->child = generate_ast(aexplt);
