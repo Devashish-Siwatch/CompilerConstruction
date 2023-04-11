@@ -24,45 +24,94 @@ void init_symbolhashmap(symbol_table_hash_map map)
 
 void print_symbol_table_value(SYMBOL_TABLE_VALUE value)
 {
-    printf("#################################################################\n");
-    if (value->isarray)
-    {
-        // it is an array
-        printf("<<<<<<<<ARRAY DEFN STARTS>>>>>>>>>>\n");
-        if (value->symbol_table_value_union.array.is_bottom_dynamic)
-        {
-            printf("bottom range is %s and sign is %s\n", value->symbol_table_value_union.array.bottom_range.bottom_var, value->symbol_table_value_union.array.is_bottom_sign_plus ? "+" : "-");
+    // printf("#################################################################\n");
+    printf("%-10s", value->module_name);
+    printf("%5s [%d","", value->line_number_start);
+    printf("-%d]  %-5s", value->line_number_end,"");
+    if(value->isarray){
+        if(value->symbol_table_value_union.array.element_type == integer){
+            printf("integer%-5s", "");
         }
-        else
-        {
-            printf("bottom range is %d and sign is %s\n", value->symbol_table_value_union.array.bottom_range.bottom, value->symbol_table_value_union.array.is_bottom_sign_plus ? "+" : "-");
+        else if(value->symbol_table_value_union.array.element_type == real){
+            printf("real%-5s", "");
+        }
+        else if(value->symbol_table_value_union.array.element_type == boolean){
+            printf("boolean%-5s", "");
+        } 
+        printf("yes%-8s", ""); 
+        if(!value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic){
+            printf("static%-2s", "");
+            printf("%3s [%d-","", value->symbol_table_value_union.array.bottom_range.bottom);
+            printf("%d] %-6s", value->symbol_table_value_union.array.top_range.top,"");
+        }
+        else{
+            printf("dynamic%-2s", "");
+            if(value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic){
+                printf("%3s [%d-","", value->symbol_table_value_union.array.bottom_range.bottom);
+                printf("%s] %-6s", value->symbol_table_value_union.array.top_range.top_var,"");
+                
+            }
+            else if(!value->symbol_table_value_union.array.is_top_dynamic && value->symbol_table_value_union.array.is_bottom_dynamic){
+                printf("%3s [%s-","", value->symbol_table_value_union.array.bottom_range.bottom_var);
+                printf("%d] %-6s", value->symbol_table_value_union.array.top_range.top ,"");
+            }
+            else{
+                printf("%3s [%s-","", value->symbol_table_value_union.array.bottom_range.bottom_var);
+                printf("%s] %-6s", value->symbol_table_value_union.array.top_range.top_var,"");
+            }
         }
 
-        if (value->symbol_table_value_union.array.is_top_dynamic)
-        {
-            printf("top range is %s and sign is %s\n", value->symbol_table_value_union.array.top_range.top_var, value->symbol_table_value_union.array.is_top_sign_plus ? "+" : "-");
-        }
-        else
-        {
-            printf("top range is %d and sign is %s\n", value->symbol_table_value_union.array.top_range.top, value->symbol_table_value_union.array.is_top_sign_plus ? "+" : "-");
-        }
-
-        printf("element type is %d\n", value->symbol_table_value_union.array.element_type);
-        printf("<<<<<<<<ARRAY DEFN ENDS>>>>>>>>>>\n");
     }
-    else
-    {
-        // not an array
-        printf("Not array, its type is %d\n", value->symbol_table_value_union.not_array.type);
+    else{
+        if(value->symbol_table_value_union.not_array.type == integer){
+            printf("integer%-5s", "");
+        }
+        else if(value->symbol_table_value_union.not_array.type == real){
+            printf("real%-5s", "");
+        }
+        else if(value->symbol_table_value_union.not_array.type == boolean){
+            printf("boolean%-5s", "");
+        }
+        printf("no%-10s", "");
+        printf("**%-10s", "");
+        printf("**%-10s", "");
     }
-    printf("The function it belongs to is %s.\n", value->module_name);
-    printf("Its nesting level is %d.\n", value->nesting_level);
-    printf("Its width is %d.\n", value->width);
-    printf("Its offset is %d.\n", value->offset);
-    printf("Its start line is %d.\n", value->line_number_start);
-    printf("Its end line is %d.\n", value->line_number_end);
+    printf("%-5d", value->width);
+    printf("%-5d", value->offset);
+    printf("%-5d\n", value->nesting_level);
 
-    printf("#################################################################\n");
+    // if (value->isarray)
+    // {
+    //     // it is an array
+    //     printf("<<<<<<<<ARRAY DEFN STARTS>>>>>>>>>>\n");
+    //     if (value->symbol_table_value_union.array.is_bottom_dynamic)
+    //     {
+    //         printf("bottom range is %s and sign is %s\n", value->symbol_table_value_union.array.bottom_range.bottom_var, value->symbol_table_value_union.array.is_bottom_sign_plus ? "+" : "-");
+    //     }
+    //     else
+    //     {
+    //         printf("bottom range is %d and sign is %s\n", value->symbol_table_value_union.array.bottom_range.bottom, value->symbol_table_value_union.array.is_bottom_sign_plus ? "+" : "-");
+    //     }
+
+    //     if (value->symbol_table_value_union.array.is_top_dynamic)
+    //     {
+    //         printf("top range is %s and sign is %s\n", value->symbol_table_value_union.array.top_range.top_var, value->symbol_table_value_union.array.is_top_sign_plus ? "+" : "-");
+    //     }
+    //     else
+    //     {
+    //         printf("top range is %d and sign is %s\n", value->symbol_table_value_union.array.top_range.top, value->symbol_table_value_union.array.is_top_sign_plus ? "+" : "-");
+    //     }
+
+    //     printf("element type is %d\n", value->symbol_table_value_union.array.element_type);
+    //     printf("<<<<<<<<ARRAY DEFN ENDS>>>>>>>>>>\n");
+    // }
+    // else
+    // {
+    //     // not an array
+    //     printf("Not array, its type is %d\n", value->symbol_table_value_union.not_array.type);
+    // }
+    
+    
 }
 
 void printSymboltableDFS(SYMBOL_TABLE_WRAPPER wrapper)
@@ -164,16 +213,16 @@ SYMBOL_TABLE_WRAPPER create_symbol_table_wrapper()
 
 void print_symbol_table(SYMBOL_TABLE_WRAPPER wrapper)
 {
-    printf("-----------------------------------\n");
-    printf("AT symbol table : %s\n", wrapper->name);
-    printf("starting line number : %d\n", wrapper->starting_line_number);
+    // printf("-----------------------------------\n");
+    // printf("AT symbol table : %s\n", wrapper->name);
+    // printf("starting line number : %d\n", wrapper->starting_line_number);
     for (int i = 0; i < SYMBOL_HASHMAP_SIZE; i++)
     {
         if (wrapper->symbol_table[i].is_used == true)
         {
-            printf("SYMBOL at i=%d : %s\n", i, wrapper->symbol_table[i].variable_name);
+            printf("%-15s", wrapper->symbol_table[i].variable_name);
             print_symbol_table_value(wrapper->symbol_table[i].symbol_table_value);
         }
     }
-    printf("-----------------------------------\n");
+    // printf("-----------------------------------\n");
 }
