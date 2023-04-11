@@ -330,6 +330,53 @@ void appendWhileVariables(TREENODE root, LIST list)
     }
 }
 
+void check_array_index_bounds(TREENODE indexRoot, char *arrayLexeme, int line_number)
+{
+    if (strcmp(indexRoot->name, "num") == 0)
+    {
+        int index = atoi(indexRoot->lexeme);
+        SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(arrayLexeme);
+        if (value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic)
+        {
+            int lower = value->symbol_table_value_union.array.bottom_range.bottom * ((value->symbol_table_value_union.array.is_bottom_sign_plus) ? 1 : -1);
+            int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus) ? 1 : -1);
+            if (!(index >= lower && index <= upper))
+            {
+                printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", line_number);
+            }
+        }
+    }
+    else if (strcmp(indexRoot->name, "PLUS") == 0 && strcmp(indexRoot->child->name, "num") == 0)
+    {
+        int index = atoi(indexRoot->child->lexeme);
+        SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(arrayLexeme);
+        if (value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic)
+        {
+            int lower = value->symbol_table_value_union.array.bottom_range.bottom * ((value->symbol_table_value_union.array.is_bottom_sign_plus) ? 1 : -1);
+            int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus) ? 1 : -1);
+            if (!(index >= lower && index <= upper))
+            {
+                printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", line_number);
+            }
+        }
+    }
+    else if (strcmp(indexRoot->name, "MINUS") == 0 && strcmp(indexRoot->child->name, "num") == 0)
+    {
+        printf("idhar\n");
+        int index = -1 * atoi(indexRoot->child->lexeme);
+        SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(arrayLexeme);
+        if (value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic)
+        {
+            int lower = value->symbol_table_value_union.array.bottom_range.bottom * ((value->symbol_table_value_union.array.is_bottom_sign_plus) ? 1 : -1);
+            int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus) ? 1 : -1);
+            if (!(index >= lower && index <= upper))
+            {
+                printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", line_number);
+            }
+        }
+    }
+}
+
 void check_expression_if_declared_before(TREENODE root)
 {
     // printf("CHECKING FOR %s------------------\n",root->name);
@@ -350,28 +397,21 @@ void check_expression_if_declared_before(TREENODE root)
         bool is_present = check_if_declared_before(root->lexeme);
         if (!is_present)
         {
-            printf("\033[31m\n Line %d ERROR : %s has not been declared before.\n\033[0m", root->line_number, root->lexeme);
+            printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", root->line_number, root->lexeme);
         }
         else
         {
             // checking type bound for a[5] like terms
-            if (root->child != NULL && strcmp(root->child->name, "num") == 0)
+            if (root->child != NULL)
             {
-                printf("a\n");
-                int index = atoi(root->child->lexeme);
                 SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(root->lexeme);
-                printf("%s\n", root->lexeme);
-                if (value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic)
+                if (!value->isarray)
                 {
-                    printf("b\n");
-                    int lower = value->symbol_table_value_union.array.bottom_range.bottom * value->symbol_table_value_union.array.is_bottom_sign_plus ? 1 : -1;
-                    int upper = value->symbol_table_value_union.array.top_range.top * value->symbol_table_value_union.array.is_top_sign_plus ? 1 : -1;
-                    printf("%d %d %d\n", index, lower, upper);
-                    if (!(index >= lower && index <= upper))
-                    {
-                        printf("c\n");
-                        printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", root->line_number);
-                    }
+                    printf("\033[31m\nLine %d ERROR : Array type access for non-array element.\n\033[0m", root->line_number);
+                }
+                else
+                {
+                    check_array_index_bounds(root->child, root->lexeme, root->line_number);
                 }
             }
         }
@@ -622,14 +662,14 @@ void ast_pass2(TREENODE root)
 
                     if (strcmp(input_plist_iterator->next->name, "integer") != 0)
                     {
-                        printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                        printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                     }
                 }
                 else if (strcmp(apl_id_node->name, "rnum") == 0)
                 {
                     if (strcmp(input_plist_iterator->next->name, "real") != 0)
                     {
-                        printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                        printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                     }
                 }
                 else
@@ -643,27 +683,27 @@ void ast_pass2(TREENODE root)
                         {
                             if (strcmp(input_plist_iterator->next->name, "RANGE2") == 0)
                             {
-                                printf("\033[31m\n Line %d ERROR : %s should be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                printf("\033[31m\nLine %d ERROR : %s should be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == integer)
                             {
                                 if (strcmp(input_plist_iterator->next->name, "integer") != 0)
                                 {
-                                    printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 }
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == real)
                             {
                                 if (strcmp(input_plist_iterator->next->name, "real") != 0)
                                 {
-                                    printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 }
                             }
                             else
                             {
                                 if (strcmp(input_plist_iterator->next->name, "boolean") != 0)
                                 {
-                                    printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 }
                             }
                         }
@@ -671,7 +711,7 @@ void ast_pass2(TREENODE root)
                         {
                             if (strcmp(input_plist_iterator->next->name, "RANGE2") != 0)
                             {
-                                printf("\033[31m\n Line %d ERROR : %s should not be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                printf("\033[31m\nLine %d ERROR : %s should not be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                             }
                             else
                             {
@@ -682,7 +722,8 @@ void ast_pass2(TREENODE root)
                                     // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
                                     if (strcmp(input_plist_iterator->next->child->next->next->name, "integer") != 0)
                                     {
-                                        printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+
+                                        printf("\033[31m\nLine %d ERROR : %s is of uenxpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                                 else if (sym_val->symbol_table_value_union.array.element_type == real)
@@ -691,7 +732,7 @@ void ast_pass2(TREENODE root)
                                     // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
                                     if (strcmp(input_plist_iterator->next->child->next->next->name, "real") != 0)
                                     {
-                                        printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                                 else if (sym_val->symbol_table_value_union.array.element_type == boolean)
@@ -700,7 +741,7 @@ void ast_pass2(TREENODE root)
                                     // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
                                     if (strcmp(input_plist_iterator->next->child->next->next->name, "boolean") != 0)
                                     {
-                                        printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                                 // printf("%d here",sym_val->symbol_table_value_union.array.bottom_range.bottom);
@@ -761,7 +802,7 @@ void ast_pass2(TREENODE root)
                                     int size_of_array_ipl = abs(upper_bound_ipl - lower_bound_ipl);
                                     if (size_of_array_apl != size_of_array_ipl)
                                     {
-                                        printf("\033[31m\n Line %d ERROR : %s array size does not match with input parameter array size.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        printf("\033[31m\nLine %d ERROR : %s array size does not match with input parameter array size.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                             }
@@ -778,11 +819,11 @@ void ast_pass2(TREENODE root)
 
             if (input_plist_iterator == NULL && apl_iter != NULL)
             {
-                printf("\033[31m\n Line %d ERROR : Too many arguments in calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                printf("\033[31m\nLine %d ERROR : Too many arguments in calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
             }
             if (input_plist_iterator != NULL && apl_iter == NULL)
             {
-                printf("\033[31m\n Line %d ERROR : Too few arguments in calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                printf("\033[31m\nLine %d ERROR : Too few arguments in calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
             }
 
             // printf("value->input_list:   %s\n", value->input_list->child->next->name);
@@ -790,11 +831,11 @@ void ast_pass2(TREENODE root)
             //  printf("Module Name of input list parameter : %s\n", sym_val->symbol_table_value_union.not_array.type);
             if (optional == NULL && value->output_list != NULL)
             {
-                printf("\033[31m\n Line %d ERROR : Expected return parameters while calling module : %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                printf("\033[31m\nLine %d ERROR : Expected return parameters while calling module : %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
             }
             if (optional != NULL && value->output_list == NULL)
             {
-                printf("\033[31m\n Line %d ERROR : No return parameter expected while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                printf("\033[31m\nLine %d ERROR : No return parameter expected while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
             }
             else if (optional != NULL && value->output_list->child != NULL)
             {
@@ -808,7 +849,7 @@ void ast_pass2(TREENODE root)
                     {
                         if (sym_val->isarray == true)
                         {
-                            printf("\033[31m\n Line %d ERROR : Array not allowed in output parameter while calling module %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                            printf("\033[31m\nLine %d ERROR : Array not allowed in output parameter while calling module %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
                         }
                         else
                         {
@@ -816,21 +857,21 @@ void ast_pass2(TREENODE root)
                             {
                                 if (strcmp(output_itr->next->name, "integer") != 0)
                                 {
-                                    printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
                                 }
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == real)
                             {
                                 if (strcmp(output_itr->next->name, "real") != 0)
                                 {
-                                    printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
                                 }
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == boolean)
                             {
                                 if (strcmp(output_itr->next->name, "boolean") != 0)
                                 {
-                                    printf("\033[31m\n Line %d ERROR : %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
                                 }
                             }
                         }
@@ -877,7 +918,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 //  printf("value->input_list:   %s", value->input_list);
                 value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
                 if (value->input_list != NULL)
-                    printf("\033[31m\n Line %d ERROR : Module %s redeclared.\n\033[0m", root->child->line_number, root->child->lexeme);
+                    printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", root->child->line_number, root->child->lexeme);
             }
             else
             {
@@ -913,7 +954,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 if (redeclared)
                 {
                     // printf("ERROR: Function %s redeclared\n", temp->lexeme);
-                    printf("\033[31m\n Line %d ERROR : Module %s redeclared.\n\033[0m", temp->line_number, temp->lexeme);
+                    printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", temp->line_number, temp->lexeme);
                 }
                 else
                 {
@@ -958,7 +999,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             // printf("Kys hus");
             if (!lhs_exists)
             {
-                printf("\033[31m\n Line %d ERROR : %s has not been declared before.\n\033[0m", lhs->line_number, lhs->lexeme);
+                printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", lhs->line_number, lhs->lexeme);
             }
             else
             {
@@ -968,12 +1009,22 @@ void populate_function_and_symbol_tables(TREENODE root)
                 // printf("Ferefefsdf %s\n", value->module_name);
                 if (value != NULL && value->isLoopVariable)
                 {
-                    printf("\033[31m\n Line %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", lhs->line_number, lhs->lexeme);
+                    printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", lhs->line_number, lhs->lexeme);
                 }
-                // printf("Ferefefsdf %s\n", value->module_name);
-                //  if (r_type->symbol_table_value_union.not_array.type == -1 || l_type->symbol_table_value_union.not_array.type == -1)
-                //  {
-                //      printf("\033[31m\n Line %d ERROR : Type mismatch\n\033[0m", lhs->line_number);
+
+                // if (r_type->symbol_table_value_union.not_array.type == -1 || l_type->symbol_table_value_union.not_array.type==-1)
+                // {
+                //     printf("\033[31m\nLine %d ERROR : Type mismatch\n\033[0m",lhs->line_number);
+                // }
+                // else
+                // {
+                //     if(!l_type->isarray&&!r_type->isarray){
+                //         if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.not_array.type)
+                //     { // type checking
+                //         printf("\033[31m\nLine %d ERROR : Types of %s and %s are different\n\033[0m",lhs->line_number, lhs->lexeme, rhs->lexeme);
+                //     }
+                //     }
+
                 //  }
 
                 if (!l_type->isarray && !r_type->isarray)
@@ -1023,9 +1074,14 @@ void populate_function_and_symbol_tables(TREENODE root)
                     }
                 }
             }
+
             if (strcmp(rhs->name, "LVALUEARRSTMT") == 0)
             {
+
                 check_expression_if_declared_before(rhs->child->child);
+                printf("here\n");
+                // checking if this index is a single number and if yes, then checking if it is within bounds
+                check_array_index_bounds(rhs->child->child, lhs->lexeme, lhs->line_number);
                 check_expression_if_declared_before(rhs->child->next->child);
             }
             else
@@ -1054,7 +1110,7 @@ void populate_function_and_symbol_tables(TREENODE root)
         {
             if (current_symbol_table_wrapper->while_variables != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
             {
-                printf("\033[31m\n Line %d ERROR : None of the variables in the while condition have been assigned in the while statements.\n\033[0m", current_symbol_table_wrapper->starting_line_number);
+                printf("\033[31m\nLine %d ERROR : None of the variables in the while condition have been assigned in the while statements.\n\033[0m", current_symbol_table_wrapper->starting_line_number);
             }
             go_back_to_parent_symbol_table();
         }
@@ -1085,7 +1141,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     }
                     else
                     {
-                        printf("\033[31m\n Line %d ERROR : %s has already been declared before.\n\033[0m", temp->line_number, temp->lexeme);
+                        printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", temp->line_number, temp->lexeme);
                     }
                 }
                 else
@@ -1124,7 +1180,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             bool is_declared = check_if_declared_before(root->child->lexeme);
             if (!is_declared)
             {
-                printf("\033[31m\n Line %d ERROR : %s has not been declared before.\n\033[0m", root->child->line_number, root->child->lexeme);
+                printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", root->child->line_number, root->child->lexeme);
             }
             else
             {
@@ -1132,19 +1188,19 @@ void populate_function_and_symbol_tables(TREENODE root)
                 if (get_type_of_variable(root->child->lexeme) == 2)
                 {
                     if (root->child->next->next != NULL)
-                        printf("\033[31m\n Line %d ERROR : Default statement not expected in boolean switch case\n\033[0m", root->child->line_number);
+                        printf("\033[31m\nLine %d ERROR : Default statement not expected in boolean switch case\n\033[0m", root->child->line_number);
                 }
                 else if (get_type_of_variable(root->child->lexeme) == 0)
                 {
 
                     if (root->child->next->next == NULL)
-                        printf("\033[31m\n Line %d ERROR : Default statement is expected in integer switch case\n\033[0m", root->child->line_number);
+                        printf("\033[31m\nLine %d ERROR : Default statement is expected in integer switch case\n\033[0m", root->child->line_number);
                 }
                 if (get_type_of_variable(root->child->lexeme) == 1)
                 {
 
                     root->child->next = NULL;
-                    printf("\033[31m\n Line %d ERROR : %s has type real, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
+                    printf("\033[31m\nLine %d ERROR : %s has type real, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
                 }
             }
             // check_if_declared_before(root->child->lexeme);
@@ -1222,7 +1278,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             bool var_exists = check_if_declared_before(var->lexeme);
             if (!var_exists)
             {
-                printf("\033[31m\n Line %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
+                printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
             }
         }
         else if (strcmp(root->name, "IO_OUTPUT") == 0)
@@ -1233,14 +1289,14 @@ void populate_function_and_symbol_tables(TREENODE root)
                 var_exists = check_if_declared_before(var->lexeme);
             if (!var_exists)
             {
-                printf("\033[31m\n Line %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
+                printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
             }
             if (var->next != NULL)
             {
                 var = var->next;
                 if ((strcmp(var->name, "id") == 0) && (!check_if_declared_before(var->lexeme)))
                 {
-                    printf("\033[31m\n Line %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
+                    printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
                 }
             }
         }
@@ -1253,12 +1309,12 @@ void populate_function_and_symbol_tables(TREENODE root)
                 if (strcmp(temp->next->name, "id") != 0)
                 {
                     if (strcmp(current_module_name, root->child->lexeme) == 0)
-                        printf("\033[31m\n Line %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->line_number, root->child->lexeme);
+                        printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->line_number, root->child->lexeme);
                 }
                 else
                 {
                     if (strcmp(current_module_name, root->child->next->lexeme) == 0)
-                        printf("\033[31m\n Line %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->next->line_number, root->child->next->lexeme);
+                        printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->next->line_number, root->child->next->lexeme);
                 }
             }
             if (strcmp(temp->name, "id") != 0)
@@ -1269,7 +1325,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     bool dec_before = check_if_declared_before(temp2->lexeme);
                     if (!dec_before)
                     {
-                        printf("\033[31m\n Line %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
+                        printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
                     }
                     temp2 = temp2->child;
                 }
@@ -1277,7 +1333,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             }
             if ((!check_if_function_declared(temp->lexeme)))
             {
-                printf("\033[31m\n Line %d ERROR : Module %s has not been declared before.\n\033[0m", temp->line_number, temp->lexeme);
+                printf("\033[31m\nLine %d ERROR : Module %s has not been declared before.\n\033[0m", temp->line_number, temp->lexeme);
             }
             else
             {
@@ -1287,7 +1343,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     value->needsChecking = false;
                     if (value->isDeclared && value->input_list != NULL)
                     {
-                        printf("\033[31m\n Line %d ERROR : Module %s has been both declared and defined before the first module reuse statement.\n\033[0m", temp->line_number, temp->lexeme);
+                        printf("\033[31m\nLine %d ERROR : Module %s has been both declared and defined before the first module reuse statement.\n\033[0m", temp->line_number, temp->lexeme);
                     }
                 }
             }
@@ -1302,7 +1358,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     {
                         if (!check_if_declared_before(temp3->lexeme))
                         {
-                            printf("\033[31m\n Line %d ERROR : %s has not been declared before.\n\033[0m", temp3->line_number, temp3->lexeme);
+                            printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp3->line_number, temp3->lexeme);
                         }
                     }
                     if (temp3->next != NULL)
@@ -1319,7 +1375,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     bool dec_before = check_if_declared_before(temp2->lexeme);
                     if (!dec_before)
                     {
-                        printf("\033[31m\n Line %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
+                        printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
                     }
                     if (temp2->next != NULL)
                     {
