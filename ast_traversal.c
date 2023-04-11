@@ -698,6 +698,7 @@ void ast_pass2(TREENODE root)
         {
             TREENODE input_plist_iterator = value->input_list->child;
             TREENODE apl_iter = module_id_node->next->child;
+
             while (input_plist_iterator != NULL && apl_iter != NULL)
             {
                 // printf("value->input_list:   %s\n", input_plist_iterator->lexeme);
@@ -970,30 +971,56 @@ void populate_function_and_symbol_tables(TREENODE root)
             {
                 //  printf("value->input_list:   %s", value->input_list);
                 value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
-                if (value->input_list != NULL)
+                if (value->input_list != NULL){
                     printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", root->child->line_number, root->child->lexeme);
+                        value->symbol_table_wrapper = create_symbol_table_wrapper();
+                        value->symbol_table_wrapper->starting_line_number = root->line_number;
+                        value->symbol_table_wrapper->name = root->child->lexeme;
+                        current_module_name = root->child->lexeme;
+                        value->symbol_table_wrapper->parent = NULL;
+                        value->symbol_table_wrapper->child = NULL;
+                        value->symbol_table_wrapper->next = NULL;                        
+                        current_symbol_table_wrapper = value->symbol_table_wrapper;
+                }
+                else
+                {
+                    value->input_list = root->child->next;
+                    if (strcmp(root->child->next->next->name, "OutputPlistHead") == 0)
+                        value->output_list = root->child->next->next;
+                    else
+                        value->output_list = NULL;
+                    value->symbol_table_wrapper = create_symbol_table_wrapper();
+                    value->symbol_table_wrapper->starting_line_number = root->line_number;
+                    value->symbol_table_wrapper->name = root->child->lexeme;
+                    current_module_name = root->child->lexeme;
+                    value->symbol_table_wrapper->parent = NULL;
+                    value->symbol_table_wrapper->child = NULL;
+                    value->symbol_table_wrapper->next = NULL;
+                    function_table_insert(function_table, root->child->lexeme, value);
+                    current_symbol_table_wrapper = value->symbol_table_wrapper;
+                }
             }
             else
             {
                 value = create_function_value();
                 value->isDeclared = false;
                 value->needsChecking = true;
-            }
-            value->input_list = root->child->next;
-            if (strcmp(root->child->next->next->name, "OutputPlistHead") == 0)
-                value->output_list = root->child->next->next;
-            else
-                value->output_list = NULL;
-            value->symbol_table_wrapper = create_symbol_table_wrapper();
-            value->symbol_table_wrapper->starting_line_number = root->line_number;
-            value->symbol_table_wrapper->name = root->child->lexeme;
-            current_module_name = root->child->lexeme;
-            value->symbol_table_wrapper->parent = NULL;
-            value->symbol_table_wrapper->child = NULL;
-            value->symbol_table_wrapper->next = NULL;
-            if (!redeclared)
+                value->input_list = root->child->next;
+                if (strcmp(root->child->next->next->name, "OutputPlistHead") == 0)
+                    value->output_list = root->child->next->next;
+                else
+                    value->output_list = NULL;
+                value->symbol_table_wrapper = create_symbol_table_wrapper();
+                value->symbol_table_wrapper->starting_line_number = root->line_number;
+                value->symbol_table_wrapper->name = root->child->lexeme;
+                current_module_name = root->child->lexeme;
+                value->symbol_table_wrapper->parent = NULL;
+                value->symbol_table_wrapper->child = NULL;
+                value->symbol_table_wrapper->next = NULL;
                 function_table_insert(function_table, root->child->lexeme, value);
-            current_symbol_table_wrapper = value->symbol_table_wrapper;
+                current_symbol_table_wrapper = value->symbol_table_wrapper;
+            }
+            
         }
         // checking for redeclaration of function
         else if (strcmp(root->name, "MDSHead") == 0)
