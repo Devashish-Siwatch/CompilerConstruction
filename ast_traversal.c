@@ -48,6 +48,22 @@ int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper)
     return count;
 }
 
+SYMBOL_TABLE_WRAPPER get_while_symbol_table_having_declaration_of(char* var){
+    SYMBOL_TABLE_WRAPPER temp_wrapper = current_symbol_table_wrapper;
+    while (true)
+    {
+        if (temp_wrapper == NULL)
+            return NULL;
+        if(temp_wrapper->while_variables!=NULL && data_exists(var,temp_wrapper->while_variables)){
+            return temp_wrapper;
+        }
+        else
+        {
+            temp_wrapper = temp_wrapper->parent;
+        }
+    }
+}
+
 SYMBOL_TABLE_VALUE get_symbol_table_value_in_above_table(SYMBOL_TABLE_WRAPPER cc, char *var)
 {
     SYMBOL_TABLE_WRAPPER temp_wrapper = cc;
@@ -1439,7 +1455,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             }
             else
             {
-
+                
                 // checking if lhs is for loop variable
                 SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, lhs->lexeme);
                 // printf("Ferefefsdf %s\n", value->module_name);
@@ -1447,7 +1463,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 {
                     printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", lhs->line_number, lhs->lexeme);
                 }
-
+                
                 // if (r_type->symbol_table_value_union.not_array.type == -1 || l_type->symbol_table_value_union.not_array.type==-1)
                 // {
                 //     printf("\033[31m\nLine %d ERROR : Type mismatch\n\033[0m",lhs->line_number);
@@ -1480,7 +1496,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 {
                     if (l_type->symbol_table_value_union.array.element_type == r_type->symbol_table_value_union.array.element_type)
                     { // type checking
-                        // printf("HELLOE");
+                        //printf("HELLOE");
                         if ((l_type->symbol_table_value_union.array.top_range.top - l_type->symbol_table_value_union.array.bottom_range.bottom) != (r_type->symbol_table_value_union.array.top_range.top - r_type->symbol_table_value_union.array.bottom_range.bottom))
                         {
                             printf("\033[31m\nLine %d ERROR : Array size mismatch\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
@@ -1504,18 +1520,19 @@ void populate_function_and_symbol_tables(TREENODE root)
                     if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.array.element_type)
                         printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                 }
-
+                
                 // checking if lhs is while loop variable
-                if (current_symbol_table_wrapper->while_variables != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
+                SYMBOL_TABLE_WRAPPER wrapper = get_while_symbol_table_having_declaration_of(lhs->lexeme);
+                if (wrapper!=NULL && wrapper->while_variables != NULL && !wrapper->while_condition_fulfilled)
                 {
-                    if (data_exists(lhs->lexeme, current_symbol_table_wrapper->while_variables))
+                    if (data_exists(lhs->lexeme, wrapper->while_variables))
                     {
-                        current_symbol_table_wrapper->while_condition_fulfilled = true;
+                        wrapper->while_condition_fulfilled = true;
                     }
                 }
 
                 // checking if it is output param
-                SYMBOL_TABLE_VALUE value2 = symbol_table_get(current_symbol_table_wrapper->symbol_table, lhs->lexeme, strlen(lhs->lexeme));
+                SYMBOL_TABLE_VALUE value2 = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, lhs->lexeme);
                 if (value2 != NULL && value2->isOutputParameter && value2->outputParameterNeedsChecking)
                 {
                     value2->outputParameterNeedsChecking = false;
