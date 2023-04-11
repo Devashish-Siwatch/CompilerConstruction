@@ -1006,9 +1006,9 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     // }
     // printf("File opened successfully\n");
 
-    parser(input_file);
+     parser(input_file);
 
-    printTree(parse_tree, output_file);
+    printTree(parse_tree);
 
     printf("\n\n\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
@@ -1035,4 +1035,84 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     //     if(strcmp(follow[i],"-1")==0) break;
     // }
     return 0;
+}
+
+
+int parse_tree_func(FILE *input_file)
+{
+    grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
+    for (int i = 0; i < NUMBER_OF_RULES; ++i)
+        grammar[i] = createNewList();
+    populate_grammer();
+    // display_rules();
+    // printf("here\n");
+
+    init_nt_array();
+    init_t_array();
+    // printf("here\n");
+    complete_first_sets = all_first_sets();   // populating first set
+    complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets();   // populating synch set
+    // printf("here\n");
+
+    init_parse_table();
+    // printf("here\n");
+    fillParseTable();
+    // printf("here\n");
+    // printParseTable();
+
+    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+    //     printf("%d. %s\n",i,arrayOfNonTerminals[i]);
+    // }
+
+    // printf("NUMBER OF UNIQUE TERMINALS : %d\n", number_of_unique_terminals);
+    // printf("NUMBER OF UNIQUE NON-TERMINALS : %d\n", number_of_unique_nonterminals);
+
+    // printf("NO OF UNIQUE NT : %d\n",x);
+
+    // char ** first = get_first_set("MODULE1");
+    // printf("FINAL PRINT\n");
+    // for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
+    //     printf("%s\n",first[i]);
+    //     if(strcmp(first[i],"-1")==0) break;
+    // }
+
+    // // Printing follow sets
+    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+    //     printf("PRINTING FOLLOW OF %s:-\n",arrayOfNonTerminals[i]);
+    //     for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
+    //         // printf("here\n");
+    //         if(strcmp(complete_follow_sets[i][j],"-1")==0) break;
+    //         printf("%s\n",complete_follow_sets[i][j]);
+    //     }
+    // }
+
+    // //  Printing first sets
+    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
+    //     printf("PRINTING FIRST OF %s:-\n",arrayOfNonTerminals[i]);
+    //     for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
+    //         // printf("here\n");
+    //         if(strcmp(complete_first_sets[i][j],"-1")==0) break;
+    //         printf("%s\n",complete_first_sets[i][j]);
+    //     }
+    // }
+
+    // init_parser();
+
+    // FILE *input_file;
+    // // Open the input file in read mode
+    // input_file = fopen("input.txt", "r");
+    // if (input_file == NULL)
+    // {
+    //     printf("Unable to open file");
+    //     return 1;
+    // }
+    // printf("File opened successfully\n");
+
+    parser(input_file);
+
+    printTree(parse_tree);
+
+    return 0;
+
 }

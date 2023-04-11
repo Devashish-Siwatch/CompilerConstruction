@@ -16,6 +16,7 @@ int searchForRowIndex(char* data);
 int searchForColIndex(char* data);
 
 int parser_complete_functionality(FILE* input_file, FILE* output_file);
+int parse_tree_func(FILE *input_file);
 void parser(FILE *input_file_pointer);
 void fillParseTable();
 void printParseTable();

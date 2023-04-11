@@ -13,17 +13,17 @@ Chaitanya Iyer - 2020A7PS0012P
 #include <string.h>
 #include <stdlib.h>
 
-void printParseTree(TREENODE  node, FILE* output_file) {
+void printParseTree(TREENODE  node) {
 
     if (node == NULL) return;
 
     if(node->child != NULL){
-        printParseTree(node->child,output_file);
+        printParseTree(node->child);
     }
-    printf("%s and rule number : %d\n",node->name, node->rule_number+1);
-    /*
-    printf("Name : %-20s, lexeme : %-20s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15f \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
-    printf("%-20s ",node->lexeme);
+    //printf("%s and rule number : %d\n",node->name, node->rule_number+1);
+    
+    //printf("Name : %-15s, lexeme : %-10s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15f \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
+    printf("%-15s ",node->lexeme);
     if(node->line_number<0)
         printf("%-11d ",node->line_number);
     else
@@ -57,50 +57,50 @@ void printParseTree(TREENODE  node, FILE* output_file) {
         printf("%-20s","");
     // printf("%-5f ",node->valueIfRNum);
     printf("%-10d ",node->line_number);
-    printf("\n");*/
+    printf("\n");
 
     //Writing to output file
-    fprintf(output_file,"%-20s ",node->lexeme);
-    if(node->line_number<0)
-        fprintf(output_file,"%-11d ",node->line_number);
-    else
-        fprintf(output_file,"%-10d ",node->line_number);
-    if(strcmp(node->lexeme,"----"))
-        fprintf(output_file,"%-20s ",node->name);
-    else
-        fprintf(output_file,"%-20s","");
+    // fprintf(output_file,"%-20s ",node->lexeme);
+    // if(node->line_number<0)
+    //     fprintf(output_file,"%-11d ",node->line_number);
+    // else
+    //     fprintf(output_file,"%-10d ",node->line_number);
+    // if(strcmp(node->lexeme,"----"))
+    //     fprintf(output_file,"%-20s ",node->name);
+    // else
+    //     fprintf(output_file,"%-20s","");
 
-    if(strcmp(node->name,"num")==0){
-        fprintf(output_file,"%-10d ",node->valueIfNum); 
-    }
-    else if(strcmp(node->name,"rnum")==0){
-        fprintf(output_file,"%-10f ",node->valueIfRNum);
-    }
-    else
-    {
-        fprintf(output_file,"%-11s","");
-    }
-    if(strcmp(node->name,"S")==0)
-        fprintf(output_file,"ROOT%-17s","");
-    else
-        fprintf(output_file,"%-20s ",node->parent->name);
-    if(node->child!=NULL)
-        fprintf(output_file,"no%-10s","");
-    else    
-        fprintf(output_file,"yes%-9s","");
-    if(node->child!=NULL)
-        fprintf(output_file,"%-20s ",node->name);
-    else
-        fprintf(output_file,"%-20s","");
-    fprintf(output_file,"%-10d ",node->line_number);
-    // printf("%-5f ",node->valueIfRNum);
+    // if(strcmp(node->name,"num")==0){
+    //     fprintf(output_file,"%-10d ",node->valueIfNum); 
+    // }
+    // else if(strcmp(node->name,"rnum")==0){
+    //     fprintf(output_file,"%-10f ",node->valueIfRNum);
+    // }
+    // else
+    // {
+    //     fprintf(output_file,"%-11s","");
+    // }
+    // if(strcmp(node->name,"S")==0)
+    //     fprintf(output_file,"ROOT%-17s","");
+    // else
+    //     fprintf(output_file,"%-20s ",node->parent->name);
+    // if(node->child!=NULL)
+    //     fprintf(output_file,"no%-10s","");
+    // else    
+    //     fprintf(output_file,"yes%-9s","");
+    // if(node->child!=NULL)
+    //     fprintf(output_file,"%-20s ",node->name);
+    // else
+    //     fprintf(output_file,"%-20s","");
+    // fprintf(output_file,"%-10d ",node->line_number);
+    // // printf("%-5f ",node->valueIfRNum);
 
-    fprintf(output_file,"\n");
+    // fprintf(output_file,"\n");
 
     if (node->child != NULL){
         TREENODE temp = node->child->next;
         while (temp != NULL){
-            printParseTree(temp, output_file);
+            printParseTree(temp);
             temp = temp->next;
         }
     }
@@ -198,7 +198,7 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent, int grammar_rule_
     return treePointerArray;
 }
 
-void printTree(TREELIST tree, FILE *output_file){
+void printTree(TREELIST tree){
     TREENODE head = tree->head;
-    printParseTree(head, output_file);
+    printParseTree(head);
 }
