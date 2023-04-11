@@ -1,7 +1,5 @@
 <<<driver program>>>
 start
-	declare a : array [-20..-5] of integer;
-	declare b : real;
-	a[-12] := a[122] + a[-111];
-	a[-133] := b[1] + a[0] + 33;
+	a[-133] :=3;
+	a := 22;
 end

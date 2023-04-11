@@ -313,7 +313,7 @@ void check_array_index_bounds(TREENODE indexRoot, char* arrayLexeme, int line_nu
     if(strcmp(indexRoot->name,"num")==0){
         int index = atoi(indexRoot->lexeme);
         SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(arrayLexeme);
-        if(value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
+        if(value !=NULL && value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
             int lower = value->symbol_table_value_union.array.bottom_range.bottom * ((value->symbol_table_value_union.array.is_bottom_sign_plus)?1:-1);
             int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus)?1:-1);
             if(!(index>=lower && index<=upper)){
@@ -323,7 +323,7 @@ void check_array_index_bounds(TREENODE indexRoot, char* arrayLexeme, int line_nu
     }else if(strcmp(indexRoot->name,"PLUS")==0 && strcmp(indexRoot->child->name,"num")==0){
         int index = atoi(indexRoot->child->lexeme);
         SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(arrayLexeme);
-        if(value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
+        if(value !=NULL && value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
             int lower = value->symbol_table_value_union.array.bottom_range.bottom * ((value->symbol_table_value_union.array.is_bottom_sign_plus)?1:-1);
             int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus)?1:-1);
             if(!(index>=lower && index<=upper)){
@@ -334,7 +334,7 @@ void check_array_index_bounds(TREENODE indexRoot, char* arrayLexeme, int line_nu
         printf("idhar\n");
         int index = -1*atoi(indexRoot->child->lexeme);
         SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(arrayLexeme);
-        if(value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
+        if(value !=NULL && value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
             int lower = value->symbol_table_value_union.array.bottom_range.bottom * ((value->symbol_table_value_union.array.is_bottom_sign_plus)?1:-1);
             int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus)?1:-1);
             if(!(index>=lower && index<=upper)){
