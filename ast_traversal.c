@@ -985,7 +985,6 @@ void ast_pass2(TREENODE root)
 
     else if (strcmp(root->name, "MODULE_REUSE_STMT") == 0)
     {
-
         // printf("REACHED MODULE_REUSE_STMT NODE\n");
         TREENODE module_id_node;
         FUNCTION_TABLE_VALUE value;
@@ -993,7 +992,6 @@ void ast_pass2(TREENODE root)
         if (strcmp(root->child->name, "id") == 0)
         {
             module_id_node = root->child;
-
             value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
         }
         else
@@ -1004,192 +1002,198 @@ void ast_pass2(TREENODE root)
         }
         if (value != NULL)
         {
-            TREENODE input_plist_iterator = value->input_list->child;
-            TREENODE apl_iter = module_id_node->next->child;
-
-            while (input_plist_iterator != NULL && apl_iter != NULL)
-            {
-                // printf("value->input_list:   %s\n", input_plist_iterator->lexeme);
-
-                // printf("type of input list parameter is %s\n", input_plist_iterator->next->name);
-
-                TREENODE apl_id_node;
-                if (strcmp(apl_iter->name, "PLUS") == 0 || strcmp(apl_iter->name, "MINUS") == 0)
+            if(value->input_list!=NULL){
+                TREENODE input_plist_iterator = value->input_list->child;
+                TREENODE apl_iter = module_id_node->next->child;
+                while (input_plist_iterator != NULL && apl_iter != NULL)
                 {
-                    apl_id_node = apl_iter->next;
-                }
-                else
-                    apl_id_node = apl_iter;
-                // printf("APL ids: %s\n",apl_id_node->lexeme);
-                if (strcmp(apl_id_node->name, "num") == 0)
-                {
+                    // printf("value->input_list:   %s\n", input_plist_iterator->lexeme);
 
-                    if (strcmp(input_plist_iterator->next->name, "integer") != 0)
+                    // printf("type of input list parameter is %s\n", input_plist_iterator->next->name);
+
+                    TREENODE apl_id_node;
+                    if (strcmp(apl_iter->name, "PLUS") == 0 || strcmp(apl_iter->name, "MINUS") == 0)
                     {
-                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                        apl_id_node = apl_iter->next;
                     }
-                }
-                else if (strcmp(apl_id_node->name, "rnum") == 0)
-                {
-                    if (strcmp(input_plist_iterator->next->name, "real") != 0)
-                    {
-                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
-                    }
-                }
-                else
-                {
-
-                    SYMBOL_TABLE_VALUE sym_val = get_symbol_table_value_in_above_table(current_symbol_table_wrapper_pass_2, apl_id_node->lexeme);
-                    if (sym_val != NULL)
+                    else
+                        apl_id_node = apl_iter;
+                    // printf("APL ids: %s\n",apl_id_node->lexeme);
+                    if (strcmp(apl_id_node->name, "num") == 0)
                     {
 
-                        if (sym_val->isarray == false)
+                        if (strcmp(input_plist_iterator->next->name, "integer") != 0)
                         {
-                            if (strcmp(input_plist_iterator->next->name, "RANGE2") == 0)
-                            {
-                                printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
-                            }
-                            else if (sym_val->symbol_table_value_union.not_array.type == integer)
-                            {
-                                if (strcmp(input_plist_iterator->next->name, "integer") != 0)
-                                {
-                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
-                                }
-                            }
-                            else if (sym_val->symbol_table_value_union.not_array.type == real)
-                            {
-                                if (strcmp(input_plist_iterator->next->name, "real") != 0)
-                                {
-                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
-                                }
-                            }
-                            else
-                            {
-                                if (strcmp(input_plist_iterator->next->name, "boolean") != 0)
-                                {
-                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
-                                }
-                            }
+                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                         }
-                        else
+                    }
+                    else if (strcmp(apl_id_node->name, "rnum") == 0)
+                    {
+                        if (strcmp(input_plist_iterator->next->name, "real") != 0)
                         {
-                            if (strcmp(input_plist_iterator->next->name, "RANGE2") != 0)
-                            {
-                                printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should not be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
-                            }
-                            else
-                            {
+                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                        }
+                    }
+                    else
+                    {
 
-                                if (sym_val->symbol_table_value_union.array.element_type == integer)
+                        SYMBOL_TABLE_VALUE sym_val = get_symbol_table_value_in_above_table(current_symbol_table_wrapper_pass_2, apl_id_node->lexeme);
+                        if (sym_val != NULL)
+                        {
+
+                            if (sym_val->isarray == false)
+                            {
+                                if (strcmp(input_plist_iterator->next->name, "RANGE2") == 0)
                                 {
-
-                                    // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
-                                    if (strcmp(input_plist_iterator->next->child->next->next->name, "integer") != 0)
-                                    {
-
-                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of uenxpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
-                                    }
+                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 }
-                                else if (sym_val->symbol_table_value_union.array.element_type == real)
+                                else if (sym_val->symbol_table_value_union.not_array.type == integer)
                                 {
-
-                                    // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
-                                    if (strcmp(input_plist_iterator->next->child->next->next->name, "real") != 0)
+                                    if (strcmp(input_plist_iterator->next->name, "integer") != 0)
                                     {
                                         printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
-                                else if (sym_val->symbol_table_value_union.array.element_type == boolean)
+                                else if (sym_val->symbol_table_value_union.not_array.type == real)
                                 {
-
-                                    // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
-                                    if (strcmp(input_plist_iterator->next->child->next->next->name, "boolean") != 0)
+                                    if (strcmp(input_plist_iterator->next->name, "real") != 0)
                                     {
                                         printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
-                                // printf("%d here",sym_val->symbol_table_value_union.array.bottom_range.bottom);
-                                if (sym_val->symbol_table_value_union.array.is_bottom_dynamic == false && sym_val->symbol_table_value_union.array.is_top_dynamic == false)
+                                else
                                 {
-                                    int lower_bound_apl = sym_val->symbol_table_value_union.array.bottom_range.bottom;
-                                    if (sym_val->symbol_table_value_union.array.is_bottom_sign_plus == false)
-                                        lower_bound_apl *= -1;
-
-                                    int upper_bound_apl = sym_val->symbol_table_value_union.array.top_range.top;
-                                    if (sym_val->symbol_table_value_union.array.is_top_sign_plus == false)
-                                        upper_bound_apl *= -1;
-
-                                    int lower_bound_ipl;
-                                    int upper_bound_ipl;
-                                    TREENODE lower_bound_ipl_node = input_plist_iterator->next->child;
-                                    TREENODE upper_bound_ipl_node = input_plist_iterator->next->child->next;
-
-                                    // bottom range
-                                    if (strcmp(lower_bound_ipl_node->name, "PLUS") == 0)
+                                    if (strcmp(input_plist_iterator->next->name, "boolean") != 0)
                                     {
-                                        lower_bound_ipl_node = lower_bound_ipl_node->child;
-                                        lower_bound_ipl = 1;
-                                    }
-                                    else if (strcmp(lower_bound_ipl_node->name, "MINUS") == 0)
-                                    {
-                                        lower_bound_ipl = -1;
-                                        lower_bound_ipl_node = lower_bound_ipl_node->child;
-                                    }
-                                    else
-                                    {
-                                        lower_bound_ipl = 1;
-                                    }
-                                    lower_bound_ipl *= (atoi(lower_bound_ipl_node->lexeme));
-
-                                    // top range
-                                    if (strcmp(upper_bound_ipl_node->name, "PLUS") == 0)
-                                    {
-                                        upper_bound_ipl_node = upper_bound_ipl_node->child;
-                                        upper_bound_ipl = 1;
-                                    }
-                                    else if (strcmp(upper_bound_ipl_node->name, "MINUS") == 0)
-                                    {
-                                        upper_bound_ipl = -1;
-                                        upper_bound_ipl_node = upper_bound_ipl_node->child;
-                                    }
-                                    else
-                                    {
-                                        upper_bound_ipl = 1;
-                                    }
-                                    upper_bound_ipl *= (atoi(upper_bound_ipl_node->lexeme));
-
-                                    // int upper_bound_apl=sym_val->symbol_table_value_union.array.top_range.top;
-                                    // if(strcmp(input_plist_iterator->next->child->name,"PLUS")==0)
-                                    // printf("lower bound %d upper bound %d of apl \n",lower_bound_apl,upper_bound_apl);
-                                    // printf("lower bound %d upper bound %d of ipl \n",lower_bound_ipl,upper_bound_ipl);
-                                    int size_of_array_apl = abs(upper_bound_apl - lower_bound_apl);
-                                    int size_of_array_ipl = abs(upper_bound_ipl - lower_bound_ipl);
-                                    if (size_of_array_apl != size_of_array_ipl)
-                                    {
-                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s array size does not match with input parameter array size.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                             }
-                        }
-                        // if(strcmp(input_plist_iterator->next->name,"integer")==0){
+                            else
+                            {
+                                if (strcmp(input_plist_iterator->next->name, "RANGE2") != 0)
+                                {
+                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should not be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                }
+                                else
+                                {
 
-                        //  }
+                                    if (sym_val->symbol_table_value_union.array.element_type == integer)
+                                    {
+
+                                        // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
+                                        if (strcmp(input_plist_iterator->next->child->next->next->name, "integer") != 0)
+                                        {
+
+                                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of uenxpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        }
+                                    }
+                                    else if (sym_val->symbol_table_value_union.array.element_type == real)
+                                    {
+
+                                        // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
+                                        if (strcmp(input_plist_iterator->next->child->next->next->name, "real") != 0)
+                                        {
+                                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        }
+                                    }
+                                    else if (sym_val->symbol_table_value_union.array.element_type == boolean)
+                                    {
+
+                                        // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
+                                        if (strcmp(input_plist_iterator->next->child->next->next->name, "boolean") != 0)
+                                        {
+                                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        }
+                                    }
+                                    // printf("%d here",sym_val->symbol_table_value_union.array.bottom_range.bottom);
+                                    if (sym_val->symbol_table_value_union.array.is_bottom_dynamic == false && sym_val->symbol_table_value_union.array.is_top_dynamic == false)
+                                    {
+                                        int lower_bound_apl = sym_val->symbol_table_value_union.array.bottom_range.bottom;
+                                        if (sym_val->symbol_table_value_union.array.is_bottom_sign_plus == false)
+                                            lower_bound_apl *= -1;
+
+                                        int upper_bound_apl = sym_val->symbol_table_value_union.array.top_range.top;
+                                        if (sym_val->symbol_table_value_union.array.is_top_sign_plus == false)
+                                            upper_bound_apl *= -1;
+
+                                        int lower_bound_ipl;
+                                        int upper_bound_ipl;
+                                        TREENODE lower_bound_ipl_node = input_plist_iterator->next->child;
+                                        TREENODE upper_bound_ipl_node = input_plist_iterator->next->child->next;
+
+                                        // bottom range
+                                        if (strcmp(lower_bound_ipl_node->name, "PLUS") == 0)
+                                        {
+                                            lower_bound_ipl_node = lower_bound_ipl_node->child;
+                                            lower_bound_ipl = 1;
+                                        }
+                                        else if (strcmp(lower_bound_ipl_node->name, "MINUS") == 0)
+                                        {
+                                            lower_bound_ipl = -1;
+                                            lower_bound_ipl_node = lower_bound_ipl_node->child;
+                                        }
+                                        else
+                                        {
+                                            lower_bound_ipl = 1;
+                                        }
+                                        lower_bound_ipl *= (atoi(lower_bound_ipl_node->lexeme));
+
+                                        // top range
+                                        if (strcmp(upper_bound_ipl_node->name, "PLUS") == 0)
+                                        {
+                                            upper_bound_ipl_node = upper_bound_ipl_node->child;
+                                            upper_bound_ipl = 1;
+                                        }
+                                        else if (strcmp(upper_bound_ipl_node->name, "MINUS") == 0)
+                                        {
+                                            upper_bound_ipl = -1;
+                                            upper_bound_ipl_node = upper_bound_ipl_node->child;
+                                        }
+                                        else
+                                        {
+                                            upper_bound_ipl = 1;
+                                        }
+                                        upper_bound_ipl *= (atoi(upper_bound_ipl_node->lexeme));
+
+                                        // int upper_bound_apl=sym_val->symbol_table_value_union.array.top_range.top;
+                                        // if(strcmp(input_plist_iterator->next->child->name,"PLUS")==0)
+                                        // printf("lower bound %d upper bound %d of apl \n",lower_bound_apl,upper_bound_apl);
+                                        // printf("lower bound %d upper bound %d of ipl \n",lower_bound_ipl,upper_bound_ipl);
+                                        int size_of_array_apl = abs(upper_bound_apl - lower_bound_apl);
+                                        int size_of_array_ipl = abs(upper_bound_ipl - lower_bound_ipl);
+                                        if (size_of_array_apl != size_of_array_ipl)
+                                        {
+                                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s array size does not match with input parameter array size.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        }
+                                    }
+                                }
+                            }
+                            // if(strcmp(input_plist_iterator->next->name,"integer")==0){
+
+                            //  }
+                        }
                     }
+
+                    input_plist_iterator = input_plist_iterator->child;
+                    apl_iter = apl_iter->child;
                 }
 
-                input_plist_iterator = input_plist_iterator->child;
-                apl_iter = apl_iter->child;
+                if (input_plist_iterator == NULL && apl_iter != NULL)
+                {
+                    printf("\033[31m\nLine %d ERROR : Too many arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                }
+                if (input_plist_iterator != NULL && apl_iter == NULL)
+                {
+                    printf("\033[31m\nLine %d ERROR : Too few arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                }
             }
-
-            if (input_plist_iterator == NULL && apl_iter != NULL)
-            {
-                printf("\033[31m\nLine %d ERROR : Too many arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+            else{
+                printf("\033[31m\nLine %d ERROR : Module declared but not defined.\n\033[0m", module_id_node->line_number);
+                ast_pass2(root->child);
+                ast_pass2(root->next);
+                return;
             }
-            if (input_plist_iterator != NULL && apl_iter == NULL)
-            {
-                printf("\033[31m\nLine %d ERROR : Too few arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
-            }
-
             // printf("value->input_list:   %s\n", value->input_list->child->next->name);
             //  SYMBOL_TABLE_VALUE sym_val=symbol_table_get(value->symbol_table_wrapper->symbol_table,value->input_list->child->lexeme,strlen(value->input_list->child->lexeme));
             //  printf("Module Name of input list parameter : %s\n", sym_val->symbol_table_value_union.not_array.type);
@@ -1201,7 +1205,7 @@ void ast_pass2(TREENODE root)
             {
                 printf("\033[31m\nLine %d ERROR : No return parameter expected while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
             }
-            else if (optional != NULL && value->output_list->child != NULL)
+            else if (optional != NULL && value->output_list!=NULL && value->output_list->child != NULL)
             {
                 TREENODE optional_itr = optional->child;
                 TREENODE output_itr = value->output_list->child;
