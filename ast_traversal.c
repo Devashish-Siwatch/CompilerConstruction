@@ -11,6 +11,31 @@ char *current_module_name;
 int current_offset_value = 0;
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper_pass_2;
 
+int get_width(SYMBOL_TABLE_WRAPPER wrapper){
+    int total = 0;
+    for(int i=0 ; i<SYMBOL_HASHMAP_SIZE ; i++){
+        if(wrapper->symbol_table[i].is_used){
+            SYMBOL_TABLE_VALUE value = wrapper->symbol_table[i].symbol_table_value;
+            total += value->width;
+        }
+    }
+    if(wrapper->child!=NULL) total += get_width(wrapper->child);
+    if(wrapper->next!=NULL) total += get_width(wrapper->next);
+    return total;
+}
+
+int get_total_width(){
+    int total = 0;
+    for(int i=0 ; i<FUNC_HASHMAP_SIZE ; i++){
+        if(function_table[i].is_used){
+            FUNCTION_TABLE_VALUE value = function_table[i].function_table_value;
+            SYMBOL_TABLE_WRAPPER temp = value->symbol_table_wrapper;
+            total += get_width(temp);
+        }
+    }
+    return total;
+}
+
 int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper)
 {
     SYMBOL_TABLE_WRAPPER temp = wrapper;
@@ -1311,7 +1336,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     value->symbol_table_wrapper->parent = NULL;
                     value->symbol_table_wrapper->child = NULL;
                     value->symbol_table_wrapper->next = NULL;
-                    function_table_insert(function_table, root->child->lexeme, value);
+                    // function_table_insert(function_table, root->child->lexeme, value);
                     current_symbol_table_wrapper = value->symbol_table_wrapper;
                 }
             }

@@ -1017,16 +1017,19 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     populate_function_and_symbol_tables(astHead);
 
     ast_pass2(astHead);
-    
+        printf("Total width : %d\n",get_total_width());   
     print_function_table();
+
     for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
-    {
+    {   
+        // printf("variable name    scope (module name)    scope (line numbers)   	type of element	   is_array	   Static/dynamic	 array range	width	 offset	  nesting level");
         if (function_table[i].is_used)
         {
             SYMBOL_TABLE_WRAPPER symbol_table = function_table[i].function_table_value->symbol_table_wrapper;
             printSymboltableDFS(symbol_table);
         }
     }
+
     init_functionhashmap(function_table);
 
     // char** follow = get_follow_set("STATEMENTS");
