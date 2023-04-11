@@ -21,6 +21,7 @@ typedef struct symbol_table_value
     char *module_name;
     int nesting_level, width, offset, line_number_start, line_number_end;
     bool isInputParameter, isLoopVariable;
+    bool isOutputParameter, outputParameterNeedsChecking;
     bool isarray;
     union
     {

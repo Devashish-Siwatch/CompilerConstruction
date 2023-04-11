@@ -138,6 +138,8 @@ SYMBOL_TABLE_VALUE create_new_symbol_node(char *name)
     }
     value->module_name = "----";
     value->isInputParameter = false;
+    value->isOutputParameter = false;
+    value->outputParameterNeedsChecking = false;
     value->line_number_end = 0;
     value->line_number_start = 0;
     value->nesting_level = 0;

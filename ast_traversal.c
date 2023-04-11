@@ -434,8 +434,10 @@ void go_back_to_parent_symbol_table()
     }
 }
 
-void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_TABLE_VALUE value, char *module_name, int nesting_level, int start_line_number, bool isInputParameter, bool isLoopVariable)
+void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_TABLE_VALUE value, char *module_name, int nesting_level, int start_line_number, bool isInputParameter, bool isLoopVariable, bool isOutputParameter, bool outputParameterNeedsChecking)
 {
+    value->isOutputParameter = isOutputParameter;
+    value->outputParameterNeedsChecking = outputParameterNeedsChecking;
     value->isLoopVariable = isLoopVariable;
     value->isInputParameter = isInputParameter;
     value->module_name = module_name;
@@ -573,7 +575,7 @@ void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_T
     value->offset = current_offset_value;
     current_offset_value += value->width;
 }
-void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam)
+void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam, bool isOutputParam, bool outputParamNeedsChecking)
 {
     // used when root->child is id and root->child->next is datatype
     TREENODE ListHead = root;
@@ -590,7 +592,7 @@ void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam)
         TREENODE datatype = temp->next;
         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
         value->line_number_end = end_line_number;
-        populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, temp->line_number, isInputParam, false);
+        populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, temp->line_number, isInputParam, false,isOutputParam, outputParamNeedsChecking);
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
     }
@@ -678,7 +680,7 @@ void ast_pass2(TREENODE root)
     else if (strcmp(root->name, "MODULE_REUSE_STMT") == 0)
     {
         
-        printf("REACHED MODULE_REUSE_STMT NODE\n");
+        // printf("REACHED MODULE_REUSE_STMT NODE\n");
         TREENODE module_id_node;
         FUNCTION_TABLE_VALUE value;
         TREENODE optional = NULL;
@@ -1032,12 +1034,12 @@ void populate_function_and_symbol_tables(TREENODE root)
         else if (strcmp(root->name, "InputPlistHead") == 0)
         {
 
-            addListtoSymbolTable(root, 0, true);
+            addListtoSymbolTable(root, 0, true,false,false);
         }
         else if (strcmp(root->name, "OutputPlistHead") == 0)
         {
 
-            addListtoSymbolTable(root, 0, false);
+            addListtoSymbolTable(root, 0, false,true,true);
         }
         else if (strcmp(root->name, "ASSIGNMENTSTMT") == 0)
         {
@@ -1126,6 +1128,12 @@ void populate_function_and_symbol_tables(TREENODE root)
                         current_symbol_table_wrapper->while_condition_fulfilled = true;
                     }
                 }
+
+                // checking if it is output param
+                SYMBOL_TABLE_VALUE value2 = symbol_table_get(current_symbol_table_wrapper->symbol_table,lhs->lexeme,strlen(lhs->lexeme));
+                if(value2!=NULL && value2->isOutputParameter && value2->outputParameterNeedsChecking){
+                    value2->outputParameterNeedsChecking = false;
+                }
             }
 
             if (strcmp(rhs->name, "LVALUEARRSTMT") == 0)
@@ -1164,6 +1172,20 @@ void populate_function_and_symbol_tables(TREENODE root)
             if (current_symbol_table_wrapper->while_variables != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
             {
                 printf("\033[31m\nLine %d ERROR : None of the variables in the while condition have been assigned in the while statements.\n\033[0m", current_symbol_table_wrapper->starting_line_number);
+            }else if(current_symbol_table_wrapper->parent==NULL){
+                FUNCTION_TABLE_VALUE ftv= function_table_get(function_table,current_module_name,strlen(current_module_name));
+                TREENODE opl = ftv->output_list;
+                if(opl!=NULL){
+                    TREENODE temp = opl->child;
+                    while(temp!=NULL){
+                        char* id = temp->lexeme;
+                        SYMBOL_TABLE_VALUE stv = symbol_table_get(current_symbol_table_wrapper->symbol_table,id,strlen(id));
+                        if(stv->isOutputParameter && stv->outputParameterNeedsChecking){
+                            printf("\033[31m\nLine %d ERROR : Output parameter %s has not been changed in the module.\n\033[0m", current_symbol_table_wrapper->starting_line_number,id);
+                        }
+                        temp = temp->child;
+                    }
+                }
             }
             go_back_to_parent_symbol_table();
         }
@@ -1189,7 +1211,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
                         int nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
                         stv->line_number_end = end_line_number;
-                        populateSymboltableValue(temp, datatype, stv, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, false, false);
+                        populateSymboltableValue(temp, datatype, stv, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, false, false,false,false);
                         // symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                     }
                     else
@@ -1202,7 +1224,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
                     int nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
                     value->line_number_end = end_line_number;
-                    populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, false, false);
+                    populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, false, false,false,false);
                     symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 }
                 temp = temp->child;
@@ -1379,6 +1401,26 @@ void populate_function_and_symbol_tables(TREENODE root)
                     if (!dec_before)
                     {
                         printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
+                    }else{
+                        //checking if it is a for loop variable
+                        SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(current_symbol_table_wrapper,temp2->lexeme);
+                        if(value!=NULL && value->isLoopVariable){
+                            printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", temp2->line_number, temp2->lexeme);
+                        }
+
+                        // checking if lhs is while loop variable
+                        if (current_symbol_table_wrapper->while_variables != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
+                        {
+                            if (data_exists(temp2->lexeme, current_symbol_table_wrapper->while_variables))
+                            {
+                                current_symbol_table_wrapper->while_condition_fulfilled = true;
+                            }
+                        }
+
+                        // checking if it is output param
+                        if(value!=NULL && value->isOutputParameter && value->outputParameterNeedsChecking){
+                            value->outputParameterNeedsChecking = false;
+                        }
                     }
                     temp2 = temp2->child;
                 }
