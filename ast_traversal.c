@@ -51,12 +51,14 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
     {
         SYMBOL_TABLE_VALUE a = get_type_of_expression(root->child);
         SYMBOL_TABLE_VALUE b = get_type_of_expression(root->child->next);
-        // printf("a->isarray = %d\n", a->isarray);
-        // printf("b->isarray = %d\n", b->isarray);
-        int type_a = a->symbol_table_value_union.not_array.type;
-        int type_b = b->symbol_table_value_union.not_array.type;
+        printf("a->isarray = %s\n", root->child->lexeme);
+        printf("b->isarray = %s\n", root->child->next->lexeme);
+        printf("a->isarray = %d\n", a->isarray);
+        printf("b->isarray = %d\n", b->isarray);
         if (!a->isarray && !b->isarray)
         {
+            int type_a = a->symbol_table_value_union.not_array.type;
+            int type_b = b->symbol_table_value_union.not_array.type;
 
             if (strcmp(root->name, "plus") == 0 ||
                 strcmp(root->name, "minus") == 0 || strcmp(root->name, "mul") == 0)
@@ -144,8 +146,12 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
         }
         else if (a->isarray && b->isarray)
         {
+            int type_a = a->symbol_table_value_union.array.element_type;
+            int type_b = b->symbol_table_value_union.array.element_type;
+
             if (root->child->child == NULL || root->child->next->child == NULL)
             {
+                printf("a->null = %s\n", root->child->lexeme);
                 // printf("\033[31m\nERROR : TYPE MISMATCH in both arrays.\n\033[0m");
                 type->symbol_table_value_union.not_array.type = -1;
                 return type;
@@ -159,16 +165,106 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
             {
                 if (a->symbol_table_value_union.array.element_type == b->symbol_table_value_union.array.element_type)
                 {
-                    return a;
+                    if (strcmp(root->name, "plus") == 0 ||
+                        strcmp(root->name, "minus") == 0 || strcmp(root->name, "mul") == 0)
+                    {
+
+                        if (type_a == 0 && type_b == 0)
+                        {
+                            type->symbol_table_value_union.not_array.type = 0;
+                        }
+                        else if (type_a == 1 && type_b == 1)
+                            type->symbol_table_value_union.not_array.type = 1;
+                        else if (type_a == -2 || type_b == -2)
+                        {
+                            type->symbol_table_value_union.not_array.type = -2;
+                        }
+                        else
+                        {
+                            type->symbol_table_value_union.not_array.type = -1;
+                            // printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
+                        }
+                    }
+                    else if (strcmp(root->name, "div") == 0)
+                    {
+                        if (type_a == 0 && type_b == 0)
+                        {
+                            type->symbol_table_value_union.not_array.type = 1; // real in all cases
+                        }
+                        else if (type_a == 0 && type_b == 1 || type_a == 1 && type_b == 0)
+                        {
+                            type->symbol_table_value_union.not_array.type = 1;
+                        }
+                        else if (type_a == 1 && type_b == 1)
+                        {
+                            type->symbol_table_value_union.not_array.type = 1;
+                        }
+                        else if (type_a == -2 || type_b == -2)
+                        {
+                            type->symbol_table_value_union.not_array.type = -2;
+                        }
+                        else
+                        {
+                            type->symbol_table_value_union.not_array.type = -1;
+                            // printf("TYPE MISMATCH IN EXPRESSION");
+                        }
+                    }
+                    else if (strcmp(root->name, "lt") == 0 ||
+                             strcmp(root->name, "gt") == 0 || strcmp(root->name, "le") == 0 || strcmp(root->name, "ge") == 0 ||
+                             strcmp(root->name, "ne") == 0 || strcmp(root->name, "eq") == 0)
+                    {
+                        if (type_a == 0 && type_b == 0)
+                        {
+                            type->symbol_table_value_union.not_array.type = 2; // relational on int
+                        }
+                        else if (type_a == 1 && type_b == 1)
+                        {
+                            type->symbol_table_value_union.not_array.type = 2; // relational on real
+                        }
+                        else if (type_a == -2 || type_b == -2)
+                        {
+                            type->symbol_table_value_union.not_array.type = -2;
+                        }
+                        else
+                        {
+                            type->symbol_table_value_union.not_array.type = -1;
+                            // printf("TYPE MISMATCH IN EXPRESSION");
+                        }
+                    }
+                    else if (strcmp(root->name, "and") == 0 || strcmp(root->name, "or") == 0)
+                    {
+                        if (type_a == 2 && type_b == 2)
+                        {
+                            type->symbol_table_value_union.not_array.type = 2; // logical on bool
+                        }
+                        else if (type_a == -2 || type_b == -2)
+                        {
+                            type->symbol_table_value_union.not_array.type = -2;
+                        }
+                        else
+                        {
+                            type->symbol_table_value_union.not_array.type = -1;
+                            // printf("TYPE MISMATCH IN EXPRESSION");
+                        }
+                    }
+                    return type;
                 }
             }
         }
         else if (a->isarray && !b->isarray)
         {
-            // if (root->child->child == NULL)
-            // {
-            if (b->symbol_table_value_union.not_array.type != a->symbol_table_value_union.array.element_type)
+            int type_a = a->symbol_table_value_union.array.element_type;
+            int type_b = b->symbol_table_value_union.not_array.type;
+
+            if (root->child->child == NULL)
             {
+
+                type->symbol_table_value_union.not_array.type = -1;
+                return type;
+            }
+            else if (b->symbol_table_value_union.not_array.type != a->symbol_table_value_union.array.element_type)
+            {
+                printf("HEYA");
                 type->symbol_table_value_union.not_array.type = -1;
                 return type;
             }
@@ -179,7 +275,89 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
             }
             else
             {
-                return b;
+                if (strcmp(root->name, "plus") == 0 ||
+                    strcmp(root->name, "minus") == 0 || strcmp(root->name, "mul") == 0)
+                {
+
+                    if (type_a == 0 && type_b == 0)
+                    {
+                        type->symbol_table_value_union.not_array.type = 0;
+                    }
+                    else if (type_a == 1 && type_b == 1)
+                        type->symbol_table_value_union.not_array.type = 1;
+                    else if (type_a == -2 || type_b == -2)
+                    {
+                        type->symbol_table_value_union.not_array.type = -2;
+                    }
+                    else
+                    {
+                        type->symbol_table_value_union.not_array.type = -1;
+                        // printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
+                    }
+                }
+                else if (strcmp(root->name, "div") == 0)
+                {
+                    if (type_a == 0 && type_b == 0)
+                    {
+                        type->symbol_table_value_union.not_array.type = 1; // real in all cases
+                    }
+                    else if (type_a == 0 && type_b == 1 || type_a == 1 && type_b == 0)
+                    {
+                        type->symbol_table_value_union.not_array.type = 1;
+                    }
+                    else if (type_a == 1 && type_b == 1)
+                    {
+                        type->symbol_table_value_union.not_array.type = 1;
+                    }
+                    else if (type_a == -2 || type_b == -2)
+                    {
+                        type->symbol_table_value_union.not_array.type = -2;
+                    }
+                    else
+                    {
+                        type->symbol_table_value_union.not_array.type = -1;
+                        // printf("TYPE MISMATCH IN EXPRESSION");
+                    }
+                }
+                else if (strcmp(root->name, "lt") == 0 ||
+                         strcmp(root->name, "gt") == 0 || strcmp(root->name, "le") == 0 || strcmp(root->name, "ge") == 0 ||
+                         strcmp(root->name, "ne") == 0 || strcmp(root->name, "eq") == 0)
+                {
+                    if (type_a == 0 && type_b == 0)
+                    {
+                        type->symbol_table_value_union.not_array.type = 2; // relational on int
+                    }
+                    else if (type_a == 1 && type_b == 1)
+                    {
+                        type->symbol_table_value_union.not_array.type = 2; // relational on real
+                    }
+                    else if (type_a == -2 || type_b == -2)
+                    {
+                        type->symbol_table_value_union.not_array.type = -2;
+                    }
+                    else
+                    {
+                        type->symbol_table_value_union.not_array.type = -1;
+                        // printf("TYPE MISMATCH IN EXPRESSION");
+                    }
+                }
+                else if (strcmp(root->name, "and") == 0 || strcmp(root->name, "or") == 0)
+                {
+                    if (type_a == 2 && type_b == 2)
+                    {
+                        type->symbol_table_value_union.not_array.type = 2; // logical on bool
+                    }
+                    else if (type_a == -2 || type_b == -2)
+                    {
+                        type->symbol_table_value_union.not_array.type = -2;
+                    }
+                    else
+                    {
+                        type->symbol_table_value_union.not_array.type = -1;
+                        // printf("TYPE MISMATCH IN EXPRESSION");
+                    }
+                }
+                return type;
             }
             // }
             // else
@@ -192,6 +370,8 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
         }
         else if (!a->isarray && b->isarray)
         {
+            int type_a = a->symbol_table_value_union.not_array.type;
+            int type_b = b->symbol_table_value_union.array.element_type;
             if (root->child->next->child == NULL)
             {
                 if (a->symbol_table_value_union.not_array.type != b->symbol_table_value_union.array.element_type)
@@ -213,7 +393,89 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
             {
                 if (a->symbol_table_value_union.not_array.type == b->symbol_table_value_union.array.element_type)
                 {
-                    return b;
+                    if (strcmp(root->name, "plus") == 0 ||
+                        strcmp(root->name, "minus") == 0 || strcmp(root->name, "mul") == 0)
+                    {
+
+                        if (type_a == 0 && type_b == 0)
+                        {
+                            type->symbol_table_value_union.not_array.type = 0;
+                        }
+                        else if (type_a == 1 && type_b == 1)
+                            type->symbol_table_value_union.not_array.type = 1;
+                        else if (type_a == -2 || type_b == -2)
+                        {
+                            type->symbol_table_value_union.not_array.type = -2;
+                        }
+                        else
+                        {
+                            type->symbol_table_value_union.not_array.type = -1;
+                            // printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
+                        }
+                    }
+                    else if (strcmp(root->name, "div") == 0)
+                    {
+                        if (type_a == 0 && type_b == 0)
+                        {
+                            type->symbol_table_value_union.not_array.type = 1; // real in all cases
+                        }
+                        else if (type_a == 0 && type_b == 1 || type_a == 1 && type_b == 0)
+                        {
+                            type->symbol_table_value_union.not_array.type = 1;
+                        }
+                        else if (type_a == 1 && type_b == 1)
+                        {
+                            type->symbol_table_value_union.not_array.type = 1;
+                        }
+                        else if (type_a == -2 || type_b == -2)
+                        {
+                            type->symbol_table_value_union.not_array.type = -2;
+                        }
+                        else
+                        {
+                            type->symbol_table_value_union.not_array.type = -1;
+                            // printf("TYPE MISMATCH IN EXPRESSION");
+                        }
+                    }
+                    else if (strcmp(root->name, "lt") == 0 ||
+                             strcmp(root->name, "gt") == 0 || strcmp(root->name, "le") == 0 || strcmp(root->name, "ge") == 0 ||
+                             strcmp(root->name, "ne") == 0 || strcmp(root->name, "eq") == 0)
+                    {
+                        if (type_a == 0 && type_b == 0)
+                        {
+                            type->symbol_table_value_union.not_array.type = 2; // relational on int
+                        }
+                        else if (type_a == 1 && type_b == 1)
+                        {
+                            type->symbol_table_value_union.not_array.type = 2; // relational on real
+                        }
+                        else if (type_a == -2 || type_b == -2)
+                        {
+                            type->symbol_table_value_union.not_array.type = -2;
+                        }
+                        else
+                        {
+                            type->symbol_table_value_union.not_array.type = -1;
+                            // printf("TYPE MISMATCH IN EXPRESSION");
+                        }
+                    }
+                    else if (strcmp(root->name, "and") == 0 || strcmp(root->name, "or") == 0)
+                    {
+                        if (type_a == 2 && type_b == 2)
+                        {
+                            type->symbol_table_value_union.not_array.type = 2; // logical on bool
+                        }
+                        else if (type_a == -2 || type_b == -2)
+                        {
+                            type->symbol_table_value_union.not_array.type = -2;
+                        }
+                        else
+                        {
+                            type->symbol_table_value_union.not_array.type = -1;
+                            // printf("TYPE MISMATCH IN EXPRESSION");
+                        }
+                    }
+                    return type;
                 }
             }
         }
@@ -1121,8 +1383,25 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE rhs = lhs->next;
             SYMBOL_TABLE_VALUE l_type = get_type_of_expression(lhs);
             SYMBOL_TABLE_VALUE r_type = get_type_of_expression(rhs);
-            // printf("IS ARRAY: %d\n", l_type->isarray);
-            // printf("IS ARRAY: %d\n", r_type->isarray);
+            printf("l ARRAY: %d\n", l_type->isarray);
+            printf("r ARRAY: %d\n", r_type->isarray);
+            // print all values of types for each case of l_type->isarray and r_type->isarray
+            if (l_type->isarray && r_type->isarray)
+            {
+                printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.array.element_type, r_type->symbol_table_value_union.array.element_type);
+            }
+            else if (l_type->isarray && !r_type->isarray)
+            {
+                printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.array.element_type, r_type->symbol_table_value_union.not_array.type);
+            }
+            else if (!l_type->isarray && r_type->isarray)
+            {
+                printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.not_array.type, r_type->symbol_table_value_union.array.element_type);
+            }
+            else if (!l_type->isarray && !r_type->isarray)
+            {
+                printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.not_array.type, r_type->symbol_table_value_union.not_array.type);
+            }
             bool lhs_exists = check_if_declared_before(lhs->lexeme);
             // printf("Kys hus");
             if (!lhs_exists)
