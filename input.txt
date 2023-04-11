@@ -123,31 +123,6 @@ end
 
 <<<driver program>>>
 start
-	declare v_1_2_3, A:integer;
-	declare u1, k:boolean;
-        A:=12;
-	declare p: real;
-	p:= 23.56;
-	get_value(v_1_2_3);							 		
-	declare B, C: array [2..20] of integer;
-	[ v_1_2_3, u1]:=use module var_demo_array with parameters A,B,p;		
-	[ v_1_2_3, k]:=use module var_demo_array with parameters A,B,p;	
-	declare a,b:integer;
-	a:= 5.89e-2;			        **ERROR: type mismatch error**
-	get_value(b);
-	declare value, q, r: real;
-	get_value(q);
-	r:= 23.67e+2;
-	value:= p+q*r-a*value; 			**ERROR: type mismatch error**
-	k:= true AND false OR q;		**ERROR: type mismatch error**
-	u1:= a<=b;
-	declare w: integer;			 
-	w:= 23+B[6];                                  
-	b:= a*25+100*C[1];		        **ERROR:element of array C is out of bound** 
-	declare D: array[20..40] of integer;			 
-	D:= value-q+r;				**ERROR: type mismatch error**
-	w:= w + 5;		 
-	B:= C;
-	C:= D;				        **ERROR: type mismatch error**        
+	a[-133] :=3;
+	a := 22;
 end
-
