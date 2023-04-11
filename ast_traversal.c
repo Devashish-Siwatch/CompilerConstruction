@@ -720,14 +720,14 @@ void ast_pass2(TREENODE root)
 
                     if (strcmp(input_plist_iterator->next->name, "integer") != 0)
                     {
-                        printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                     }
                 }
                 else if (strcmp(apl_id_node->name, "rnum") == 0)
                 {
                     if (strcmp(input_plist_iterator->next->name, "real") != 0)
                     {
-                        printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                     }
                 }
                 else
@@ -741,27 +741,27 @@ void ast_pass2(TREENODE root)
                         {
                             if (strcmp(input_plist_iterator->next->name, "RANGE2") == 0)
                             {
-                                printf("\033[31m\nLine %d ERROR : %s should be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == integer)
                             {
                                 if (strcmp(input_plist_iterator->next->name, "integer") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 }
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == real)
                             {
                                 if (strcmp(input_plist_iterator->next->name, "real") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 }
                             }
                             else
                             {
                                 if (strcmp(input_plist_iterator->next->name, "boolean") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 }
                             }
                         }
@@ -769,7 +769,7 @@ void ast_pass2(TREENODE root)
                         {
                             if (strcmp(input_plist_iterator->next->name, "RANGE2") != 0)
                             {
-                                printf("\033[31m\nLine %d ERROR : %s should not be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should not be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                             }
                             else
                             {
@@ -781,7 +781,7 @@ void ast_pass2(TREENODE root)
                                     if (strcmp(input_plist_iterator->next->child->next->next->name, "integer") != 0)
                                     {
 
-                                        printf("\033[31m\nLine %d ERROR : %s is of uenxpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of uenxpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                                 else if (sym_val->symbol_table_value_union.array.element_type == real)
@@ -790,7 +790,7 @@ void ast_pass2(TREENODE root)
                                     // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
                                     if (strcmp(input_plist_iterator->next->child->next->next->name, "real") != 0)
                                     {
-                                        printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                                 else if (sym_val->symbol_table_value_union.array.element_type == boolean)
@@ -799,7 +799,7 @@ void ast_pass2(TREENODE root)
                                     // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
                                     if (strcmp(input_plist_iterator->next->child->next->next->name, "boolean") != 0)
                                     {
-                                        printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                                 // printf("%d here",sym_val->symbol_table_value_union.array.bottom_range.bottom);
@@ -860,7 +860,7 @@ void ast_pass2(TREENODE root)
                                     int size_of_array_ipl = abs(upper_bound_ipl - lower_bound_ipl);
                                     if (size_of_array_apl != size_of_array_ipl)
                                     {
-                                        printf("\033[31m\nLine %d ERROR : %s array size does not match with input parameter array size.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s array size does not match with input parameter array size.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                             }
@@ -877,11 +877,11 @@ void ast_pass2(TREENODE root)
 
             if (input_plist_iterator == NULL && apl_iter != NULL)
             {
-                printf("\033[31m\nLine %d ERROR : Too many arguments in calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                printf("\033[31m\nLine %d ERROR : Too many arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
             }
             if (input_plist_iterator != NULL && apl_iter == NULL)
             {
-                printf("\033[31m\nLine %d ERROR : Too few arguments in calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                printf("\033[31m\nLine %d ERROR : Too few arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
             }
 
             // printf("value->input_list:   %s\n", value->input_list->child->next->name);
@@ -913,21 +913,21 @@ void ast_pass2(TREENODE root)
                             {
                                 if (strcmp(output_itr->next->name, "integer") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : Output Parameter Type Mismatch %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
                                 }
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == real)
                             {
                                 if (strcmp(output_itr->next->name, "real") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : Output Parameter Type Mismatch %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
                                 }
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == boolean)
                             {
                                 if (strcmp(output_itr->next->name, "boolean") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
+                                    printf("\033[31m\nLine %d ERROR : Output Parameter Type Mismatch %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
                                 }
                             }
                         }
@@ -1114,7 +1114,7 @@ void populate_function_and_symbol_tables(TREENODE root)
 
                     if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.not_array.type)
                     { // type checking
-                        printf("\033[31m\n Line %d ERROR : Type Mismatch\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
+                        printf("\033[31m\nLine %d ERROR : Type Mismatch\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                     }
                 }
 
