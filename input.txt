@@ -13,4 +13,5 @@ takes input [a:integer,b:integer,c:integer];
 returns [k:integer,x:integer];
 start
 	k:= 4;
+	x:= k;
 end

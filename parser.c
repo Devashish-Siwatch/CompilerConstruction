@@ -1017,8 +1017,9 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     populate_function_and_symbol_tables(astHead);
 
     ast_pass2(astHead);
-    
+        printf("Total width : %d\n",get_total_width());   
     print_function_table();
+
     for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
     {
         if (function_table[i].is_used)
@@ -1027,6 +1028,7 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
             printSymboltableDFS(symbol_table);
         }
     }
+
     init_functionhashmap(function_table);
 
     // char** follow = get_follow_set("STATEMENTS");
