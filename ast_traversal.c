@@ -9,7 +9,7 @@
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper;
 char *current_module_name;
 int current_offset_value = 0;
-
+SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper_pass_2;
 
 
 
@@ -25,9 +25,9 @@ int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper)
     return count;
 }
 
-SYMBOL_TABLE_VALUE get_symbol_table_value_in_above_table(char *var)
+SYMBOL_TABLE_VALUE get_symbol_table_value_in_above_table(SYMBOL_TABLE_WRAPPER cc,char *var)
 {
-    SYMBOL_TABLE_WRAPPER temp_wrapper = current_symbol_table_wrapper;
+    SYMBOL_TABLE_WRAPPER temp_wrapper = cc;
     while (true)
     {
         if(temp_wrapper==NULL)
@@ -192,7 +192,7 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
     else if (strcmp(root->name, "id") == 0)
     {
         printf("id: %s\n", root->lexeme);
-        SYMBOL_TABLE_VALUE stv = get_symbol_table_value_in_above_table(root->lexeme);
+        SYMBOL_TABLE_VALUE stv = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, root->lexeme);
         if(stv!=NULL){
             if (!stv->isarray){
                 return stv;
@@ -241,8 +241,8 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
 
 int get_type_of_variable(char *lexeme)
 {
-    printf("Hi");
-    SYMBOL_TABLE_VALUE stv = get_symbol_table_value_in_above_table(lexeme);
+    // printf("Hi");
+    SYMBOL_TABLE_VALUE stv = get_symbol_table_value_in_above_table(current_symbol_table_wrapper,lexeme);
     printf("%s\n",stv->module_name);
     if (stv->symbol_table_value_union.not_array.type == integer)
         return 0;
@@ -336,7 +336,7 @@ void check_expression_if_declared_before(TREENODE root)
             if(root->child!=NULL && strcmp(root->child->name,"num")==0){
                 // printf("a\n");
                 int index = atoi(root->child->lexeme);
-                SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(root->lexeme);
+                SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(current_symbol_table_wrapper,root->lexeme);
                 // printf("%s\n",root->lexeme);
                 // printf("%d line gooo %s\n",root->line_number,value->module_name);
                 if(value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic){
@@ -548,15 +548,69 @@ void insert_symbol_table_at_end(SYMBOL_TABLE_WRAPPER wrapper, SYMBOL_TABLE_WRAPP
         temp->parent = wrapper;
     }
 }
+
+SYMBOL_TABLE_WRAPPER search_below_by_line_number(int line_no){
+    SYMBOL_TABLE_WRAPPER iter=current_symbol_table_wrapper_pass_2->child;
+    while(iter!=NULL){
+        if(iter->starting_line_number==line_no){
+            return iter;
+        }
+        iter=iter->next;
+    }
+    return NULL;
+}
+
 void ast_pass2(TREENODE root)
 {
+    // printf("%s sigma\n",root->name);
     if (root == NULL)
     {
         // printf("Currently at %s",head->name);
         return;
     }
+    else if(strcmp(root->name,"DRIVER_MODULE_STMTS")==0){
+        FUNCTION_TABLE_VALUE val=function_table_get(function_table,"driver",strlen("driver"));
+        if(val!=NULL){
+            current_symbol_table_wrapper_pass_2=val->symbol_table_wrapper;  
+        }
+    }
+
+    else if(strcmp(root->name,"Module1")==0){
+        printf("REACHED Module1 NODE\n");
+        FUNCTION_TABLE_VALUE val=function_table_get(function_table,root->child->lexeme,strlen(root->child->lexeme));
+        if(val!=NULL){
+            current_symbol_table_wrapper_pass_2=val->symbol_table_wrapper;  
+        }
+    }
+
+    else if(strcmp(root->name,"ITERATIVESTMT_WHILE")==0){
+        printf("REACHED ITERATIVESTMT_WHILE NODE\n");
+        int line_number=root->line_number;
+
+        current_symbol_table_wrapper_pass_2=search_below_by_line_number(line_number);
+    }
+    else if(strcmp(root->name,"ITERATIVESTMT_FOR")==0){
+        printf("REACHED ITERATIVESTMT_FOR NODE\n");
+        int line_number=root->line_number;
+
+        current_symbol_table_wrapper_pass_2=search_below_by_line_number(line_number);
+    }
+    else if(strcmp(root->name,"STMTS_END")==0){
+        printf("REACHED STMTS_END NODE\n");
+        if(current_symbol_table_wrapper_pass_2->parent!=NULL)
+            current_symbol_table_wrapper_pass_2=current_symbol_table_wrapper_pass_2->parent;
+    }
+    else if(strcmp(root->name,"CASE_STMT")==0){
+        printf("REACHED CASE_STMT NODE\n");
+        int line_number=root->line_number;
+
+        current_symbol_table_wrapper_pass_2=search_below_by_line_number(line_number);
+    }
+
+
     else if (strcmp(root->name, "MODULE_REUSE_STMT") == 0)
     {
+        
         printf("REACHED MODULE_REUSE_STMT NODE\n");
         TREENODE module_id_node;
         FUNCTION_TABLE_VALUE value;
@@ -600,7 +654,8 @@ void ast_pass2(TREENODE root)
                 }
                 else{
                     
-                    SYMBOL_TABLE_VALUE sym_val= get_symbol_table_value_in_above_table(apl_id_node->lexeme);
+                    SYMBOL_TABLE_VALUE sym_val= get_symbol_table_value_in_above_table(current_symbol_table_wrapper_pass_2,apl_id_node->lexeme);
+                    
                     if(sym_val!=NULL){
                         
                         if(sym_val->isarray==false){
@@ -755,7 +810,7 @@ void ast_pass2(TREENODE root)
                 TREENODE output_itr=value->output_list->child;
                 while(optional_itr!=NULL && output_itr!=NULL){
 
-                    SYMBOL_TABLE_VALUE sym_val= get_symbol_table_value_in_above_table(optional_itr->lexeme);
+                    SYMBOL_TABLE_VALUE sym_val= get_symbol_table_value_in_above_table(current_symbol_table_wrapper_pass_2 ,optional_itr->lexeme);
                     if(sym_val!=NULL){
                         if(sym_val->isarray==true){
                             printf("\033[31m\n Line %d ERROR : Array not allowed in output parameter while calling module %s.\n\033[0m",module_id_node->line_number, module_id_node->lexeme);
@@ -1074,11 +1129,11 @@ void populate_function_and_symbol_tables(TREENODE root)
             int type_of_switch_variable = get_type_of_variable(root->parent->parent->child->lexeme);
             if (type_of_switch_variable == 0 && (strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
             {
-                printf("\033[31m\n Line %d ERROR : Case value is expected to have type Integer.\n\033[0m",root->child->line_number);
+                printf("\033[31m\n Line %d ERROR : Case value is expected to have type Integer.\n\033[0m",root->line_number);
             }
             if (type_of_switch_variable == 2 && !(strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
             {
-                printf("\033[31m\n Line %d ERROR : Case value is expected to have type boolean.\n\033[0m",root->child->line_number);
+                printf("\033[31m\n Line %d ERROR : Case value is expected to have type boolean.\n\033[0m", root->line_number);
             }
             }
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
