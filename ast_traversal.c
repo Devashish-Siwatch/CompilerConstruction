@@ -1542,8 +1542,8 @@ void populate_function_and_symbol_tables(TREENODE root)
                 }
                 else if (l_type->isarray && !r_type->isarray)
                 {
-                    // printf("lhs->next %s\n", lhs->lexeme);
-                    if (lhs->next == NULL)
+                    printf("lhs->next %s\n", lhs->next->name);
+                    if (!(strcmp(lhs->next->name, "LVALUEARRSTMT") == 0)) // if lhs is of type A = not array
                     {
                         printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                     }
