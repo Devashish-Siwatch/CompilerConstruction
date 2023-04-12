@@ -2228,7 +2228,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                         {
                             //printf("\033[31m\nLine %d ERROR : Type Mismatch: Array sizes different.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                         }
-                        printf("%d\n", l_type->symbol_table_value_union.array.element_type);
+                        // printf("%d\n", l_type->symbol_table_value_union.array.element_type);
                     }
                     else
                     {

@@ -128,7 +128,6 @@ TREENODE generate_ast(TREENODE node)
     {
         int rule_number = node->rule_number;
         if (rule_number == -1)
-            printf("KUCH TO DIKKAT HAI\n");
         
         switch (rule_number)
         {
@@ -537,14 +536,12 @@ TREENODE generate_ast(TREENODE node)
             TREENODE temp = generate_ast(node->child->next);
             if (temp == NULL)
             {
-                printf("reached the case where whichId is null\n");
                 TREENODE result = generate_ast(node->child);
                 result->next = NULL;
                 return result;
             }
             else
             {
-                printf("reached the case where whichId is NOT null\n");
 
                 TREENODE id = generate_ast(node->child);
                 id->next = temp;
