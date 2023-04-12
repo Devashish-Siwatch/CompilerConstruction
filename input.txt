@@ -8,7 +8,7 @@ end
 takes input [data: array[100..150] of boolean, weight: real, length: integer, b:array[35..50] of real, q:integer];
 returns [R1: real, R2: integer, R3: boolean, R4: integer];
 start
-	
+ declare a:integer;	
 end								** ERROR: Output parameter R3 is not assigned any value **
 
 <<module function1>>			    	**ERROR: function1 cannot be overloaded**

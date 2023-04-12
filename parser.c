@@ -1020,6 +1020,62 @@ void parse_tree_formation_ast_printing(FILE *input_file){
     printAst(astHead);
     return ;
 }
+
+void parse_tree_formation_ast_formation(FILE *input_file){
+    grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
+    for (int i = 0; i < NUMBER_OF_RULES; ++i)
+        grammar[i] = createNewList();
+    populate_grammer();
+    // display_rules();
+    // printf("here\n");
+
+    init_nt_array();
+    init_t_array();
+    // printf("here\n");
+    complete_first_sets = all_first_sets();   // populating first set
+    complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets();   // populating synch set
+    // printf("here\n");
+
+    init_parse_table();
+    // printf("here\n");
+    fillParseTable();
+    
+
+    parser(input_file);
+
+    printf("\n\n\n\n\n");
+    int total_parse_tree_nodes=total_tree_nodes(parse_tree->head);
+    int total_parse_tree_memory=get_memory_of_tree(parse_tree->head);
+    printf("Parse tree Number of nodes = %d, Allocated Memory =  %d Bytes\n\n", total_parse_tree_nodes,total_parse_tree_memory);
+    TREENODE astHead = generate_ast(parse_tree->head);
+    setASTParent(astHead);
+    
+    int total_ast_tree_nodes=total_tree_nodes(astHead);
+    int total_ast_memory=get_memory_of_tree(astHead);
+    printf("AST tree Number of nodes = %d, Allocated Memory =  %d Bytes\n\n", total_ast_tree_nodes, total_ast_memory);
+    float compression_percentage=(total_parse_tree_memory-total_ast_memory)*100/total_parse_tree_memory;
+    printf("Compression percentage = %f ", compression_percentage);
+    return;
+
+}
+
+int total_tree_nodes(TREENODE head){
+    if(head==NULL)
+        return 0;
+    int get_nodes_in_child=total_tree_nodes(head->child);
+    int get_nodes_next=total_tree_nodes(head->next);
+    return get_nodes_in_child+get_nodes_next+1;
+}
+
+int get_memory_of_tree(TREENODE head){
+    if(head==NULL)
+        return 0;
+    int get_nodes_in_child=total_tree_nodes(head->child);
+    int get_nodes_next=total_tree_nodes(head->next);
+    return get_nodes_in_child+get_nodes_next+sizeof(head);
+}
+
 int parse_tree_func(FILE *input_file)
 {
     grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
