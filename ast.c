@@ -33,7 +33,7 @@ void appendAtLast(TREENODE head, TREENODE node)
 
     if (node != NULL)
     {
-        printf("trying to append at last %s\n", node->name);
+        
         node->next = NULL;
     }
     if (head == NULL)
@@ -99,9 +99,9 @@ void printAst(TREENODE head)
     }
     printAst(head->child);
     if (head->parent != NULL)
-        printf("Currently at node : %-20s, lexeme : %-20s and parent : %-20s, plexeme : %-20s \n", head->name, head->lexeme, head->parent->name, head->parent->lexeme);
+        printf("Currently at node : %-17s, lexeme : %-15s, line number : %-5d parent : %-18s, parent's lexeme : %-20s \n", head->name, head->lexeme, head->line_number, head->parent->name, head->parent->lexeme);
     else
-        printf("Currently at node : %-20s and parent : %-20s\n", head->name, "NULL");
+        printf("Currently at node : %-17s, lexeme : %-15s, line number : %-5d parent : %-18s, parent's lexeme : %-20s \n", head->name, head->lexeme, head->line_number, "NULL", "NULL");
     printAst(head->next);
 }
 void setASTParent(TREENODE root)
@@ -129,7 +129,7 @@ TREENODE generate_ast(TREENODE node)
         int rule_number = node->rule_number;
         if (rule_number == -1)
             printf("KUCH TO DIKKAT HAI\n");
-        printf("%d ************\n", rule_number);
+        
         switch (rule_number)
         {
         case 0:

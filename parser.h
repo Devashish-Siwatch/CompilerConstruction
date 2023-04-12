@@ -11,6 +11,7 @@ Chaitanya Iyer - 2020A7PS0012P
 #include <stdio.h>
 #include "lexer.h"
 #include "parserDef.h"
+#include "treeADTDef.h"
 int getTypeOfData(char* str);
 int searchForRowIndex(char* data);
 int searchForColIndex(char* data);
@@ -40,7 +41,12 @@ int getTypeOfData(char *str);
 int set_contains(char **arr, int arr_len, char *str);
 void init_parser();
 char *convertToLowercase(char *str);
-
-
-
+void parse_tree_formation_ast_printing(FILE *input_file);
+void parse_tree_formation_ast_formation(FILE *input_file);
+void ast_formation_print_ast(FILE *input_file);
+int total_tree_nodes(TREENODE head);
+int get_memory_of_tree(TREENODE head);
+void ast_formation_print_activation_records(FILE *input_file);
+void ast_formation_print_all_errors(FILE* input_file);
+void ast_formation_array_info_print(FILE *input_file);
 #endif

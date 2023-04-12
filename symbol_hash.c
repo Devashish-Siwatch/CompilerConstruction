@@ -34,18 +34,18 @@ void init_symbolhashmap(symbol_table_hash_map map)
 void print_symbol_table_value(SYMBOL_TABLE_VALUE value)
 {
     // printf("#################################################################\n");
-    printf("%-10s", value->module_name);
+    printf("%-15s", value->module_name);
     printf("%5s [%d","", value->line_number_start);
     printf("-%d]  %-5s", value->line_number_end,"");
     if(value->isarray){
         if(value->symbol_table_value_union.array.element_type == integer){
-            printf("integer%-5s", "");
+            printf("integer%-6s", "");
         }
         else if(value->symbol_table_value_union.array.element_type == real){
-            printf("real%-5s", "");
+            printf("real%-9s", "");
         }
         else if(value->symbol_table_value_union.array.element_type == boolean){
-            printf("boolean%-5s", "");
+            printf("boolean%-6s", "");
         } 
         printf("yes%-8s", ""); 
         if(!value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic){
@@ -73,21 +73,21 @@ void print_symbol_table_value(SYMBOL_TABLE_VALUE value)
     }
     else{
         if(value->symbol_table_value_union.not_array.type == integer){
-            printf("integer%-5s", "");
+            printf("integer%-6s", "");
         }
         else if(value->symbol_table_value_union.not_array.type == real){
-            printf("real%-5s", "");
+            printf("real%-9s", "");
         }
         else if(value->symbol_table_value_union.not_array.type == boolean){
-            printf("boolean%-5s", "");
+            printf("boolean%-6s", "");
         }
         printf("no%-10s", "");
         printf("**%-10s", "");
         printf("**%-10s", "");
     }
-    printf("%-5d", value->width);
-    printf("%-5d", value->offset);
-    printf("%-5d\n", value->nesting_level);
+    printf("%-10d", value->width);
+    printf("%-10d", value->offset);
+    printf("%-10d\n", value->nesting_level);
 
     // if (value->isarray)
     // {
@@ -134,6 +134,21 @@ void printSymboltableDFS(SYMBOL_TABLE_WRAPPER wrapper)
     while (symboliter != NULL)
     {
         print_symbol_table(symboliter);
+        init_symbolhashmap(symboliter->symbol_table);
+        symboliter = symboliter->next;
+    }
+}
+
+void init_all_symbol_tables(SYMBOL_TABLE_WRAPPER wrapper){
+    if (wrapper == NULL)
+    {
+        return;
+    }
+    init_all_symbol_tables(wrapper->child);
+    SYMBOL_TABLE_WRAPPER symboliter = wrapper;
+    while (symboliter != NULL)
+    {
+       
         init_symbolhashmap(symboliter->symbol_table);
         symboliter = symboliter->next;
     }

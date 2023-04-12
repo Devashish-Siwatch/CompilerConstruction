@@ -26,6 +26,7 @@ Chaitanya Iyer - 2020A7PS0012P
 
 STACK stack;
 TREELIST parse_tree;
+int global_error_flag;
 char *enum_to_token_name[] = {
     "ID",
     "NUM",
@@ -933,7 +934,9 @@ void parser(FILE *input_file_pointer)
     // }else{
     //     printf("Input source code is syntactically correct...........\n");
     // }
+    global_error_flag=error_flag;
 }
+
 
 int parser_complete_functionality(FILE *input_file, FILE *output_file)
 {
@@ -955,58 +958,9 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     init_parse_table();
     // printf("here\n");
     fillParseTable();
-    // printf("here\n");
-    // printParseTable();
+    
 
-    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-    //     printf("%d. %s\n",i,arrayOfNonTerminals[i]);
-    // }
-
-    // printf("NUMBER OF UNIQUE TERMINALS : %d\n", number_of_unique_terminals);
-    // printf("NUMBER OF UNIQUE NON-TERMINALS : %d\n", number_of_unique_nonterminals);
-
-    // printf("NO OF UNIQUE NT : %d\n",x);
-
-    // char ** first = get_first_set("MODULE1");
-    // printf("FINAL PRINT\n");
-    // for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
-    //     printf("%s\n",first[i]);
-    //     if(strcmp(first[i],"-1")==0) break;
-    // }
-
-    // // Printing follow sets
-    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-    //     printf("PRINTING FOLLOW OF %s:-\n",arrayOfNonTerminals[i]);
-    //     for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
-    //         // printf("here\n");
-    //         if(strcmp(complete_follow_sets[i][j],"-1")==0) break;
-    //         printf("%s\n",complete_follow_sets[i][j]);
-    //     }
-    // }
-
-    // //  Printing first sets
-    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-    //     printf("PRINTING FIRST OF %s:-\n",arrayOfNonTerminals[i]);
-    //     for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
-    //         // printf("here\n");
-    //         if(strcmp(complete_first_sets[i][j],"-1")==0) break;
-    //         printf("%s\n",complete_first_sets[i][j]);
-    //     }
-    // }
-
-    // init_parser();
-
-    // FILE *input_file;
-    // // Open the input file in read mode
-    // input_file = fopen("input.txt", "r");
-    // if (input_file == NULL)
-    // {
-    //     printf("Unable to open file");
-    //     return 1;
-    // }
-    // printf("File opened successfully\n");
-
-     parser(input_file);
+    parser(input_file);
 
     printTree(parse_tree);
 
@@ -1014,9 +968,10 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
     printAst(astHead);
+    init_ast_traversal();
     populate_function_and_symbol_tables(astHead);
     ast_pass2(astHead);
-        printf("Total width : %d\n",get_total_width());   
+    get_total_width();   
     print_function_table();
 
     for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
@@ -1039,6 +994,291 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     return 0;
 }
 
+void ast_formation_array_info_print(FILE *input_file){
+    grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
+    for (int i = 0; i < NUMBER_OF_RULES; ++i)
+        grammar[i] = createNewList();
+    populate_grammer();
+    // display_rules();
+    // printf("here\n");
+
+    init_nt_array();
+    init_t_array();
+    // printf("here\n");
+    complete_first_sets = all_first_sets();   // populating first set
+    complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets();   // populating synch set
+    // printf("here\n");
+
+    init_parse_table();
+    // printf("here\n");
+    fillParseTable();
+    
+
+    parser(input_file);
+
+
+    printf("\n\n\n\n\n");
+    TREENODE astHead = generate_ast(parse_tree->head);
+    setASTParent(astHead);
+    init_ast_traversal();
+    populate_function_and_symbol_tables_without_error(astHead);
+    print_all_array_info();
+
+
+    for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
+        {   
+            if (function_table[i].is_used)
+            {
+                SYMBOL_TABLE_WRAPPER symbol_table = function_table[i].function_table_value->symbol_table_wrapper;
+                init_all_symbol_tables(symbol_table);
+            }
+        }
+        
+    init_functionhashmap(function_table);
+
+    // char** follow = get_follow_set("STATEMENTS");
+    // for(int i=0 ; i<number_of_unique_terminals ; i++){
+    //     printf("%s\n",follow[i]);
+    //     if(strcmp(follow[i],"-1")==0) break;
+    // }
+    return ;
+}
+
+void ast_formation_print_all_errors(FILE* input_file){
+    grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
+    for (int i = 0; i < NUMBER_OF_RULES; ++i)
+        grammar[i] = createNewList();
+    populate_grammer();
+    // display_rules();
+    // printf("here\n");
+
+    init_nt_array();
+    init_t_array();
+    // printf("here\n");
+    complete_first_sets = all_first_sets();   // populating first set
+    complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets();   // populating synch set
+    // printf("here\n");
+
+    init_parse_table();
+    // printf("here\n");
+    fillParseTable();
+    
+
+    parser(input_file);
+
+
+    printf("\n\n\n\n\n");
+    if(global_error_flag==0){
+        TREENODE astHead = generate_ast(parse_tree->head);
+        setASTParent(astHead);
+        init_ast_traversal();
+        populate_function_and_symbol_tables(astHead);
+        ast_pass2(astHead);
+        for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
+        {   
+            if (function_table[i].is_used)
+            {
+                SYMBOL_TABLE_WRAPPER symbol_table = function_table[i].function_table_value->symbol_table_wrapper;
+                init_all_symbol_tables(symbol_table);
+            }
+        }
+        
+        init_functionhashmap(function_table);
+
+        // char** follow = get_follow_set("STATEMENTS");
+        // for(int i=0 ; i<number_of_unique_terminals ; i++){
+        //     printf("%s\n",follow[i]);
+        //     if(strcmp(follow[i],"-1")==0) break;
+        // }
+    }
+    return ;
+}
+
+
+void ast_formation_print_activation_records(FILE *input_file){
+    grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
+    for (int i = 0; i < NUMBER_OF_RULES; ++i)
+        grammar[i] = createNewList();
+    populate_grammer();
+    // display_rules();
+    // printf("here\n");
+
+    init_nt_array();
+    init_t_array();
+    // printf("here\n");
+    complete_first_sets = all_first_sets();   // populating first set
+    complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets();   // populating synch set
+    // printf("here\n");
+
+    init_parse_table();
+    // printf("here\n");
+    fillParseTable();
+    
+
+    parser(input_file);
+
+    
+
+    printf("\n\n\n\n\n");
+    TREENODE astHead = generate_ast(parse_tree->head);
+    setASTParent(astHead);
+    init_ast_traversal();
+    populate_function_and_symbol_tables_without_error(astHead);
+   
+    get_total_width();   
+
+    for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
+    {   
+        if (function_table[i].is_used)
+        {
+            SYMBOL_TABLE_WRAPPER symbol_table = function_table[i].function_table_value->symbol_table_wrapper;
+            init_all_symbol_tables(symbol_table);
+        }
+    }
+
+    init_functionhashmap(function_table);
+    return;
+}
+
+void ast_formation_print_ast(FILE *input_file){
+     grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
+    for (int i = 0; i < NUMBER_OF_RULES; ++i)
+        grammar[i] = createNewList();
+    populate_grammer();
+    // display_rules();
+    // printf("here\n");
+
+    init_nt_array();
+    init_t_array();
+    // printf("here\n");
+    complete_first_sets = all_first_sets();   // populating first set
+    complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets();   // populating synch set
+    // printf("here\n");
+
+    init_parse_table();
+    // printf("here\n");
+    fillParseTable();
+    
+
+    parser(input_file);
+
+    printf("\n\n\n\n\n");
+    TREENODE astHead = generate_ast(parse_tree->head);
+    setASTParent(astHead);
+    init_ast_traversal();
+    populate_function_and_symbol_tables_without_error(astHead);
+      
+  
+
+    for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
+    {   
+        // printf("variable name    scope (module name)    scope (line numbers)   	type of element	   is_array	   Static/dynamic	 array range	width	 offset	  nesting level");
+        if (function_table[i].is_used)
+        {
+            SYMBOL_TABLE_WRAPPER symbol_table = function_table[i].function_table_value->symbol_table_wrapper;
+            printSymboltableDFS(symbol_table);
+        }
+    }
+
+    init_functionhashmap(function_table);
+
+    // char** follow = get_follow_set("STATEMENTS");
+    // for(int i=0 ; i<number_of_unique_terminals ; i++){
+    //     printf("%s\n",follow[i]);
+    //     if(strcmp(follow[i],"-1")==0) break;
+    // }
+    return ;
+}
+
+void parse_tree_formation_ast_printing(FILE *input_file){
+    grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
+    for (int i = 0; i < NUMBER_OF_RULES; ++i)
+        grammar[i] = createNewList();
+    populate_grammer();
+    // display_rules();
+    // printf("here\n");
+
+    init_nt_array();
+    init_t_array();
+    // printf("here\n");
+    complete_first_sets = all_first_sets();   // populating first set
+    complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets();   // populating synch set
+    // printf("here\n");
+
+    init_parse_table();
+    // printf("here\n");
+    fillParseTable();
+    
+
+    parser(input_file);
+
+    printf("\n\n\n\n\n");
+    TREENODE astHead = generate_ast(parse_tree->head);
+    setASTParent(astHead);
+    printf("The traversal order for printing AST is DFS\n\n");
+    printAst(astHead);
+    return ;
+}
+
+void parse_tree_formation_ast_formation(FILE *input_file){
+    grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
+    for (int i = 0; i < NUMBER_OF_RULES; ++i)
+        grammar[i] = createNewList();
+    populate_grammer();
+    // display_rules();
+    // printf("here\n");
+
+    init_nt_array();
+    init_t_array();
+    // printf("here\n");
+    complete_first_sets = all_first_sets();   // populating first set
+    complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets();   // populating synch set
+    // printf("here\n");
+
+    init_parse_table();
+    // printf("here\n");
+    fillParseTable();
+    
+
+    parser(input_file);
+
+    printf("\n\n\n\n\n");
+    int total_parse_tree_nodes=total_tree_nodes(parse_tree->head);
+    int total_parse_tree_memory=get_memory_of_tree(parse_tree->head);
+    printf("Parse tree Number of nodes = %d, Allocated Memory =  %d Bytes\n\n", total_parse_tree_nodes,total_parse_tree_memory);
+    TREENODE astHead = generate_ast(parse_tree->head);
+    setASTParent(astHead);
+    
+    int total_ast_tree_nodes=total_tree_nodes(astHead);
+    int total_ast_memory=get_memory_of_tree(astHead);
+    printf("AST tree Number of nodes = %d, Allocated Memory =  %d Bytes\n\n", total_ast_tree_nodes, total_ast_memory);
+    float compression_percentage=(total_parse_tree_memory-total_ast_memory)*100/total_parse_tree_memory;
+    printf("Compression percentage = %f ", compression_percentage);
+    return;
+
+}
+
+int total_tree_nodes(TREENODE head){
+    if(head==NULL)
+        return 0;
+    int get_nodes_in_child=total_tree_nodes(head->child);
+    int get_nodes_next=total_tree_nodes(head->next);
+    return get_nodes_in_child+get_nodes_next+1;
+}
+
+int get_memory_of_tree(TREENODE head){
+    if(head==NULL)
+        return 0;
+    int get_nodes_in_child=total_tree_nodes(head->child);
+    int get_nodes_next=total_tree_nodes(head->next);
+    return get_nodes_in_child+get_nodes_next+sizeof(head);
+}
 
 int parse_tree_func(FILE *input_file)
 {
@@ -1060,56 +1300,7 @@ int parse_tree_func(FILE *input_file)
     init_parse_table();
     // printf("here\n");
     fillParseTable();
-    // printf("here\n");
-    // printParseTable();
-
-    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-    //     printf("%d. %s\n",i,arrayOfNonTerminals[i]);
-    // }
-
-    // printf("NUMBER OF UNIQUE TERMINALS : %d\n", number_of_unique_terminals);
-    // printf("NUMBER OF UNIQUE NON-TERMINALS : %d\n", number_of_unique_nonterminals);
-
-    // printf("NO OF UNIQUE NT : %d\n",x);
-
-    // char ** first = get_first_set("MODULE1");
-    // printf("FINAL PRINT\n");
-    // for(int i=0 ; i<MAX_NUMBER_OF_UNIQUE_TERMINALS ; i++){
-    //     printf("%s\n",first[i]);
-    //     if(strcmp(first[i],"-1")==0) break;
-    // }
-
-    // // Printing follow sets
-    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-    //     printf("PRINTING FOLLOW OF %s:-\n",arrayOfNonTerminals[i]);
-    //     for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
-    //         // printf("here\n");
-    //         if(strcmp(complete_follow_sets[i][j],"-1")==0) break;
-    //         printf("%s\n",complete_follow_sets[i][j]);
-    //     }
-    // }
-
-    // //  Printing first sets
-    // for(int i=0 ; i<number_of_unique_nonterminals ; i++){
-    //     printf("PRINTING FIRST OF %s:-\n",arrayOfNonTerminals[i]);
-    //     for(int j=0 ; j<MAX_NUMBER_OF_UNIQUE_TERMINALS ; j++){
-    //         // printf("here\n");
-    //         if(strcmp(complete_first_sets[i][j],"-1")==0) break;
-    //         printf("%s\n",complete_first_sets[i][j]);
-    //     }
-    // }
-
-    // init_parser();
-
-    // FILE *input_file;
-    // // Open the input file in read mode
-    // input_file = fopen("input.txt", "r");
-    // if (input_file == NULL)
-    // {
-    //     printf("Unable to open file");
-    //     return 1;
-    // }
-    // printf("File opened successfully\n");
+    
 
     parser(input_file);
 
