@@ -48,6 +48,47 @@ void get_total_width()
     return;
 }
 
+void print_array_info(SYMBOL_TABLE_WRAPPER wrapper){
+    for (int i = 0; i < SYMBOL_HASHMAP_SIZE; i++)
+    {
+        if (wrapper->symbol_table[i].is_used)
+        {
+            SYMBOL_TABLE_VALUE value = wrapper->symbol_table[i].symbol_table_value;
+            if(value->isarray){
+                char* s_or_d = (!value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic)?"Static":"Dynamic";
+                char* top, bottom;
+                if(!value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic){
+                    printf("%-20s, %-4d-%-4d, %-20s, %-8s array, [%-4d,%-4d], %-20s",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d, value->symbol_table_value_union.array,value->symbol_table_value_union.array.bottom_range.bottom,value->symbol_table_value_union.array.top_range.top,value->symbol_table_value_union.array.element_type);
+                }else if(value->symbol_table_value_union.array.is_top_dynamic && value->symbol_table_value_union.array.is_bottom_dynamic){
+                    printf("%-20s, %-4d-%-4d, %-20s, %-8s array, [%-4s,%-4s], %-20s",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d, value->symbol_table_value_union.array,value->symbol_table_value_union.array.bottom_range.bottom_var,value->symbol_table_value_union.array.top_range.top_var,value->symbol_table_value_union.array.element_type);
+                }else if(!value->symbol_table_value_union.array.is_top_dynamic && value->symbol_table_value_union.array.is_bottom_dynamic){
+                    printf("%-20s, %-4d-%-4d, %-20s, %-8s array, [%-4s,%-4d], %-20s",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d, value->symbol_table_value_union.array,value->symbol_table_value_union.array.bottom_range.bottom_var,value->symbol_table_value_union.array.top_range.top,value->symbol_table_value_union.array.element_type);
+                }else if(value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic){
+                    printf("%-20s, %-4d-%-4d, %-20s, %-8s array, [%-4d,%-4s], %-20s",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d, value->symbol_table_value_union.array,value->symbol_table_value_union.array.bottom_range.bottom,value->symbol_table_value_union.array.top_range.top_var,value->symbol_table_value_union.array.element_type);
+                }
+            }
+        }    
+    }
+    if (wrapper->child != NULL)
+        print_array_info(wrapper->child);
+    if (wrapper->next != NULL)
+        print_array_info(wrapper->next);
+    return;
+}
+
+void print_all_array_info(){
+    for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
+    {   
+        if (function_table[i].is_used)
+        {
+            FUNCTION_TABLE_VALUE value = function_table[i].function_table_value;
+            SYMBOL_TABLE_WRAPPER temp = value->symbol_table_wrapper;
+            print_array_info(temp);
+        }
+    }
+    return;
+}
+
 int get_nesting_level(SYMBOL_TABLE_WRAPPER wrapper)
 {
     SYMBOL_TABLE_WRAPPER temp = wrapper;

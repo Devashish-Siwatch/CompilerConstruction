@@ -25,3 +25,5 @@ void appendWhileVariables(TREENODE root, LIST list);
 void check_array_index_bounds(TREENODE indexRoot, char *arrayLexeme, int line_number);
 SYMBOL_TABLE_WRAPPER search_below_by_line_number(int line_no);
 void populate_function_and_symbol_tables_without_error(TREENODE root);
+void print_array_info(SYMBOL_TABLE_WRAPPER wrapper);
+void print_all_array_info();
