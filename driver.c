@@ -306,7 +306,17 @@ int main(int argc, char *argv[])
         }
         else if (choice == 8)
         {
-            printf("Error reporting and total compile time Goes Here\n");            
+            FILE *input_file;
+            input_file = fopen(argv[1], "r");
+
+            if (input_file == NULL)
+            {
+                printf("Unable to open file");
+                return 1;
+            }
+
+           
+            ast_formation_print_all_errors(input_file);
         }
         else if (choice == 9)
         {
