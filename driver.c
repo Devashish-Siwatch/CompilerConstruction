@@ -220,11 +220,28 @@ int main(int argc, char *argv[])
                 printf("\033[31mUnable to open output file\033[0m\n");
                 return 1;
             }
-            int parse = parser_complete_functionality(input_file, output_file);
-            printf("AST Function Goes Here\n");            
+            parse_tree_formation_ast_printing(input_file);         
         }
         else if (choice == 4)
         {
+            FILE *input_file;
+            input_file = fopen(argv[1], "r");
+
+            if (input_file == NULL)
+            {
+                printf("Unable to open file");
+                return 1;
+            }
+
+            FILE *output_file;
+            output_file = fopen(argv[2], "w");
+            if (output_file == NULL)
+            {
+                printf("\033[31mUnable to open output file\033[0m\n");
+                return 1;
+            }
+            int parse = parser_complete_functionality(input_file, output_file);
+            printf("AST Function Goes Here\n"); 
             printf("Memory Taken Function Goes Here\n");            
         }
         else if (choice == 5)

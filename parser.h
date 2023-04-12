@@ -40,7 +40,7 @@ int getTypeOfData(char *str);
 int set_contains(char **arr, int arr_len, char *str);
 void init_parser();
 char *convertToLowercase(char *str);
-
+void parse_tree_formation_ast_printing(FILE *input_file);
 
 
 #endif

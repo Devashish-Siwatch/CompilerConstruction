@@ -24,7 +24,7 @@ void appendAtLast(TREENODE head, TREENODE node)
 
     if (node != NULL)
     {
-        printf("trying to append at last %s\n", node->name);
+        
         node->next = NULL;
     }
     if (head == NULL)
@@ -120,7 +120,7 @@ TREENODE generate_ast(TREENODE node)
         int rule_number = node->rule_number;
         if (rule_number == -1)
             printf("KUCH TO DIKKAT HAI\n");
-        printf("%d ************\n", rule_number);
+        
         switch (rule_number)
         {
         case 0:
