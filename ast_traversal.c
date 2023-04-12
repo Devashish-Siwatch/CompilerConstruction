@@ -28,6 +28,38 @@ void init_ast_traversal(){
     return;
 }
 
+void copy_symbol_table_value(SYMBOL_TABLE_VALUE newValue, SYMBOL_TABLE_VALUE oldValue){
+    if (oldValue->isarray)
+    {
+        newValue->isarray = true;
+        newValue->symbol_table_value_union.array.is_bottom_dynamic = oldValue->symbol_table_value_union.array.is_bottom_dynamic;
+        newValue->symbol_table_value_union.array.is_bottom_sign_plus = oldValue->symbol_table_value_union.array.is_bottom_sign_plus;
+        newValue->symbol_table_value_union.array.is_top_dynamic = oldValue->symbol_table_value_union.array.is_top_dynamic;
+        newValue->symbol_table_value_union.array.is_top_sign_plus = oldValue->symbol_table_value_union.array.is_top_sign_plus;
+        newValue->symbol_table_value_union.array.top_range.top = oldValue->symbol_table_value_union.array.top_range.top;
+        newValue->symbol_table_value_union.array.top_range.top_var = oldValue->symbol_table_value_union.array.top_range.top_var;
+        newValue->symbol_table_value_union.array.bottom_range.bottom = oldValue->symbol_table_value_union.array.bottom_range.bottom;
+        newValue->symbol_table_value_union.array.bottom_range.bottom_var = oldValue->symbol_table_value_union.array.bottom_range.bottom_var;
+        newValue->symbol_table_value_union.array.element_type = oldValue->symbol_table_value_union.array.element_type;
+    }
+    else
+    {
+        newValue->isarray = false;
+        newValue->symbol_table_value_union.not_array.type = oldValue->symbol_table_value_union.not_array.type;
+    }
+    newValue->module_name = oldValue->module_name;
+    newValue->isInputParameter = oldValue->isInputParameter;
+    newValue->isOutputParameter = oldValue->isOutputParameter;
+    newValue->outputParameterNeedsChecking = oldValue->outputParameterNeedsChecking;
+    newValue->line_number_end = oldValue->line_number_end;
+    newValue->line_number_start = oldValue->line_number_start;
+    newValue->nesting_level = oldValue->nesting_level;
+    newValue->offset = oldValue->offset;
+    newValue->width = oldValue->width;
+    newValue->isLoopVariable = oldValue->isLoopVariable;
+    return;
+}
+
 int get_width(SYMBOL_TABLE_WRAPPER wrapper)
 {
     int total = 0;
@@ -2321,11 +2353,20 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     SYMBOL_TABLE_VALUE stv = symbol_table_get(current_symbol_table_wrapper->symbol_table, temp->lexeme, strlen(temp->lexeme));
                     if (stv->isInputParameter)
                     {
+                        SYMBOL_TABLE_VALUE original = create_new_symbol_node("array");
                         stv->isInputParameter = false;
+                        copy_symbol_table_value(original,stv);
+
+                        if(current_symbol_table_wrapper->shadowed==NULL){
+                            current_symbol_table_wrapper->shadowed = create_symbol_table_wrapper();
+                        }
+                        symbol_insert(current_symbol_table_wrapper->shadowed->symbol_table, temp->lexeme, original);
+
                         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
                         int nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
                         stv->line_number_end = end_line_number;
                         populateSymboltableValue(temp, datatype, stv, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, false, false, false, false);
+                        current_offset_value += stv->width;
                         // symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                     }
                     else

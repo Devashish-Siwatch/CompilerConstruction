@@ -232,6 +232,7 @@ SYMBOL_TABLE_WRAPPER create_symbol_table_wrapper()
     wrapper->while_variables = NULL;
     wrapper->while_condition_fulfilled = false;
     wrapper->starting_line_number = 0;
+    wrapper->shadowed = NULL;
     return wrapper;
 }
 
@@ -240,6 +241,18 @@ void print_symbol_table(SYMBOL_TABLE_WRAPPER wrapper)
     // printf("-----------------------------------\n");
     // printf("AT symbol table : %s\n", wrapper->name);
     // printf("starting line number : %d\n", wrapper->starting_line_number);
+
+    if(wrapper->shadowed!=NULL){
+        for (int i = 0; i < SYMBOL_HASHMAP_SIZE; i++)
+        {
+            if (wrapper->shadowed->symbol_table[i].is_used == true)
+            {
+                printf("%-15s", wrapper->shadowed->symbol_table[i].variable_name);
+                print_symbol_table_value(wrapper->shadowed->symbol_table[i].symbol_table_value);
+            }
+        }
+    }
+
     for (int i = 0; i < SYMBOL_HASHMAP_SIZE; i++)
     {
         if (wrapper->symbol_table[i].is_used == true)

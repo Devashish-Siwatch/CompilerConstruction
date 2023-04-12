@@ -75,6 +75,7 @@ typedef struct symbol_table_wrapper
     struct symbol_table_wrapper *child;
     struct symbol_table_wrapper *parent;
     struct symbol_table_wrapper *next;
+    struct symbol_table_wrapper *shadowed;
     char *name;
     LIST while_variables;
     bool while_condition_fulfilled;
