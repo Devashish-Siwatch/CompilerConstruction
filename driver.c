@@ -94,7 +94,7 @@ void save_all_tokens(FILE *input_file, FILE *output_file)
 
 int main(int argc, char *argv[])
 {
-    if (argc != 4)
+    if (argc != 3)
     {
         printf("\033[31mPlease provide correct number of arguments\n\033[0m");
         return 1;
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 
     // BUFFER_SIZE = atoi(argv[3]);
     // MAX_LEXEME_LENGTH = BUFFER_SIZE/2;
-    BUFFER_SIZE = 2*atoi(argv[3]);
+    BUFFER_SIZE = 2*40;
     MAX_LEXEME_LENGTH = BUFFER_SIZE/2;
     printf("SINGLE_BUFFER_SIZE = %d", BUFFER_SIZE/2);
     
@@ -305,9 +305,24 @@ int main(int argc, char *argv[])
                 printf("Unable to open file");
                 return 1;
             }
+            clock_t start_time, end_time;
+
+            double total_CPU_time, total_CPU_time_in_seconds;
+
+            start_time = clock();
 
            
             ast_formation_print_all_errors(input_file);
+
+            end_time = clock();
+
+            total_CPU_time = (double)(end_time - start_time);
+
+            total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
+
+            // Print both total_CPU_time and total_CPU_time_in_seconds
+            printf("Total CPU time (in ticks)   = %lf\n", total_CPU_time);
+            printf("Total CPU time (in seconds) = %lf\n", total_CPU_time_in_seconds);
         }
         else if (choice == 9)
         {
