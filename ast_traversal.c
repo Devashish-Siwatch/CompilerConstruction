@@ -1617,16 +1617,22 @@ void populate_function_and_symbol_tables(TREENODE root)
                     {
                         printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                     }
-                    else if (l_type->symbol_table_value_union.array.element_type == r_type->symbol_table_value_union.array.element_type)
+                    else if ( (!r_type->symbol_table_value_union.array.is_bottom_dynamic && !r_type->symbol_table_value_union.array.is_top_dynamic) && (!l_type->symbol_table_value_union.array.is_bottom_dynamic && !l_type->symbol_table_value_union.array.is_top_dynamic) && l_type->symbol_table_value_union.array.element_type == r_type->symbol_table_value_union.array.element_type)
                     { // type checking
                         // printf("HELLOE");
-                        if ((l_type->symbol_table_value_union.array.top_range.top - l_type->symbol_table_value_union.array.bottom_range.bottom) != (r_type->symbol_table_value_union.array.top_range.top - r_type->symbol_table_value_union.array.bottom_range.bottom))
+                        int l_lower = l_type->symbol_table_value_union.array.bottom_range.bottom * ((l_type->symbol_table_value_union.array.is_bottom_sign_plus) ? 1 : -1);
+                        int l_upper = l_type->symbol_table_value_union.array.top_range.top * ((l_type->symbol_table_value_union.array.is_top_sign_plus) ? 1 : -1);
+
+                        int r_lower = r_type->symbol_table_value_union.array.bottom_range.bottom * ((r_type->symbol_table_value_union.array.is_bottom_sign_plus) ? 1 : -1);
+                        int r_upper = r_type->symbol_table_value_union.array.top_range.top * ((r_type->symbol_table_value_union.array.is_top_sign_plus) ? 1 : -1);
+
+                        if (abs(l_upper-l_lower) != abs(r_upper-r_lower))
                         {
                             printf("\033[31m\nLine %d ERROR : Type Mismatch: Array sizes different.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                         }
                         printf("%d\n", l_type->symbol_table_value_union.array.element_type);
                     }
-                    else
+                    else if((!r_type->symbol_table_value_union.array.is_bottom_dynamic && !r_type->symbol_table_value_union.array.is_top_dynamic) && (!l_type->symbol_table_value_union.array.is_bottom_dynamic && !l_type->symbol_table_value_union.array.is_top_dynamic))
                     {
                         // int x = 102;
                         //  printf("%d", x);

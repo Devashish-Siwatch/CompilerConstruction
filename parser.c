@@ -964,7 +964,7 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
 
     printTree(parse_tree);
 
-    printf("\n\n\n\n\n");
+    printf("\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
     printAst(astHead);
@@ -1018,7 +1018,7 @@ void ast_formation_array_info_print(FILE *input_file){
     parser(input_file);
 
 
-    printf("\n\n\n\n\n");
+    printf("\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
     init_ast_traversal();
@@ -1069,7 +1069,7 @@ void ast_formation_print_all_errors(FILE* input_file){
     parser(input_file);
 
 
-    printf("\n\n\n\n\n");
+    printf("\n\n\n");
     if(global_error_flag==0){
         TREENODE astHead = generate_ast(parse_tree->head);
         setASTParent(astHead);
@@ -1122,7 +1122,7 @@ void ast_formation_print_activation_records(FILE *input_file){
 
     
 
-    printf("\n\n\n\n\n");
+    printf("\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
     init_ast_traversal();
@@ -1166,7 +1166,7 @@ void ast_formation_print_ast(FILE *input_file){
 
     parser(input_file);
 
-    printf("\n\n\n\n\n");
+    printf("\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
     init_ast_traversal();
@@ -1217,7 +1217,7 @@ void parse_tree_formation_ast_printing(FILE *input_file){
 
     parser(input_file);
 
-    printf("\n\n\n\n\n");
+    printf("\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
     printf("The traversal order for printing AST is DFS\n\n");
@@ -1248,7 +1248,7 @@ void parse_tree_formation_ast_formation(FILE *input_file){
 
     parser(input_file);
 
-    printf("\n\n\n\n\n");
+    printf("\n\n\n");
     int total_parse_tree_nodes=total_tree_nodes(parse_tree->head);
     int total_parse_tree_memory=get_memory_of_tree(parse_tree->head);
     printf("Parse tree Number of nodes = %d, Allocated Memory =  %d Bytes\n\n", total_parse_tree_nodes,total_parse_tree_memory);
@@ -1260,6 +1260,7 @@ void parse_tree_formation_ast_formation(FILE *input_file){
     printf("AST tree Number of nodes = %d, Allocated Memory =  %d Bytes\n\n", total_ast_tree_nodes, total_ast_memory);
     float compression_percentage=(total_parse_tree_memory-total_ast_memory)*100/total_parse_tree_memory;
     printf("Compression percentage = %f ", compression_percentage);
+    printf("\n\n\n");
     return;
 
 }

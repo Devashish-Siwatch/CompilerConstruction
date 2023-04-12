@@ -1,25 +1,16 @@
 declare module function1;
 <<<driver program>>>
 start
-	 declare arr: array[1..5] of integer;    
+	 declare arr: array[l..r] of integer;
+	 declare arr1: array[1..3] of integer;
+	 declare arr2: array[1..5] of integer;
+	 arr:=arr1;
+	 declare a:boolean;
+	 declare b:boolean;
+	 declare c:boolean;
+	 c:=b;
 end
 
-<<module function1>>
-takes input [data: array[100..150] of boolean, weight: real, length: integer, b:array[35..50] of real, q:integer];
-returns [R1: real, R2: integer, R3: boolean, R4: integer];
-start
- 	declare a:integer;
-	while(a<10)
-	start
-		declare weight : array[2..55] of integer;
-	end	
-end								** ERROR: Output parameter R3 is not assigned any value **
 
-<<module function1>>			    	**ERROR: function1 cannot be overloaded**
-takes input [b:boolean, e:integer];
-returns [c:boolean, d: integer];
-start
-	b:=d;
-end
 
 
