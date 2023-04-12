@@ -48,4 +48,5 @@ int total_tree_nodes(TREENODE head);
 int get_memory_of_tree(TREENODE head);
 void ast_formation_print_activation_records(FILE *input_file);
 void ast_formation_print_all_errors(FILE* input_file);
+void ast_formation_array_info_print(FILE *input_file);
 #endif

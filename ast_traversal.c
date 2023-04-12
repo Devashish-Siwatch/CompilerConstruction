@@ -11,6 +11,14 @@ char *current_module_name;
 int current_offset_value = 0;
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper_pass_2;
 
+void init_ast_traversal(){
+    current_module_name="";
+    current_offset_value=0;
+    current_symbol_table_wrapper=NULL;
+    current_symbol_table_wrapper_pass_2=NULL;
+    return;
+}
+
 int get_width(SYMBOL_TABLE_WRAPPER wrapper)
 {
     int total = 0;
@@ -54,17 +62,27 @@ void print_array_info(SYMBOL_TABLE_WRAPPER wrapper){
         if (wrapper->symbol_table[i].is_used)
         {
             SYMBOL_TABLE_VALUE value = wrapper->symbol_table[i].symbol_table_value;
-            if(value->isarray){
+            if(value!=NULL && value->isarray){
                 char* s_or_d = (!value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic)?"Static":"Dynamic";
                 char* top, bottom;
+                char* type;
+                if(value->symbol_table_value_union.array.element_type==integer){
+                    type = "integer";
+                }else if(value->symbol_table_value_union.array.element_type==real){
+                    type = "real";
+                }else if(value->symbol_table_value_union.array.element_type==boolean){
+                    type = "boolean";
+                }
+
+
                 if(!value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic){
-                    printf("%-20s, %-4d-%-4d, %-20s, %-8s array, [%-4d,%-4d], %-20s",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d, value->symbol_table_value_union.array,value->symbol_table_value_union.array.bottom_range.bottom,value->symbol_table_value_union.array.top_range.top,value->symbol_table_value_union.array.element_type);
+                    printf("%-20s %4d-%-4d %-20s %-8s array           [%4d,%-4d] \t%-20s\n",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d,value->symbol_table_value_union.array.bottom_range.bottom,value->symbol_table_value_union.array.top_range.top,type);
                 }else if(value->symbol_table_value_union.array.is_top_dynamic && value->symbol_table_value_union.array.is_bottom_dynamic){
-                    printf("%-20s, %-4d-%-4d, %-20s, %-8s array, [%-4s,%-4s], %-20s",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d, value->symbol_table_value_union.array,value->symbol_table_value_union.array.bottom_range.bottom_var,value->symbol_table_value_union.array.top_range.top_var,value->symbol_table_value_union.array.element_type);
+                    printf("%-20s %4d-%-4d %-20s %-8s array           [%4s,%-4s] \t%-20s\n",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d,value->symbol_table_value_union.array.bottom_range.bottom_var,value->symbol_table_value_union.array.top_range.top_var,type);
                 }else if(!value->symbol_table_value_union.array.is_top_dynamic && value->symbol_table_value_union.array.is_bottom_dynamic){
-                    printf("%-20s, %-4d-%-4d, %-20s, %-8s array, [%-4s,%-4d], %-20s",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d, value->symbol_table_value_union.array,value->symbol_table_value_union.array.bottom_range.bottom_var,value->symbol_table_value_union.array.top_range.top,value->symbol_table_value_union.array.element_type);
+                    printf("%-20s %4d-%-4d %-20s %-8s array           [%4s,%-4d] \t%-20s\n",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d,value->symbol_table_value_union.array.bottom_range.bottom_var,value->symbol_table_value_union.array.top_range.top,type);
                 }else if(value->symbol_table_value_union.array.is_top_dynamic && !value->symbol_table_value_union.array.is_bottom_dynamic){
-                    printf("%-20s, %-4d-%-4d, %-20s, %-8s array, [%-4d,%-4s], %-20s",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d, value->symbol_table_value_union.array,value->symbol_table_value_union.array.bottom_range.bottom,value->symbol_table_value_union.array.top_range.top_var,value->symbol_table_value_union.array.element_type);
+                    printf("%-20s %4d-%-4d %-20s %-8s array           [%4d,%-4s] \t%-20s\n",value->module_name, value->line_number_start, value->line_number_end, wrapper->symbol_table[i].variable_name, s_or_d,value->symbol_table_value_union.array.bottom_range.bottom,value->symbol_table_value_union.array.top_range.top_var,type);
                 }
             }
         }    
@@ -83,6 +101,7 @@ void print_all_array_info(){
         {
             FUNCTION_TABLE_VALUE value = function_table[i].function_table_value;
             SYMBOL_TABLE_WRAPPER temp = value->symbol_table_wrapper;
+            // printf("calling for %s\n",value->symbol_table_wrapper->name);
             print_array_info(temp);
         }
     }
@@ -1575,7 +1594,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 }
                 else if (l_type->isarray && !r_type->isarray)
                 {
-                    printf("lhs->next %s\n", lhs->next->name);
+                    // printf("lhs->next %s\n", lhs->next->name);
                     if (!(strcmp(lhs->next->name, "LVALUEARRSTMT") == 0)) // if lhs is of type A = not array
                     {
                         printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
@@ -1694,6 +1713,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                         int nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
                         stv->line_number_end = end_line_number;
                         populateSymboltableValue(temp, datatype, stv, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, false, false, false, false);
+                        
                         // symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                     }
                     else
@@ -2178,7 +2198,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                 }
                 else if (l_type->isarray && !r_type->isarray)
                 {
-                    printf("lhs->next %s\n", lhs->next->name);
+                    // printf("lhs->next %s\n", lhs->next->name);
                     if (!(strcmp(lhs->next->name, "LVALUEARRSTMT") == 0)) // if lhs is of type A = not array
                     {
                         //printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);

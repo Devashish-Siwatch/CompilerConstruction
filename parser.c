@@ -968,6 +968,7 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
     printAst(astHead);
+    init_ast_traversal();
     populate_function_and_symbol_tables(astHead);
     ast_pass2(astHead);
     get_total_width();   
@@ -991,6 +992,57 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     //     if(strcmp(follow[i],"-1")==0) break;
     // }
     return 0;
+}
+
+void ast_formation_array_info_print(FILE *input_file){
+    grammar = (linked_list **)malloc(sizeof(linked_list *) * NUMBER_OF_RULES);
+    for (int i = 0; i < NUMBER_OF_RULES; ++i)
+        grammar[i] = createNewList();
+    populate_grammer();
+    // display_rules();
+    // printf("here\n");
+
+    init_nt_array();
+    init_t_array();
+    // printf("here\n");
+    complete_first_sets = all_first_sets();   // populating first set
+    complete_follow_sets = all_follow_sets(); // populating follow set
+    complete_synch_sets = all_synch_sets();   // populating synch set
+    // printf("here\n");
+
+    init_parse_table();
+    // printf("here\n");
+    fillParseTable();
+    
+
+    parser(input_file);
+
+
+    printf("\n\n\n\n\n");
+    TREENODE astHead = generate_ast(parse_tree->head);
+    setASTParent(astHead);
+    init_ast_traversal();
+    populate_function_and_symbol_tables_without_error(astHead);
+    print_all_array_info();
+
+
+    for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
+        {   
+            if (function_table[i].is_used)
+            {
+                SYMBOL_TABLE_WRAPPER symbol_table = function_table[i].function_table_value->symbol_table_wrapper;
+                init_all_symbol_tables(symbol_table);
+            }
+        }
+        
+    init_functionhashmap(function_table);
+
+    // char** follow = get_follow_set("STATEMENTS");
+    // for(int i=0 ; i<number_of_unique_terminals ; i++){
+    //     printf("%s\n",follow[i]);
+    //     if(strcmp(follow[i],"-1")==0) break;
+    // }
+    return ;
 }
 
 void ast_formation_print_all_errors(FILE* input_file){
@@ -1021,6 +1073,7 @@ void ast_formation_print_all_errors(FILE* input_file){
     if(global_error_flag==0){
         TREENODE astHead = generate_ast(parse_tree->head);
         setASTParent(astHead);
+        init_ast_traversal();
         populate_function_and_symbol_tables(astHead);
         ast_pass2(astHead);
         for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
@@ -1072,6 +1125,7 @@ void ast_formation_print_activation_records(FILE *input_file){
     printf("\n\n\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
+    init_ast_traversal();
     populate_function_and_symbol_tables_without_error(astHead);
    
     get_total_width();   
@@ -1112,10 +1166,10 @@ void ast_formation_print_ast(FILE *input_file){
 
     parser(input_file);
 
-
     printf("\n\n\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
+    init_ast_traversal();
     populate_function_and_symbol_tables_without_error(astHead);
       
   
