@@ -934,7 +934,6 @@ void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_T
         }
     }
     value->offset = current_offset_value;
-    current_offset_value += value->width;
 }
 void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam, bool isOutputParam, bool outputParamNeedsChecking)
 {
@@ -954,6 +953,7 @@ void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam, b
         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
         value->line_number_end = end_line_number;
         populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, temp->line_number, isInputParam, false, isOutputParam, outputParamNeedsChecking);
+        current_offset_value += value->width;
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
     }
@@ -1681,6 +1681,8 @@ void populate_function_and_symbol_tables(TREENODE root)
                     int nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
                     value->line_number_end = end_line_number;
                     populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, false, false, false, false);
+                    current_offset_value += value->width;
+
                     symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
                 }
                 temp = temp->child;
@@ -1801,6 +1803,8 @@ void populate_function_and_symbol_tables(TREENODE root)
             value->module_name = current_module_name;
             value->nesting_level = get_nesting_level(current_symbol_table_wrapper) + 1;
             value->isLoopVariable = true;
+            
+
             symbol_insert(current_symbol_table_wrapper->symbol_table, root->child->lexeme, value);
         }
         else if (strcmp(root->name, "IO_INPUT") == 0)
