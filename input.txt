@@ -1,8 +1,7 @@
 <<<driver program>>>
 start
-		a:=b;
-
+	while(x)
+	start
+		x:=x+1;
+	end
 end
-
-
-

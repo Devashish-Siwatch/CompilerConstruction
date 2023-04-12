@@ -805,6 +805,7 @@ void appendWhileVariables(TREENODE root, LIST list)
     {
         NODE node = createNewNode(root->lexeme);
         insertNodeIntoList(node, list);
+        printf("inserted %s\n",node->data);
         return;
     }
 }
@@ -967,6 +968,9 @@ void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_T
         }
         else
         {
+            if(!check_if_declared_before(range1->lexeme)){
+                printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", range1->line_number, range1->lexeme);
+            }
             value->symbol_table_value_union.array.bottom_range.bottom_var = range1->lexeme;
             value->symbol_table_value_union.array.is_bottom_dynamic = true;
         }
@@ -993,6 +997,9 @@ void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_T
         }
         else
         {
+            if(!check_if_declared_before(range2->lexeme)){
+                printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", range2->line_number, range2->lexeme);
+            }
             value->symbol_table_value_union.array.top_range.top_var = range2->lexeme;
             value->symbol_table_value_union.array.is_top_dynamic = true;
         }
@@ -1069,6 +1076,9 @@ void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam, b
         value->line_number_end = end_line_number;
         populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, isInputParam, false, isOutputParam, outputParamNeedsChecking);
         current_offset_value += value->width;
+        if(check_if_redeclared(temp->lexeme)){
+            printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", temp->line_number, temp->lexeme);
+        }
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
     }
@@ -1722,7 +1732,7 @@ void populate_function_and_symbol_tables(TREENODE root)
         }
         else if (strcmp(root->name, "STMTS_END") == 0)
         {
-            if (current_symbol_table_wrapper->while_variables != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
+            if (current_symbol_table_wrapper->while_variables!=NULL && current_symbol_table_wrapper->while_variables->head != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
             {
                 printf("\033[31m\nLine %d ERROR : None of the variables in the while condition have been assigned in the while statements.\n\033[0m", current_symbol_table_wrapper->starting_line_number);
             }

@@ -189,12 +189,18 @@ TREENODE generate_ast(TREENODE node)
         case 68:
         // case 57:
         // case 58:
-        case 60:
-        case 61:
+        // case 60:
+        // case 61:
         {
             TREENODE temp = node->child;
             temp->line_number = node->line_number;
             // //free(node);
+            return generate_ast(temp);
+        }
+        case 60:
+        case 61:
+        {
+            TREENODE temp = node->child;
             return generate_ast(temp);
         }
         case 57:
