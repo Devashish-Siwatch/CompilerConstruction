@@ -127,7 +127,7 @@ TREENODE generate_ast(TREENODE node)
     if (getTypeOfData(node->name) == 1)
     {
         int rule_number = node->rule_number;
-        if (rule_number == -1)
+        
         
         switch (rule_number)
         {

@@ -1450,6 +1450,7 @@ void ast_pass2(TREENODE root)
 }
 void populate_function_and_symbol_tables(TREENODE root)
 {
+
     if (root == NULL)
     {
         // printf("Currently at null");
@@ -1592,9 +1593,10 @@ void populate_function_and_symbol_tables(TREENODE root)
                 // printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.not_array.type, r_type->symbol_table_value_union.not_array.type);
             }
             bool lhs_exists = check_if_declared_before(lhs->lexeme);
-            // printf("Kys hus");
+          
             if (!lhs_exists)
             {
+                
                 printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", lhs->line_number, lhs->lexeme);
             }
             else

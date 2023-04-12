@@ -1068,12 +1068,12 @@ void ast_formation_print_all_errors(FILE* input_file){
 
     parser(input_file);
 
-
     printf("\n\n\n");
     if(global_error_flag==0){
         TREENODE astHead = generate_ast(parse_tree->head);
         setASTParent(astHead);
         init_ast_traversal();
+       
         populate_function_and_symbol_tables(astHead);
         ast_pass2(astHead);
         for (int i = 0; i < FUNC_HASHMAP_SIZE; i++)
