@@ -611,12 +611,12 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
         {
             if (!a->symbol_table_value_union.not_array.type == 0)
             {
-                printf("\033[31m\n Line %d ERROR : Array range expression not integer.\n\033[0m", root->line_number);
+                printf("\033[31m\nLine %d ERROR : Array range expression not integer.\n\033[0m", root->line_number);
             }
         }
         else
         {
-            printf("\033[31m\n Line %d ERROR : Array range expression not integer.\n\033[0m", root->line_number);
+            printf("\033[31m\nLine %d ERROR : Array range expression not integer.\n\033[0m", root->line_number);
         }
         return b;
     }
@@ -891,7 +891,7 @@ void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_T
             if ((bottom_range) > (top_range))
             {
 
-                printf("\033[31m\n Line %d ERROR : Upper range is less than lower range of the array .\n\033[0m", current_node->line_number);
+                printf("\033[31m\nLine %d ERROR : Upper range is less than lower range of the array .\n\033[0m", current_node->line_number);
             }
         }
         // element type
@@ -952,7 +952,7 @@ void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam, b
         TREENODE datatype = temp->next;
         SYMBOL_TABLE_VALUE value = create_new_symbol_node(datatype->name);
         value->line_number_end = end_line_number;
-        populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, temp->line_number, isInputParam, false, isOutputParam, outputParamNeedsChecking);
+        populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, isInputParam, false, isOutputParam, outputParamNeedsChecking);
         current_offset_value += value->width;
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
@@ -1012,7 +1012,7 @@ void ast_pass2(TREENODE root)
 
     else if (strcmp(root->name, "Module1") == 0)
     {
-        printf("REACHED Module1 NODE\n");
+        // printf("REACHED Module1 NODE\n");
         FUNCTION_TABLE_VALUE val = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
         if (val != NULL)
         {
@@ -1022,27 +1022,27 @@ void ast_pass2(TREENODE root)
 
     else if (strcmp(root->name, "ITERATIVESTMT_WHILE") == 0)
     {
-        printf("REACHED ITERATIVESTMT_WHILE NODE\n");
+        // printf("REACHED ITERATIVESTMT_WHILE NODE\n");
         int line_number = root->line_number;
 
         current_symbol_table_wrapper_pass_2 = search_below_by_line_number(line_number);
     }
     else if (strcmp(root->name, "ITERATIVESTMT_FOR") == 0)
     {
-        printf("REACHED ITERATIVESTMT_FOR NODE\n");
+        // printf("REACHED ITERATIVESTMT_FOR NODE\n");
         int line_number = root->line_number;
 
         current_symbol_table_wrapper_pass_2 = search_below_by_line_number(line_number);
     }
     else if (strcmp(root->name, "STMTS_END") == 0)
     {
-        printf("REACHED STMTS_END NODE\n");
+        // printf("REACHED STMTS_END NODE\n");
         if (current_symbol_table_wrapper_pass_2->parent != NULL)
             current_symbol_table_wrapper_pass_2 = current_symbol_table_wrapper_pass_2->parent;
     }
     else if (strcmp(root->name, "CASE_STMT") == 0)
     {
-        printf("REACHED CASE_STMT NODE\n");
+        // printf("REACHED CASE_STMT NODE\n");
         int line_number = root->line_number;
 
         current_symbol_table_wrapper_pass_2 = search_below_by_line_number(line_number);
@@ -1284,7 +1284,7 @@ void ast_pass2(TREENODE root)
                     {
                         if (sym_val->isarray == true)
                         {
-                            printf("\033[31m\n Line %d ERROR : Array not allowed in output parameter while calling module %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                            printf("\033[31m\nLine %d ERROR : Array not allowed in output parameter while calling module %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
                         }
                         else
                         {
@@ -1317,11 +1317,11 @@ void ast_pass2(TREENODE root)
                 }
                 if (optional_itr == NULL && output_itr != NULL)
                 {
-                    printf("\033[31m\n Line %d ERROR : Too many output parameters are returned while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                    printf("\033[31m\nLine %d ERROR : Too many output parameters are returned while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
                 }
                 if (optional_itr != NULL && output_itr == NULL)
                 {
-                    printf("\033[31m\n Line %d ERROR : Too few output parameters are returned while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                    printf("\033[31m\nLine %d ERROR : Too few output parameters are returned while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
                 }
             }
 
@@ -1337,16 +1337,16 @@ void populate_function_and_symbol_tables(TREENODE root)
 {
     if (root == NULL)
     {
-        printf("Currently at null");
+        // printf("Currently at null");
         return;
     }
     else
     {
-        printf("arrived in %s\n",root->name);
+        // printf("arrived in %s\n",root->name);
 
         if (strcmp(root->name, "Module1") == 0)
         {
-            printf("REACHED MODULE1 NODE\n");
+            // printf("REACHED MODULE1 NODE\n");
             // checking for redeclarations
             bool redeclared = check_if_function_declared(root->child->lexeme);
             FUNCTION_TABLE_VALUE value;
@@ -1747,11 +1747,11 @@ void populate_function_and_symbol_tables(TREENODE root)
                 int type_of_switch_variable = get_type_of_variable(root->parent->parent->child->lexeme);
                 if (type_of_switch_variable == 0 && (strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
                 {
-                    printf("\033[31m\n Line %d ERROR : Case value is expected to have type Integer.\n\033[0m", root->line_number);
+                    printf("\033[31m\nLine %d ERROR : Case value is expected to have type Integer.\n\033[0m", root->line_number);
                 }
                 if (type_of_switch_variable == 2 && !(strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
                 {
-                    printf("\033[31m\n Line %d ERROR : Case value is expected to have type boolean.\n\033[0m", root->line_number);
+                    printf("\033[31m\nLine %d ERROR : Case value is expected to have type boolean.\n\033[0m", root->line_number);
                 }
             }
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
