@@ -43,7 +43,8 @@ void init_parser();
 char *convertToLowercase(char *str);
 void parse_tree_formation_ast_printing(FILE *input_file);
 void parse_tree_formation_ast_formation(FILE *input_file);
+void ast_formation_print_ast(FILE *input_file);
 int total_tree_nodes(TREENODE head);
 int get_memory_of_tree(TREENODE head);
-
+void ast_formation_print_activation_records(FILE *input_file);
 #endif

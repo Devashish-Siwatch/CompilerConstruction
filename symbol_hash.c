@@ -130,6 +130,21 @@ void printSymboltableDFS(SYMBOL_TABLE_WRAPPER wrapper)
     }
 }
 
+void init_all_symbol_tables(SYMBOL_TABLE_WRAPPER wrapper){
+    if (wrapper == NULL)
+    {
+        return;
+    }
+    init_all_symbol_tables(wrapper->child);
+    SYMBOL_TABLE_WRAPPER symboliter = wrapper;
+    while (symboliter != NULL)
+    {
+       
+        init_symbolhashmap(symboliter->symbol_table);
+        symboliter = symboliter->next;
+    }
+}
+
 void symbol_insert(symbol_table_hash_map map, char *key, SYMBOL_TABLE_VALUE type)
 {
     int index = symbol_hash(key);

@@ -1,7 +1,7 @@
 declare module function1;
 <<<driver program>>>
 start
-	     
+	 declare arr: array[1..5] of integer;    
 end
 
 <<module function1>>
