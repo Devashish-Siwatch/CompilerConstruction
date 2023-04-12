@@ -993,7 +993,7 @@ SYMBOL_TABLE_WRAPPER search_below_by_line_number(int line_no)
 
 void ast_pass2(TREENODE root)
 {
-    // printf("%s sigma\n",root->name);
+     // printf("%s sigma\n",root->name);
     if (root == NULL)
     {
         // printf("Currently at %s",head->name);
@@ -1335,11 +1335,13 @@ void populate_function_and_symbol_tables(TREENODE root)
 {
     if (root == NULL)
     {
-        // printf("Currently at %s",head->name);
+        printf("Currently at null");
         return;
     }
     else
     {
+        printf("arrived in %s\n",root->name);
+
         if (strcmp(root->name, "Module1") == 0)
         {
             printf("REACHED MODULE1 NODE\n");
@@ -1348,19 +1350,20 @@ void populate_function_and_symbol_tables(TREENODE root)
             FUNCTION_TABLE_VALUE value;
             if (redeclared)
             {
+                
                 //  printf("value->input_list:   %s", value->input_list);
                 value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
                 if (value->input_list != NULL)
                 {
                     printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", root->child->line_number, root->child->lexeme);
-                    value->symbol_table_wrapper = create_symbol_table_wrapper();
-                    value->symbol_table_wrapper->starting_line_number = root->line_number;
-                    value->symbol_table_wrapper->name = root->child->lexeme;
+                    SYMBOL_TABLE_WRAPPER wraped = create_symbol_table_wrapper();
+                    wraped->starting_line_number = root->line_number;
+                    wraped->name = root->child->lexeme;
                     current_module_name = root->child->lexeme;
-                    value->symbol_table_wrapper->parent = NULL;
-                    value->symbol_table_wrapper->child = NULL;
-                    value->symbol_table_wrapper->next = NULL;
-                    current_symbol_table_wrapper = value->symbol_table_wrapper;
+                    wraped->parent = NULL;
+                    wraped->child = NULL;
+                    wraped->next = NULL;
+                    current_symbol_table_wrapper = wraped;
                 }
                 else
                 {
@@ -1425,7 +1428,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     value->symbol_table_wrapper = create_symbol_table_wrapper();
                     value->symbol_table_wrapper->starting_line_number = temp->line_number;
                     value->symbol_table_wrapper->name = temp->name;
-                    strcat(value->symbol_table_wrapper->name, "_symbol_table");
+                    // strcat(value->symbol_table_wrapper->name, "_symbol_table");
                     value->symbol_table_wrapper->parent = NULL;
                     value->symbol_table_wrapper->child = NULL;
                     value->symbol_table_wrapper->next = NULL;
@@ -1574,7 +1577,6 @@ void populate_function_and_symbol_tables(TREENODE root)
                     value2->outputParameterNeedsChecking = false;
                 }
             }
-
             if (strcmp(rhs->name, "LVALUEARRSTMT") == 0)
             {
 
@@ -1588,6 +1590,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             {
                 check_expression_if_declared_before(rhs);
             }
+            
         }
         else if (strcmp(root->name, "DRIVER_MODULE_STMTS") == 0)
         {
@@ -1614,16 +1617,21 @@ void populate_function_and_symbol_tables(TREENODE root)
             }
             else if (current_symbol_table_wrapper->parent == NULL)
             {
+                                printf("idhar to aya");
                 FUNCTION_TABLE_VALUE ftv = function_table_get(function_table, current_module_name, strlen(current_module_name));
-                TREENODE opl = ftv->output_list;
+                TREENODE opl = NULL;
+                if(ftv!=NULL) opl = ftv->output_list;
+                
                 if (opl != NULL)
                 {
+                                    printf("idhar to aya");
+
                     TREENODE temp = opl->child;
                     while (temp != NULL)
                     {
                         char *id = temp->lexeme;
                         SYMBOL_TABLE_VALUE stv = symbol_table_get(current_symbol_table_wrapper->symbol_table, id, strlen(id));
-                        if (stv->isOutputParameter && stv->outputParameterNeedsChecking)
+                        if (stv!=NULL && stv->isOutputParameter && stv->outputParameterNeedsChecking)
                         {
                             printf("\033[31m\nLine %d ERROR : Output parameter %s has not been changed in the module.\n\033[0m", current_symbol_table_wrapper->starting_line_number, id);
                         }
@@ -1631,6 +1639,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     }
                 }
             }
+
             go_back_to_parent_symbol_table();
         }
         else if (strcmp(root->name, "DECLARESTMT") == 0)
@@ -1932,4 +1941,5 @@ void populate_function_and_symbol_tables(TREENODE root)
     }
     populate_function_and_symbol_tables(root->child);
     populate_function_and_symbol_tables(root->next);
+
 }

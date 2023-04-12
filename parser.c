@@ -1015,7 +1015,6 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     setASTParent(astHead);
     printAst(astHead);
     populate_function_and_symbol_tables(astHead);
-
     ast_pass2(astHead);
         printf("Total width : %d\n",get_total_width());   
     print_function_table();
