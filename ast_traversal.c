@@ -102,10 +102,10 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
     {
         SYMBOL_TABLE_VALUE a = get_type_of_expression(root->child);
         SYMBOL_TABLE_VALUE b = get_type_of_expression(root->child->next);
-        printf("a->isarray = %s\n", root->child->lexeme);
-        printf("b->isarray = %s\n", root->child->next->lexeme);
-        printf("a->isarray = %d\n", a->isarray);
-        printf("b->isarray = %d\n", b->isarray);
+        // printf("a->isarray = %s\n", root->child->lexeme);
+        // printf("b->isarray = %s\n", root->child->next->lexeme);
+        // printf("a->isarray = %d\n", a->isarray);
+        // printf("b->isarray = %d\n", b->isarray);
         if (!a->isarray && !b->isarray)
         {
             int type_a = a->symbol_table_value_union.not_array.type;
@@ -206,7 +206,7 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
             }
             else if (root->child->child == NULL || root->child->next->child == NULL)
             {
-                printf("a->null = %s\n", root->child->lexeme);
+                // printf("a->null = %s\n", root->child->lexeme);
                 // printf("\033[31m\nERROR : TYPE MISMATCH in both arrays.\n\033[0m");
                 type->symbol_table_value_union.not_array.type = -1;
                 return type;
@@ -324,7 +324,6 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
             }
             else if (b->symbol_table_value_union.not_array.type != a->symbol_table_value_union.array.element_type)
             {
-                printf("HEYA");
                 type->symbol_table_value_union.not_array.type = -1;
                 return type;
             }
@@ -624,9 +623,8 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
 
 int get_type_of_variable(char *lexeme)
 {
-    // printf("Hi");
     SYMBOL_TABLE_VALUE stv = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, lexeme);
-    printf("%s\n", stv->module_name);
+    // printf("%s\n", stv->module_name);
     if (stv->symbol_table_value_union.not_array.type == integer)
         return 0;
     else if (stv->symbol_table_value_union.not_array.type == real)
@@ -724,7 +722,6 @@ void check_array_index_bounds(TREENODE indexRoot, char *arrayLexeme, int line_nu
     }
     else if (strcmp(indexRoot->name, "MINUS") == 0 && strcmp(indexRoot->child->name, "num") == 0)
     {
-        printf("idhar\n");
         int index = -1 * atoi(indexRoot->child->lexeme);
         SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, arrayLexeme);
         if (value != NULL && value->isarray && !value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic)
@@ -915,7 +912,6 @@ void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_T
         }
         if (!value->symbol_table_value_union.array.is_bottom_dynamic && !value->symbol_table_value_union.array.is_top_dynamic)
         {
-            printf("++++++++++++++++++++++++++++++++++\n");
             int bottom = (value->symbol_table_value_union.array.bottom_range.bottom) * (value->symbol_table_value_union.array.is_bottom_sign_plus ? 1 : -1);
             int top = (value->symbol_table_value_union.array.top_range.top) * (value->symbol_table_value_union.array.is_top_sign_plus ? 1 : -1);
             value->width = abs(top - bottom) + 1;
@@ -1457,24 +1453,24 @@ void populate_function_and_symbol_tables(TREENODE root)
             TREENODE rhs = lhs->next;
             SYMBOL_TABLE_VALUE l_type = get_type_of_expression(lhs);
             SYMBOL_TABLE_VALUE r_type = get_type_of_expression(rhs);
-            printf("l ARRAY: %d\n", l_type->isarray);
-            printf("r ARRAY: %d\n", r_type->isarray);
+            // printf("l ARRAY: %d\n", l_type->isarray);
+            // printf("r ARRAY: %d\n", r_type->isarray);
             // print all values of types for each case of l_type->isarray and r_type->isarray
             if (l_type->isarray && r_type->isarray)
             {
-                printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.array.element_type, r_type->symbol_table_value_union.array.element_type);
+                // printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.array.element_type, r_type->symbol_table_value_union.array.element_type);
             }
             else if (l_type->isarray && !r_type->isarray)
             {
-                printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.array.element_type, r_type->symbol_table_value_union.not_array.type);
+                // printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.array.element_type, r_type->symbol_table_value_union.not_array.type);
             }
             else if (!l_type->isarray && r_type->isarray)
             {
-                printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.not_array.type, r_type->symbol_table_value_union.array.element_type);
+                // printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.not_array.type, r_type->symbol_table_value_union.array.element_type);
             }
             else if (!l_type->isarray && !r_type->isarray)
             {
-                printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.not_array.type, r_type->symbol_table_value_union.not_array.type);
+                // printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.not_array.type, r_type->symbol_table_value_union.not_array.type);
             }
             bool lhs_exists = check_if_declared_before(lhs->lexeme);
             // printf("Kys hus");
@@ -1584,7 +1580,6 @@ void populate_function_and_symbol_tables(TREENODE root)
             {
 
                 check_expression_if_declared_before(rhs->child->child);
-                printf("here\n");
                 // checking if this index is a single number and if yes, then checking if it is within bounds
                 check_array_index_bounds(rhs->child->child, lhs->lexeme, lhs->line_number);
                 check_expression_if_declared_before(rhs->child->next->child);
@@ -1620,15 +1615,12 @@ void populate_function_and_symbol_tables(TREENODE root)
             }
             else if (current_symbol_table_wrapper->parent == NULL)
             {
-                                printf("idhar to aya");
                 FUNCTION_TABLE_VALUE ftv = function_table_get(function_table, current_module_name, strlen(current_module_name));
                 TREENODE opl = NULL;
                 if(ftv!=NULL) opl = ftv->output_list;
                 
                 if (opl != NULL)
                 {
-                                    printf("idhar to aya");
-
                     TREENODE temp = opl->child;
                     while (temp != NULL)
                     {
@@ -1741,7 +1733,6 @@ void populate_function_and_symbol_tables(TREENODE root)
         else if (strcmp(root->name, "CASE_STMT") == 0)
         {
             bool is_declared = check_if_declared_before(root->parent->parent->child->lexeme);
-            printf("HI");
             if (is_declared)
             {
                 int type_of_switch_variable = get_type_of_variable(root->parent->parent->child->lexeme);
