@@ -122,9 +122,10 @@ int main(int argc, char *argv[])
     // MAX_LEXEME_LENGTH = BUFFER_SIZE/2;
     BUFFER_SIZE = 2*40;
     MAX_LEXEME_LENGTH = BUFFER_SIZE/2;
-    printf("SINGLE_BUFFER_SIZE = %d", BUFFER_SIZE/2);
+    printf("SINGLE_BUFFER_SIZE = %d\n", BUFFER_SIZE/2);
     
     int choice;
+    printf("LEVEL 4: Symbol table/type Checking/ Semantic rules Module works/ handled static and dynamic arrays in type checking\n");
     while (1)
     {
         printf("\nChoose an option:\n");

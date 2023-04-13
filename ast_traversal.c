@@ -744,6 +744,8 @@ int get_type_of_variable(char *lexeme)
 {
     SYMBOL_TABLE_VALUE stv = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, lexeme);
     // printf("%s\n", stv->module_name);
+    if(stv->isarray==1)
+    return 3;
     if (stv->symbol_table_value_union.not_array.type == integer)
         return 0;
     else if (stv->symbol_table_value_union.not_array.type == real)
@@ -1861,6 +1863,12 @@ void populate_function_and_symbol_tables(TREENODE root)
 
                     root->child->next = NULL;
                     printf("\033[31m\nLine %d ERROR : %s has type real, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
+                }
+                if (get_type_of_variable(root->child->lexeme) == 3)
+                {
+
+                    root->child->next = NULL;
+                    printf("\033[31m\nLine %d ERROR : %s is array type, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
                 }
             }
             // check_if_declared_before(root->child->lexeme);

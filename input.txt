@@ -5,7 +5,7 @@ start
 	declare c,d : array[1..4] of boolean;
 	a := b;
 
-	switch(a)
+	switch(c)
 	start
 		case true:
 		break;
