@@ -1603,7 +1603,15 @@ void populate_function_and_symbol_tables(TREENODE root)
                 // printf("lt: %d, rt: %d\n", l_type->symbol_table_value_union.not_array.type, r_type->symbol_table_value_union.not_array.type);
             }
             bool lhs_exists = check_if_declared_before(lhs->lexeme);
-          
+            // checking if lhs is while loop variable
+                SYMBOL_TABLE_WRAPPER wrapper = get_while_symbol_table_having_declaration_of(lhs->lexeme);
+                if (wrapper != NULL && wrapper->while_variables != NULL && !wrapper->while_condition_fulfilled)
+                {
+                    if (data_exists(lhs->lexeme, wrapper->while_variables))
+                    {
+                        wrapper->while_condition_fulfilled = true;
+                    }
+                }
             if (!lhs_exists)
             {
                 
@@ -1681,16 +1689,6 @@ void populate_function_and_symbol_tables(TREENODE root)
                     }
                     else if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.array.element_type)
                         printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
-                }
-
-                // checking if lhs is while loop variable
-                SYMBOL_TABLE_WRAPPER wrapper = get_while_symbol_table_having_declaration_of(lhs->lexeme);
-                if (wrapper != NULL && wrapper->while_variables != NULL && !wrapper->while_condition_fulfilled)
-                {
-                    if (data_exists(lhs->lexeme, wrapper->while_variables))
-                    {
-                        wrapper->while_condition_fulfilled = true;
-                    }
                 }
 
                 // checking if it is output param
@@ -1809,6 +1807,18 @@ void populate_function_and_symbol_tables(TREENODE root)
         {
             // checking if condition has expr has been declared before
             check_expression_if_declared_before(root->child);
+            SYMBOL_TABLE_VALUE type = get_type_of_expression(root->child);
+
+            if(type->isarray){
+                if(!(root->child->child!=NULL && type->symbol_table_value_union.array.element_type == boolean)){
+                    printf("\033[31m\nLine %d ERROR : Type mismatch - while condition must be of type boolean.\n\033[0m", root->line_number);
+                }
+            }else{
+                if(!(type->symbol_table_value_union.not_array.type==boolean)){
+                    printf("\033[31m\nLine %d ERROR : Type mismatch - while condition must be of type boolean.\n\033[0m", root->line_number);
+                }
+            }
+
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
             temp->starting_line_number = root->line_number;
             // init_symbolhashmap(temp->symbol_table);
@@ -2210,6 +2220,16 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
             }
             bool lhs_exists = check_if_declared_before(lhs->lexeme);
             // printf("Kys hus");
+            // checking if lhs is while loop variable
+            SYMBOL_TABLE_WRAPPER wrapper = get_while_symbol_table_having_declaration_of(lhs->lexeme);
+            if (wrapper != NULL && wrapper->while_variables != NULL && !wrapper->while_condition_fulfilled)
+            {
+                printf("idhar to aya");
+                if (data_exists(lhs->lexeme, wrapper->while_variables))
+                {
+                    wrapper->while_condition_fulfilled = true;
+                }
+            }
             if (!lhs_exists)
             {
                 // printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", lhs->line_number, lhs->lexeme);
@@ -2285,17 +2305,6 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     }
                     // printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                 }
-
-                // checking if lhs is while loop variable
-                SYMBOL_TABLE_WRAPPER wrapper = get_while_symbol_table_having_declaration_of(lhs->lexeme);
-                if (wrapper != NULL && wrapper->while_variables != NULL && !wrapper->while_condition_fulfilled)
-                {
-                    if (data_exists(lhs->lexeme, wrapper->while_variables))
-                    {
-                        wrapper->while_condition_fulfilled = true;
-                    }
-                }
-
                 // checking if it is output param
                 SYMBOL_TABLE_VALUE value2 = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, lhs->lexeme);
                 if (value2 != NULL && value2->isOutputParameter && value2->outputParameterNeedsChecking)
