@@ -1086,7 +1086,9 @@ void ast_formation_print_all_errors(FILE* input_file){
         }
         
         init_functionhashmap(function_table);
-
+        if(semantic_error_exist==false){
+            printf("\033[0;32m\nCode compiles successfully.......\n\033[0m");
+        }
         // char** follow = get_follow_set("STATEMENTS");
         // for(int i=0 ; i<number_of_unique_terminals ; i++){
         //     printf("%s\n",follow[i]);

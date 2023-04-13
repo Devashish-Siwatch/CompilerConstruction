@@ -13,6 +13,8 @@ Chaitanya Iyer - 2020A7PS0012P
 #include "treeADT.h"
 #include "function_hash.h"
 
+bool semantic_error_exist;
+
 void ast_pass2(TREENODE root);
 void populate_function_and_symbol_tables(TREENODE root);
 bool check_if_declared_before(char *var);

@@ -3,18 +3,5 @@ start
 	declare a : integer;
 	declare b : boolean;
 	declare c,d : array[1..4] of boolean;
-	a := b;
-
-	switch(c)
-	start
-		case true:
-		break;
-		case false:
-		break;
-	end
-
-	while(c)
-	start
-		b[2]:=x+1;
-	end
+	
 end
