@@ -19,13 +19,15 @@ SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper;
 char *current_module_name;
 int current_offset_value = 0;
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper_pass_2;
+bool print_error;
 
-void init_ast_traversal()
+void init_ast_traversal(bool print_error1)
 {
     current_module_name = "";
     current_offset_value = 0;
     current_symbol_table_wrapper = NULL;
     current_symbol_table_wrapper_pass_2 = NULL;
+    print_error = print_error1;
     return;
 }
 
@@ -247,7 +249,7 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
                 else
                 {
                     type->symbol_table_value_union.not_array.type = -1;
-                    // printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
+                    // if(print_error) printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
                 }
             }
             else if (strcmp(root->name, "div") == 0)
@@ -326,7 +328,7 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
             else if (root->child->child == NULL || root->child->next->child == NULL)
             {
                 // printf("a->null = %s\n", root->child->lexeme);
-                // printf("\033[31m\nERROR : TYPE MISMATCH in both arrays.\n\033[0m");
+                // if(print_error) printf("\033[31m\nERROR : TYPE MISMATCH in both arrays.\n\033[0m");
                 type->symbol_table_value_union.not_array.type = -1;
                 return type;
             }
@@ -353,7 +355,7 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
                         else
                         {
                             type->symbol_table_value_union.not_array.type = -1;
-                            // printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
+                            // if(print_error) printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
                         }
                     }
                     else if (strcmp(root->name, "div") == 0)
@@ -467,7 +469,7 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
                     else
                     {
                         type->symbol_table_value_union.not_array.type = -1;
-                        // printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
+                        // if(print_error) printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
                     }
                 }
                 else if (strcmp(root->name, "div") == 0)
@@ -590,7 +592,7 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
                         else
                         {
                             type->symbol_table_value_union.not_array.type = -1;
-                            // printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
+                            // if(print_error) printf("\033[31m\nERROR : Types of %s and %s are different\n\033[0m", root->child->lexeme,root->child->next->lexeme);
                         }
                     }
                     else if (strcmp(root->name, "div") == 0)
@@ -701,7 +703,7 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
         // bool is_present = check_if_declared_before(root->lexeme);
         // if (!is_present)
         // {
-        //     printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", root->lexeme);
+        //     if(print_error) printf("\033[31m\nERROR : %s has not been declared before.\n\033[0m", root->lexeme);
         // }
         // if (root->next != NULL)
         //     check_expression_if_declared_before(root->next);
@@ -729,12 +731,12 @@ SYMBOL_TABLE_VALUE get_type_of_expression(TREENODE root)
         {
             if (!a->symbol_table_value_union.not_array.type == 0)
             {
-                printf("\033[31m\nLine %d ERROR : Array range expression not integer.\n\033[0m", root->line_number);
+                if(print_error) printf("\033[31m\nLine %d ERROR : Array range expression not integer.\n\033[0m", root->line_number);
             }
         }
         else
         {
-            printf("\033[31m\nLine %d ERROR : Array range expression not integer.\n\033[0m", root->line_number);
+            if(print_error) printf("\033[31m\nLine %d ERROR : Array range expression not integer.\n\033[0m", root->line_number);
         }
         return b;
     }
@@ -807,7 +809,7 @@ void appendWhileVariables(TREENODE root, LIST list)
     {
         NODE node = createNewNode(root->lexeme);
         insertNodeIntoList(node, list);
-        printf("inserted %s\n",node->data);
+        // printf("inserted %s\n",node->data);
         return;
     }
 }
@@ -824,7 +826,7 @@ void check_array_index_bounds(TREENODE indexRoot, char *arrayLexeme, int line_nu
             int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus) ? 1 : -1);
             if (!(index >= lower && index <= upper))
             {
-                printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", line_number);
+                if(print_error) printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", line_number);
             }
         }
     }
@@ -838,7 +840,7 @@ void check_array_index_bounds(TREENODE indexRoot, char *arrayLexeme, int line_nu
             int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus) ? 1 : -1);
             if (!(index >= lower && index <= upper))
             {
-                printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", line_number);
+                if(print_error) printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", line_number);
             }
         }
     }
@@ -852,7 +854,7 @@ void check_array_index_bounds(TREENODE indexRoot, char *arrayLexeme, int line_nu
             int upper = value->symbol_table_value_union.array.top_range.top * ((value->symbol_table_value_union.array.is_top_sign_plus) ? 1 : -1);
             if (!(index >= lower && index <= upper))
             {
-                printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", line_number);
+                if(print_error) printf("\033[31m\nLine %d ERROR : Array index out of bounds.\n\033[0m", line_number);
             }
         }
     }
@@ -878,7 +880,7 @@ void check_expression_if_declared_before(TREENODE root)
         bool is_present = check_if_declared_before(root->lexeme);
         if (!is_present)
         {
-            printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", root->line_number, root->lexeme);
+            if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", root->line_number, root->lexeme);
         }
         else
         {
@@ -888,7 +890,7 @@ void check_expression_if_declared_before(TREENODE root)
                 SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, root->lexeme);
                 if (!value->isarray)
                 {
-                    printf("\033[31m\nLine %d ERROR : Array type access for non-array element.\n\033[0m", root->line_number);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Array type access for non-array element.\n\033[0m", root->line_number);
                 }
                 else
                 {
@@ -971,7 +973,7 @@ void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_T
         else
         {
             if(!check_if_declared_before(range1->lexeme)){
-                printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", range1->line_number, range1->lexeme);
+                if(print_error) printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", range1->line_number, range1->lexeme);
             }
             value->symbol_table_value_union.array.bottom_range.bottom_var = range1->lexeme;
             value->symbol_table_value_union.array.is_bottom_dynamic = true;
@@ -1000,7 +1002,7 @@ void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_T
         else
         {
             if(!check_if_declared_before(range2->lexeme)){
-                printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", range2->line_number, range2->lexeme);
+                if(print_error) printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", range2->line_number, range2->lexeme);
             }
             value->symbol_table_value_union.array.top_range.top_var = range2->lexeme;
             value->symbol_table_value_union.array.is_top_dynamic = true;
@@ -1016,7 +1018,7 @@ void populateSymboltableValue(TREENODE current_node, TREENODE datatype, SYMBOL_T
             if ((bottom_range) > (top_range))
             {
 
-                printf("\033[31m\nLine %d ERROR : Upper range is less than lower range of the array .\n\033[0m", current_node->line_number);
+                if(print_error) printf("\033[31m\nLine %d ERROR : Upper range is less than lower range of the array .\n\033[0m", current_node->line_number);
             }
         }
         // element type
@@ -1079,7 +1081,7 @@ void addListtoSymbolTable(TREENODE root, int nesting_level, bool isInputParam, b
         populateSymboltableValue(temp, datatype, value, current_module_name, nesting_level, current_symbol_table_wrapper->starting_line_number, isInputParam, false, isOutputParam, outputParamNeedsChecking);
         current_offset_value += value->width;
         if(check_if_redeclared(temp->lexeme)){
-            printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", temp->line_number, temp->lexeme);
+            if(print_error) printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", temp->line_number, temp->lexeme);
         }
         symbol_insert(current_symbol_table_wrapper->symbol_table, temp->lexeme, value);
         temp = temp->child;
@@ -1217,14 +1219,14 @@ void ast_pass2(TREENODE root)
 
                         if (strcmp(input_plist_iterator->next->name, "integer") != 0)
                         {
-                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                            if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                         }
                     }
                     else if (strcmp(apl_id_node->name, "rnum") == 0)
                     {
                         if (strcmp(input_plist_iterator->next->name, "real") != 0)
                         {
-                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                            if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                         }
                     }
                     else
@@ -1238,27 +1240,27 @@ void ast_pass2(TREENODE root)
                             {
                                 if (strcmp(input_plist_iterator->next->name, "RANGE2") == 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                    if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 }
                                 else if (sym_val->symbol_table_value_union.not_array.type == integer)
                                 {
                                     if (strcmp(input_plist_iterator->next->name, "integer") != 0)
                                     {
-                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                                 else if (sym_val->symbol_table_value_union.not_array.type == real)
                                 {
                                     if (strcmp(input_plist_iterator->next->name, "real") != 0)
                                     {
-                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                                 else
                                 {
                                     if (strcmp(input_plist_iterator->next->name, "boolean") != 0)
                                     {
-                                        printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                        if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                     }
                                 }
                             }
@@ -1266,7 +1268,7 @@ void ast_pass2(TREENODE root)
                             {
                                 if (strcmp(input_plist_iterator->next->name, "RANGE2") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should not be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                    if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s should not be an array.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                 }
                                 else
                                 {
@@ -1278,7 +1280,7 @@ void ast_pass2(TREENODE root)
                                         if (strcmp(input_plist_iterator->next->child->next->next->name, "integer") != 0)
                                         {
 
-                                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of uenxpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                            if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of uenxpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                         }
                                     }
                                     else if (sym_val->symbol_table_value_union.array.element_type == real)
@@ -1287,7 +1289,7 @@ void ast_pass2(TREENODE root)
                                         // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
                                         if (strcmp(input_plist_iterator->next->child->next->next->name, "real") != 0)
                                         {
-                                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                            if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                         }
                                     }
                                     else if (sym_val->symbol_table_value_union.array.element_type == boolean)
@@ -1296,7 +1298,7 @@ void ast_pass2(TREENODE root)
                                         // printf("HERE is %s\n",input_plist_iterator->next->child->next->next->name);
                                         if (strcmp(input_plist_iterator->next->child->next->next->name, "boolean") != 0)
                                         {
-                                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                            if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s is of unexpected type.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                         }
                                     }
                                     // printf("%d here",sym_val->symbol_table_value_union.array.bottom_range.bottom);
@@ -1357,7 +1359,7 @@ void ast_pass2(TREENODE root)
                                         int size_of_array_ipl = abs(upper_bound_ipl - lower_bound_ipl);
                                         if (size_of_array_apl != size_of_array_ipl)
                                         {
-                                            printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s array size does not match with input parameter array size.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
+                                            if(print_error) printf("\033[31m\nLine %d ERROR : Input Parameter Type Mismatch %s array size does not match with input parameter array size.\n\033[0m", apl_id_node->line_number, apl_id_node->lexeme);
                                         }
                                     }
                                 }
@@ -1374,16 +1376,16 @@ void ast_pass2(TREENODE root)
 
                 if (input_plist_iterator == NULL && apl_iter != NULL)
                 {
-                    printf("\033[31m\nLine %d ERROR : Too many arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Too many arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
                 }
                 if (input_plist_iterator != NULL && apl_iter == NULL)
                 {
-                    printf("\033[31m\nLine %d ERROR : Too few arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Too few arguments in Input Parameter List while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
                 }
             }
             else
             {
-                printf("\033[31m\nLine %d ERROR : Module declared but not defined.\n\033[0m", module_id_node->line_number);
+                if(print_error) printf("\033[31m\nLine %d ERROR : Module declared but not defined.\n\033[0m", module_id_node->line_number);
                 ast_pass2(root->child);
                 ast_pass2(root->next);
                 return;
@@ -1393,11 +1395,11 @@ void ast_pass2(TREENODE root)
             //  printf("Module Name of input list parameter : %s\n", sym_val->symbol_table_value_union.not_array.type);
             if (optional == NULL && value->output_list != NULL)
             {
-                printf("\033[31m\nLine %d ERROR : Expected return parameters while calling module : %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                if(print_error) printf("\033[31m\nLine %d ERROR : Expected return parameters while calling module : %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
             }
             if (optional != NULL && value->output_list == NULL)
             {
-                printf("\033[31m\nLine %d ERROR : No return parameter expected while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                if(print_error) printf("\033[31m\nLine %d ERROR : No return parameter expected while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
             }
             else if (optional != NULL && value->output_list != NULL && value->output_list->child != NULL)
             {
@@ -1411,7 +1413,7 @@ void ast_pass2(TREENODE root)
                     {
                         if (sym_val->isarray == true)
                         {
-                            printf("\033[31m\nLine %d ERROR : Array not allowed in output parameter while calling module %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                            if(print_error) printf("\033[31m\nLine %d ERROR : Array not allowed in output parameter while calling module %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
                         }
                         else
                         {
@@ -1419,21 +1421,21 @@ void ast_pass2(TREENODE root)
                             {
                                 if (strcmp(output_itr->next->name, "integer") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : Output Parameter Type Mismatch %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
+                                    if(print_error) printf("\033[31m\nLine %d ERROR : Output Parameter Type Mismatch %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
                                 }
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == real)
                             {
                                 if (strcmp(output_itr->next->name, "real") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : Output Parameter Type Mismatch %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
+                                    if(print_error) printf("\033[31m\nLine %d ERROR : Output Parameter Type Mismatch %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
                                 }
                             }
                             else if (sym_val->symbol_table_value_union.not_array.type == boolean)
                             {
                                 if (strcmp(output_itr->next->name, "boolean") != 0)
                                 {
-                                    printf("\033[31m\nLine %d ERROR : Output Parameter Type Mismatch %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
+                                    if(print_error) printf("\033[31m\nLine %d ERROR : Output Parameter Type Mismatch %s is of unexpected type.\n\033[0m", optional_itr->line_number, optional_itr->lexeme);
                                 }
                             }
                         }
@@ -1444,11 +1446,11 @@ void ast_pass2(TREENODE root)
                 }
                 if (optional_itr == NULL && output_itr != NULL)
                 {
-                    printf("\033[31m\nLine %d ERROR : Too many output parameters are returned while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Too many output parameters are returned while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
                 }
                 if (optional_itr != NULL && output_itr == NULL)
                 {
-                    printf("\033[31m\nLine %d ERROR : Too few output parameters are returned while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Too few output parameters are returned while calling module: %s.\n\033[0m", module_id_node->line_number, module_id_node->lexeme);
                 }
             }
 
@@ -1485,7 +1487,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
                 if (value->input_list != NULL)
                 {
-                    printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", root->child->line_number, root->child->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", root->child->line_number, root->child->lexeme);
                     SYMBOL_TABLE_WRAPPER wraped = create_symbol_table_wrapper();
                     wraped->starting_line_number = root->line_number;
                     wraped->name = root->child->lexeme;
@@ -1546,7 +1548,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 if (redeclared)
                 {
                     // printf("ERROR: Function %s redeclared\n", temp->lexeme);
-                    printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", temp->line_number, temp->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", temp->line_number, temp->lexeme);
                 }
                 else
                 {
@@ -1617,7 +1619,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             if (!lhs_exists)
             {
                 
-                printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", lhs->line_number, lhs->lexeme);
+                if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", lhs->line_number, lhs->lexeme);
             }
             else
             {
@@ -1627,7 +1629,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 // printf("Ferefefsdf %s\n", value->module_name);
                 if (value != NULL && value->isLoopVariable)
                 {
-                    printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", lhs->line_number, lhs->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", lhs->line_number, lhs->lexeme);
                 }
 
                 //  }
@@ -1641,7 +1643,7 @@ void populate_function_and_symbol_tables(TREENODE root)
 
                     if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.not_array.type)
                     { // type checking
-                        printf("\033[31m\nLine %d ERROR : Type Mismatch\n\033[0m", lhs->line_number);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch\n\033[0m", lhs->line_number);
                     }
                 }
 
@@ -1649,7 +1651,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                 {
                     if ((lhs->child == NULL && rhs->child != NULL) || (lhs->child != NULL && rhs->child == NULL))
                     {
-                        printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
                     }
                     else if ( (!r_type->symbol_table_value_union.array.is_bottom_dynamic && !r_type->symbol_table_value_union.array.is_top_dynamic) && (!l_type->symbol_table_value_union.array.is_bottom_dynamic && !l_type->symbol_table_value_union.array.is_top_dynamic) && l_type->symbol_table_value_union.array.element_type == r_type->symbol_table_value_union.array.element_type)
                     { // type checking
@@ -1662,7 +1664,7 @@ void populate_function_and_symbol_tables(TREENODE root)
 
                         if (abs(l_upper-l_lower) != abs(r_upper-r_lower))
                         {
-                            printf("\033[31m\nLine %d ERROR : Type Mismatch: Array sizes different.\n\033[0m", lhs->line_number);
+                            if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch: Array sizes different.\n\033[0m", lhs->line_number);
                         }
                         printf("%d\n", l_type->symbol_table_value_union.array.element_type);
                     }
@@ -1670,7 +1672,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     {
                         // int x = 102;
                         //  printf("%d", x);
-                        printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
                     }
                 }
                 else if (l_type->isarray && !r_type->isarray)
@@ -1678,19 +1680,19 @@ void populate_function_and_symbol_tables(TREENODE root)
                     // printf("lhs->next %s\n", lhs->next->name);
                     if (!(strcmp(lhs->next->name, "LVALUEARRSTMT") == 0)) // if lhs is of type A = not array
                     {
-                        printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
                     }
                     else if (r_type->symbol_table_value_union.not_array.type != l_type->symbol_table_value_union.array.element_type)
-                        printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
                 }
                 else if (!l_type->isarray && r_type->isarray)
                 {
                     if (rhs->child == NULL)
                     {
-                        printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
                     }
                     else if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.array.element_type)
-                        printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
                 }
 
                 // checking if it is output param
@@ -1734,7 +1736,7 @@ void populate_function_and_symbol_tables(TREENODE root)
         {
             if (current_symbol_table_wrapper->while_variables!=NULL && current_symbol_table_wrapper->while_variables->head != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
             {
-                printf("\033[31m\nLine %d ERROR : None of the variables in the while condition have been assigned in the while statements.\n\033[0m", current_symbol_table_wrapper->starting_line_number);
+                if(print_error) printf("\033[31m\nLine %d ERROR : None of the variables in the while condition have been assigned in the while statements.\n\033[0m", current_symbol_table_wrapper->starting_line_number);
             }
             else if (current_symbol_table_wrapper->parent == NULL)
             {
@@ -1752,7 +1754,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                         SYMBOL_TABLE_VALUE stv = symbol_table_get(current_symbol_table_wrapper->symbol_table, id, strlen(id));
                         if (stv != NULL && stv->isOutputParameter && stv->outputParameterNeedsChecking)
                         {
-                            printf("\033[31m\nLine %d ERROR : Output parameter %s has not been changed in the module.\n\033[0m", current_symbol_table_wrapper->starting_line_number, id);
+                            if(print_error) printf("\033[31m\nLine %d ERROR : Output parameter %s has not been changed in the module.\n\033[0m", current_symbol_table_wrapper->starting_line_number, id);
                         }
                         temp = temp->child;
                     }
@@ -1789,7 +1791,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     }
                     else
                     {
-                        printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", temp->line_number, temp->lexeme);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", temp->line_number, temp->lexeme);
                     }
                 }
                 else
@@ -1813,11 +1815,11 @@ void populate_function_and_symbol_tables(TREENODE root)
 
             if(type->isarray){
                 if(!(root->child->child!=NULL && type->symbol_table_value_union.array.element_type == boolean)){
-                    printf("\033[31m\nLine %d ERROR : Type mismatch - while condition must be of type boolean.\n\033[0m", root->line_number);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Type mismatch - while condition must be of type boolean.\n\033[0m", root->line_number);
                 }
             }else{
                 if(!(type->symbol_table_value_union.not_array.type==boolean)){
-                    printf("\033[31m\nLine %d ERROR : Type mismatch - while condition must be of type boolean.\n\033[0m", root->line_number);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Type mismatch - while condition must be of type boolean.\n\033[0m", root->line_number);
                 }
             }
 
@@ -1842,7 +1844,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             bool is_declared = check_if_declared_before(root->child->lexeme);
             if (!is_declared)
             {
-                printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", root->child->line_number, root->child->lexeme);
+                if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", root->child->line_number, root->child->lexeme);
             }
             else
             {
@@ -1850,25 +1852,25 @@ void populate_function_and_symbol_tables(TREENODE root)
                 if (get_type_of_variable(root->child->lexeme) == 2)
                 {
                     if (root->child->next->next != NULL)
-                        printf("\033[31m\nLine %d ERROR : Default statement not expected in boolean switch case\n\033[0m", root->child->line_number);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Default statement not expected in boolean switch case\n\033[0m", root->child->line_number);
                 }
                 else if (get_type_of_variable(root->child->lexeme) == 0)
                 {
 
                     if (root->child->next->next == NULL)
-                        printf("\033[31m\nLine %d ERROR : Default statement is expected in integer switch case\n\033[0m", root->child->line_number);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Default statement is expected in integer switch case\n\033[0m", root->child->line_number);
                 }
                 if (get_type_of_variable(root->child->lexeme) == 1)
                 {
 
                     root->child->next = NULL;
-                    printf("\033[31m\nLine %d ERROR : %s has type real, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : %s has type real, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
                 }
                 if (get_type_of_variable(root->child->lexeme) == 3)
                 {
 
                     root->child->next = NULL;
-                    printf("\033[31m\nLine %d ERROR : %s is array type, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : %s is array type, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
                 }
             }
             // check_if_declared_before(root->child->lexeme);
@@ -1881,11 +1883,11 @@ void populate_function_and_symbol_tables(TREENODE root)
                 int type_of_switch_variable = get_type_of_variable(root->parent->parent->child->lexeme);
                 if (type_of_switch_variable == 0 && (strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
                 {
-                    printf("\033[31m\nLine %d ERROR : Case value is expected to have type Integer.\n\033[0m", root->line_number);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Case value is expected to have type Integer.\n\033[0m", root->line_number);
                 }
                 if (type_of_switch_variable == 2 && !(strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
                 {
-                    printf("\033[31m\nLine %d ERROR : Case value is expected to have type boolean.\n\033[0m", root->line_number);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : Case value is expected to have type boolean.\n\033[0m", root->line_number);
                 }
             }
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
@@ -1946,7 +1948,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             bool var_exists = check_if_declared_before(var->lexeme);
             if (!var_exists)
             {
-                printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
+                if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
             }
         }
         else if (strcmp(root->name, "IO_OUTPUT") == 0)
@@ -1957,14 +1959,14 @@ void populate_function_and_symbol_tables(TREENODE root)
                 var_exists = check_if_declared_before(var->lexeme);
             if (!var_exists)
             {
-                printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
+                if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
             }
             if (var->next != NULL)
             {
                 var = var->next;
                 if ((strcmp(var->name, "id") == 0) && (!check_if_declared_before(var->lexeme)))
                 {
-                    printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
+                    if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
                 }
             }
         }
@@ -1977,12 +1979,12 @@ void populate_function_and_symbol_tables(TREENODE root)
                 if (strcmp(temp->next->name, "id") != 0)
                 {
                     if (strcmp(current_module_name, root->child->lexeme) == 0)
-                        printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->line_number, root->child->lexeme);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->line_number, root->child->lexeme);
                 }
                 else
                 {
                     if (strcmp(current_module_name, root->child->next->lexeme) == 0)
-                        printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->next->line_number, root->child->next->lexeme);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->next->line_number, root->child->next->lexeme);
                 }
             }
             if (strcmp(temp->name, "id") != 0)
@@ -1993,7 +1995,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     bool dec_before = check_if_declared_before(temp2->lexeme);
                     if (!dec_before)
                     {
-                        printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
                     }
                     else
                     {
@@ -2001,7 +2003,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                         SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, temp2->lexeme);
                         if (value != NULL && value->isLoopVariable)
                         {
-                            printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", temp2->line_number, temp2->lexeme);
+                            if(print_error) printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", temp2->line_number, temp2->lexeme);
                         }
 
                         // checking if lhs is while loop variable
@@ -2025,7 +2027,7 @@ void populate_function_and_symbol_tables(TREENODE root)
             }
             if ((!check_if_function_declared(temp->lexeme)))
             {
-                printf("\033[31m\nLine %d ERROR : Module %s has not been declared before.\n\033[0m", temp->line_number, temp->lexeme);
+                if(print_error) printf("\033[31m\nLine %d ERROR : Module %s has not been declared before.\n\033[0m", temp->line_number, temp->lexeme);
             }
             else
             {
@@ -2035,7 +2037,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     value->needsChecking = false;
                     if (value->isDeclared && value->input_list != NULL)
                     {
-                        printf("\033[31m\nLine %d ERROR : Module %s has been both declared and defined before the first module reuse statement.\n\033[0m", temp->line_number, temp->lexeme);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : Module %s has been both declared and defined before the first module reuse statement.\n\033[0m", temp->line_number, temp->lexeme);
                     }
                 }
             }
@@ -2050,7 +2052,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     {
                         if (!check_if_declared_before(temp3->lexeme))
                         {
-                            printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp3->line_number, temp3->lexeme);
+                            if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp3->line_number, temp3->lexeme);
                         }
                     }
                     if (temp3->next != NULL)
@@ -2067,7 +2069,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                     bool dec_before = check_if_declared_before(temp2->lexeme);
                     if (!dec_before)
                     {
-                        printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
+                        if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
                     }
                     if (temp2->next != NULL)
                     {
@@ -2107,7 +2109,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                 value = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
                 if (value->input_list != NULL)
                 {
-                    // printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", root->child->line_number, root->child->lexeme);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", root->child->line_number, root->child->lexeme);
                     SYMBOL_TABLE_WRAPPER wraped = create_symbol_table_wrapper();
                     wraped->starting_line_number = root->line_number;
                     wraped->name = root->child->lexeme;
@@ -2168,7 +2170,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                 if (redeclared)
                 {
                     // printf("ERROR: Function %s redeclared\n", temp->lexeme);
-                    // printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", temp->line_number, temp->lexeme);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Module %s redeclared.\n\033[0m", temp->line_number, temp->lexeme);
                 }
                 else
                 {
@@ -2240,7 +2242,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
             }
             if (!lhs_exists)
             {
-                // printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", lhs->line_number, lhs->lexeme);
+                // if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", lhs->line_number, lhs->lexeme);
             }
             else
             {
@@ -2250,7 +2252,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                 // printf("Ferefefsdf %s\n", value->module_name);
                 if (value != NULL && value->isLoopVariable)
                 {
-                    // printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", lhs->line_number, lhs->lexeme);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", lhs->line_number, lhs->lexeme);
                 }
 
                 //  }
@@ -2264,7 +2266,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
 
                     if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.not_array.type)
                     { // type checking
-                      // printf("\033[31m\nLine %d ERROR : Type Mismatch\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
+                      // if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                     }
                 }
 
@@ -2272,14 +2274,14 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                 {
                     if ((lhs->child == NULL && rhs->child != NULL) || (lhs->child != NULL && rhs->child == NULL))
                     {
-                        // printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
+                        // if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                     }
                     else if (l_type->symbol_table_value_union.array.element_type == r_type->symbol_table_value_union.array.element_type)
                     { // type checking
                         // printf("HELLOE");
                         if ((l_type->symbol_table_value_union.array.top_range.top - l_type->symbol_table_value_union.array.bottom_range.bottom) != (r_type->symbol_table_value_union.array.top_range.top - r_type->symbol_table_value_union.array.bottom_range.bottom))
                         {
-                            // printf("\033[31m\nLine %d ERROR : Type Mismatch: Array sizes different.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
+                            // if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch: Array sizes different.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                         }
                         // printf("%d\n", l_type->symbol_table_value_union.array.element_type);
                     }
@@ -2287,7 +2289,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     {
                         // int x = 102;
                         //  printf("%d", x);
-                        // printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
+                        // if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
                     }
                 }
                 else if (l_type->isarray && !r_type->isarray)
@@ -2295,23 +2297,23 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     // printf("lhs->next %s\n", lhs->next->name);
                     if (!(strcmp(lhs->next->name, "LVALUEARRSTMT") == 0)) // if lhs is of type A = not array
                     {
-                        // printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
+                        // if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                     }
                     else if (r_type->symbol_table_value_union.not_array.type != l_type->symbol_table_value_union.array.element_type)
                     {
                     }
-                    // printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                 }
                 else if (!l_type->isarray && r_type->isarray)
                 {
                     if (rhs->child == NULL)
                     {
-                        // printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
+                        // if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                     }
                     else if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.array.element_type)
                     {
                     }
-                    // printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number, lhs->lexeme, rhs->lexeme);
                 }
                 // checking if it is output param
                 SYMBOL_TABLE_VALUE value2 = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, lhs->lexeme);
@@ -2354,7 +2356,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
         {
             if (current_symbol_table_wrapper->while_variables != NULL && !current_symbol_table_wrapper->while_condition_fulfilled)
             {
-                // printf("\033[31m\nLine %d ERROR : None of the variables in the while condition have been assigned in the while statements.\n\033[0m", current_symbol_table_wrapper->starting_line_number);
+                // if(print_error) printf("\033[31m\nLine %d ERROR : None of the variables in the while condition have been assigned in the while statements.\n\033[0m", current_symbol_table_wrapper->starting_line_number);
             }
             else if (current_symbol_table_wrapper->parent == NULL)
             {
@@ -2372,7 +2374,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                         SYMBOL_TABLE_VALUE stv = symbol_table_get(current_symbol_table_wrapper->symbol_table, id, strlen(id));
                         if (stv != NULL && stv->isOutputParameter && stv->outputParameterNeedsChecking)
                         {
-                            // printf("\033[31m\nLine %d ERROR : Output parameter %s has not been changed in the module.\n\033[0m", current_symbol_table_wrapper->starting_line_number, id);
+                            // if(print_error) printf("\033[31m\nLine %d ERROR : Output parameter %s has not been changed in the module.\n\033[0m", current_symbol_table_wrapper->starting_line_number, id);
                         }
                         temp = temp->child;
                     }
@@ -2418,7 +2420,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     }
                     else
                     {
-                        // printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", temp->line_number, temp->lexeme);
+                        // if(print_error) printf("\033[31m\nLine %d ERROR : %s has already been declared before.\n\033[0m", temp->line_number, temp->lexeme);
                     }
                 }
                 else
@@ -2459,7 +2461,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
             bool is_declared = check_if_declared_before(root->child->lexeme);
             if (!is_declared)
             {
-                // printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", root->child->line_number, root->child->lexeme);
+                // if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", root->child->line_number, root->child->lexeme);
             }
             else
             {
@@ -2469,7 +2471,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     if (root->child->next->next != NULL)
                     {
                     }
-                    // printf("\033[31m\nLine %d ERROR : Default statement not expected in boolean switch case\n\033[0m", root->child->line_number);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Default statement not expected in boolean switch case\n\033[0m", root->child->line_number);
                 }
                 else if (get_type_of_variable(root->child->lexeme) == 0)
                 {
@@ -2477,13 +2479,13 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     if (root->child->next->next == NULL)
                     {
                     }
-                    // printf("\033[31m\nLine %d ERROR : Default statement is expected in integer switch case\n\033[0m", root->child->line_number);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Default statement is expected in integer switch case\n\033[0m", root->child->line_number);
                 }
                 if (get_type_of_variable(root->child->lexeme) == 1)
                 {
 
                     root->child->next = NULL;
-                    // printf("\033[31m\nLine %d ERROR : %s has type real, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : %s has type real, expected integer or boolean\n\033[0m", root->child->line_number, root->child->lexeme);
                 }
             }
             // check_if_declared_before(root->child->lexeme);
@@ -2496,11 +2498,11 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                 int type_of_switch_variable = get_type_of_variable(root->parent->parent->child->lexeme);
                 if (type_of_switch_variable == 0 && (strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
                 {
-                    // printf("\033[31m\nLine %d ERROR : Case value is expected to have type Integer.\n\033[0m", root->line_number);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Case value is expected to have type Integer.\n\033[0m", root->line_number);
                 }
                 if (type_of_switch_variable == 2 && !(strcmp(root->child->lexeme, "true") == 0 || strcmp(root->child->lexeme, "false") == 0))
                 {
-                    // printf("\033[31m\nLine %d ERROR : Case value is expected to have type boolean.\n\033[0m", root->line_number);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Case value is expected to have type boolean.\n\033[0m", root->line_number);
                 }
             }
             SYMBOL_TABLE_WRAPPER temp = create_symbol_table_wrapper();
@@ -2561,7 +2563,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
             bool var_exists = check_if_declared_before(var->lexeme);
             if (!var_exists)
             {
-                // printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
+                // if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
             }
         }
         else if (strcmp(root->name, "IO_OUTPUT") == 0)
@@ -2572,14 +2574,14 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                 var_exists = check_if_declared_before(var->lexeme);
             if (!var_exists)
             {
-                // printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
+                // if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
             }
             if (var->next != NULL)
             {
                 var = var->next;
                 if ((strcmp(var->name, "id") == 0) && (!check_if_declared_before(var->lexeme)))
                 {
-                    // printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", var->line_number, var->lexeme);
                 }
             }
         }
@@ -2594,14 +2596,14 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     if (strcmp(current_module_name, root->child->lexeme) == 0)
                     {
                     }
-                    // printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->line_number, root->child->lexeme);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->line_number, root->child->lexeme);
                 }
                 else
                 {
                     if (strcmp(current_module_name, root->child->next->lexeme) == 0)
                     {
                     }
-                    // printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->next->line_number, root->child->next->lexeme);
+                    // if(print_error) printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->next->line_number, root->child->next->lexeme);
                 }
             }
             if (strcmp(temp->name, "id") != 0)
@@ -2612,7 +2614,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     bool dec_before = check_if_declared_before(temp2->lexeme);
                     if (!dec_before)
                     {
-                        // printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
+                        // if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
                     }
                     else
                     {
@@ -2620,7 +2622,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                         SYMBOL_TABLE_VALUE value = get_symbol_table_value_in_above_table(current_symbol_table_wrapper, temp2->lexeme);
                         if (value != NULL && value->isLoopVariable)
                         {
-                            // printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", temp2->line_number, temp2->lexeme);
+                            // if(print_error) printf("\033[31m\nLine %d ERROR : %s cannot be assigned as it is a loop variable.\n\033[0m", temp2->line_number, temp2->lexeme);
                         }
 
                         // checking if lhs is while loop variable
@@ -2644,7 +2646,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
             }
             if ((!check_if_function_declared(temp->lexeme)))
             {
-                // printf("\033[31m\nLine %d ERROR : Module %s has not been declared before.\n\033[0m", temp->line_number, temp->lexeme);
+                // if(print_error) printf("\033[31m\nLine %d ERROR : Module %s has not been declared before.\n\033[0m", temp->line_number, temp->lexeme);
             }
             else
             {
@@ -2654,7 +2656,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     value->needsChecking = false;
                     if (value->isDeclared && value->input_list != NULL)
                     {
-                        // printf("\033[31m\nLine %d ERROR : Module %s has been both declared and defined before the first module reuse statement.\n\033[0m", temp->line_number, temp->lexeme);
+                        // if(print_error) printf("\033[31m\nLine %d ERROR : Module %s has been both declared and defined before the first module reuse statement.\n\033[0m", temp->line_number, temp->lexeme);
                     }
                 }
             }
@@ -2669,7 +2671,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     {
                         if (!check_if_declared_before(temp3->lexeme))
                         {
-                            // printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp3->line_number, temp3->lexeme);
+                            // if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp3->line_number, temp3->lexeme);
                         }
                     }
                     if (temp3->next != NULL)
@@ -2686,7 +2688,7 @@ void populate_function_and_symbol_tables_without_error(TREENODE root)
                     bool dec_before = check_if_declared_before(temp2->lexeme);
                     if (!dec_before)
                     {
-                        // printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
+                        // if(print_error) printf("\033[31m\nLine %d ERROR : %s has not been declared before.\n\033[0m", temp2->line_number, temp2->lexeme);
                     }
                     if (temp2->next != NULL)
                     {

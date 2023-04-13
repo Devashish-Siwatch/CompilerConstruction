@@ -968,7 +968,7 @@ int parser_complete_functionality(FILE *input_file, FILE *output_file)
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
     printAst(astHead);
-    init_ast_traversal();
+    init_ast_traversal(true);
     populate_function_and_symbol_tables(astHead);
     ast_pass2(astHead);
     get_total_width();   
@@ -1021,7 +1021,7 @@ void ast_formation_array_info_print(FILE *input_file){
     printf("\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
-    init_ast_traversal();
+    init_ast_traversal(false);
     populate_function_and_symbol_tables_without_error(astHead);
     print_all_array_info();
 
@@ -1072,7 +1072,7 @@ void ast_formation_print_all_errors(FILE* input_file){
     if(global_error_flag==0){
         TREENODE astHead = generate_ast(parse_tree->head);
         setASTParent(astHead);
-        init_ast_traversal();
+        init_ast_traversal(true);
        
         populate_function_and_symbol_tables(astHead);
         ast_pass2(astHead);
@@ -1125,7 +1125,7 @@ void ast_formation_print_activation_records(FILE *input_file){
     printf("\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
-    init_ast_traversal();
+    init_ast_traversal(false);
     populate_function_and_symbol_tables_without_error(astHead);
    
     get_total_width();   
@@ -1169,7 +1169,7 @@ void ast_formation_print_ast(FILE *input_file){
     printf("\n\n\n");
     TREENODE astHead = generate_ast(parse_tree->head);
     setASTParent(astHead);
-    init_ast_traversal();
+    init_ast_traversal(false);
     populate_function_and_symbol_tables_without_error(astHead);
       
   
