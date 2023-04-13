@@ -1667,7 +1667,7 @@ void populate_function_and_symbol_tables(TREENODE root)
                         {
                             semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch: Array sizes different.\n\033[0m", lhs->line_number);
                         }
-                        printf("%d\n", l_type->symbol_table_value_union.array.element_type);
+                        // printf("%d\n", l_type->symbol_table_value_union.array.element_type);
                     }
                     else if((!r_type->symbol_table_value_union.array.is_bottom_dynamic && !r_type->symbol_table_value_union.array.is_top_dynamic) && (!l_type->symbol_table_value_union.array.is_bottom_dynamic && !l_type->symbol_table_value_union.array.is_top_dynamic))
                     {
@@ -1852,15 +1852,15 @@ void populate_function_and_symbol_tables(TREENODE root)
                 // printf("Hi");
                 if (get_type_of_variable(root->child->lexeme) == 2)
                 {
-                    if (root->child->next->next != NULL)
-                        semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Default statement not expected in boolean switch case\n\033[0m", root->child->line_number);
+                    if (root->child->next->next != NULL){
+                        semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Default statement not expected in boolean switch case\n\033[0m", root->child->line_number);}
                 }
                 else if (get_type_of_variable(root->child->lexeme) == 0)
                 {
 
-                    if (root->child->next->next == NULL)
+                    if (root->child->next->next == NULL){
                         semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Default statement is expected in integer switch case\n\033[0m", root->child->line_number);
-                }
+                }}
                 if (get_type_of_variable(root->child->lexeme) == 1)
                 {
 
@@ -1979,13 +1979,15 @@ void populate_function_and_symbol_tables(TREENODE root)
             {
                 if (strcmp(temp->next->name, "id") != 0)
                 {
-                    if (strcmp(current_module_name, root->child->lexeme) == 0)
+                    if (strcmp(current_module_name, root->child->lexeme) == 0){
                         semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->line_number, root->child->lexeme);
+                    }
                 }
                 else
                 {
-                    if (strcmp(current_module_name, root->child->next->lexeme) == 0)
+                    if (strcmp(current_module_name, root->child->next->lexeme) == 0){
                         semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Recursion found in Module %s.\n\033[0m", root->child->next->line_number, root->child->next->lexeme);
+                    }    
                 }
             }
             if (strcmp(temp->name, "id") != 0)
