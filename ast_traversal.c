@@ -20,6 +20,7 @@ char *current_module_name;
 int current_offset_value = 0;
 SYMBOL_TABLE_WRAPPER current_symbol_table_wrapper_pass_2;
 bool print_error;
+bool ignore;
 
 void init_ast_traversal(bool print_error1)
 {
@@ -29,6 +30,7 @@ void init_ast_traversal(bool print_error1)
     current_symbol_table_wrapper_pass_2 = NULL;
     print_error = print_error1;
     semantic_error_exist=false;
+    ignore = false;
     return;
 }
 
@@ -1125,13 +1127,15 @@ SYMBOL_TABLE_WRAPPER search_below_by_line_number(int line_no)
 
 void ast_pass2(TREENODE root)
 {
-    // printf("%s sigma\n",root->name);
     if (root == NULL)
     {
         // printf("Currently at %s",head->name);
         return;
     }
-    else if (strcmp(root->name, "DRIVER_MODULE_STMTS") == 0)
+    if(!ignore || ( root->name!=NULL && strcmp(root->name,"Module1")==0)){
+    
+
+     if (strcmp(root->name, "DRIVER_MODULE_STMTS") == 0)
     {
         FUNCTION_TABLE_VALUE val = function_table_get(function_table, "driver", strlen("driver"));
         if (val != NULL)
@@ -1142,11 +1146,17 @@ void ast_pass2(TREENODE root)
 
     else if (strcmp(root->name, "Module1") == 0)
     {
-        // printf("REACHED Module1 NODE\n");
         FUNCTION_TABLE_VALUE val = function_table_get(function_table, root->child->lexeme, strlen(root->child->lexeme));
         if (val != NULL)
         {
-            current_symbol_table_wrapper_pass_2 = val->symbol_table_wrapper;
+            
+            if(val->symbol_table_wrapper->starting_line_number!=root->line_number){
+                
+                ignore = true;
+            }else{
+                ignore = false;
+            }
+            if(!ignore)current_symbol_table_wrapper_pass_2 = val->symbol_table_wrapper;
         }
     }
 
@@ -1459,7 +1469,7 @@ void ast_pass2(TREENODE root)
             //  printf("%dasdasd", get_type_of_variable(root->child->next->child->name));
         }
     }
-
+    }
     ast_pass2(root->child);
     ast_pass2(root->next);
 }
