@@ -1683,8 +1683,8 @@ void populate_function_and_symbol_tables(TREENODE root)
                     {
                         semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
                     }
-                    else if (r_type->symbol_table_value_union.not_array.type != l_type->symbol_table_value_union.array.element_type)
-                        semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
+                    else if (r_type->symbol_table_value_union.not_array.type != l_type->symbol_table_value_union.array.element_type){
+                        semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);}
                 }
                 else if (!l_type->isarray && r_type->isarray)
                 {
@@ -1692,8 +1692,8 @@ void populate_function_and_symbol_tables(TREENODE root)
                     {
                         semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
                     }
-                    else if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.array.element_type)
-                        semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);
+                    else if (l_type->symbol_table_value_union.not_array.type != r_type->symbol_table_value_union.array.element_type){
+                        semantic_error_exist =true; if(print_error) printf("\033[31m\nLine %d ERROR : Type Mismatch.\n\033[0m", lhs->line_number);}
                 }
 
                 // checking if it is output param
