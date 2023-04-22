@@ -94,11 +94,14 @@ void populate_hashmap(hashmap map)
     insert(map, "returns", RETURNS);
     insert(map, "for", FOR);
     insert(map, "in", IN);
-    insert(map, "switch", SWITCH);
-    insert(map, "case", CASE);
-    insert(map, "break", BREAK);
-    insert(map, "default", DEFAULT);
+    // insert(map, "switch", SWITCH);
+    // insert(map, "case", CASE);
+    // insert(map, "break", BREAK);
+    // insert(map, "default", DEFAULT);
     insert(map, "while", WHILE);
+    insert(map, "if", IF);
+    insert(map, "elif", ELIF);
+    insert(map, "else", ELSE);
 }
 // int main()
 // {

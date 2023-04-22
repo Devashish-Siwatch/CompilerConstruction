@@ -79,12 +79,11 @@ char *enum_to_token_name[] = {
     "RETURNS",
     "FOR",
     "IN",
-    "SWITCH",
-    "CASE",
-    "BREAK",
-    "DEFAULT",
     "WHILE",
-    "EOFILE"
+    "EOFILE",
+    "ELSE",
+    "ELIF",
+    "IF"
     // "COMMENTMARK"
 };
 char *convertToLowercase(char *str)
@@ -283,9 +282,10 @@ char **get_first_set(char *nonterminal)
     }
     for (int i = 0; i < NUMBER_OF_RULES; i++)
     {
-        // printf("here for %s\n",nonterminal);
+         //printf("here for %s\n",nonterminal);
         if (strcmp(nonterminal, grammar[i]->head->data) == 0)
         {
+            //printf("%d  %s\n",i,nonterminal);
             NODE temp = grammar[i]->head->next;
             if (strcmp(temp->data, "eps") == 0)
             {
@@ -344,6 +344,7 @@ char **get_first_set(char *nonterminal)
         }
     }
     first[index] = "-1";
+   // printf("%s \n",nonterminal);
     return first;
 }
 
@@ -507,18 +508,20 @@ char ***all_first_sets()
             first_of_all[i][j] = (char *)malloc(sizeof(char) * MAX_LENGTH_OF_NONTERMINAL);
         }
     }
-
+    //printf("%d",number_of_unique_nonterminals);
     for (int i = 0; i < number_of_unique_nonterminals; i++)
     {
         // length of arrayOfNonTerminals is more but we stop at the correct length
+       // printf("%d\n",i);
         first_of_all[i] = get_first_set(arrayOfNonTerminals[i]);
-        // printf("PRINTING FIRST OF %s\n",arrayOfNonTerminals[i]);
+         //printf("PRINTING FIRST OF %s\n",arrayOfNonTerminals[i]);
         // for(int j=0 ; j<NUMBER_OF_UNIQUE_NONTERMINALS; j++){
         // printf("%s\n",first_of_all[i][j]);
         //     if(strcmp(first_of_all[i][j],"-1")==0) break;
         // }
+       // printf("%d\n",i);
     }
-
+    //printf("HI");
     return first_of_all;
 }
 
@@ -569,6 +572,7 @@ void init_t_array()
 
 void populate_grammer()
 {
+
     FILE *grammar_input_file;
     grammar_input_file = fopen("grammar.txt", "r");
     char *str = (char *)(malloc(sizeof(char) * 30));

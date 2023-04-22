@@ -65,12 +65,11 @@ char *enum_to_token_name_string[] = {
     "RETURNS",
     "FOR",
     "IN",
-    "SWITCH",
-    "CASE",
-    "BREAK",
-    "DEFAULT",
     "WHILE",
-    "EOFILE"
+    "EOFILE",
+    "ELSE",
+    "ELIF",
+    "IF"
     // "COMMENTMARK"
 };
 

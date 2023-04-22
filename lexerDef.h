@@ -79,11 +79,11 @@ typedef enum valid_token_names
     RETURNS,
     FOR,
     IN,
-    SWITCH,
-    CASE,
-    BREAK,
-    DEFAULT,
-    WHILE,EOFILE
+    WHILE,
+    EOFILE,
+    ELSE,
+    ELIF,
+    IF
     // COMMENTMARK
 } valid_token_names;
 
