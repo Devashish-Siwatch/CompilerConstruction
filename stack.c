@@ -78,10 +78,10 @@ int isTopTerminal(STACK stack){
     else return 0;                                      //returns 0 for non-terminal
 }
 
-void pushRuleToStackandTree(STACK stack,LIST grammarRule,TREENODE parent){
+void pushRuleToStackandTree(STACK stack,LIST grammarRule,TREENODE parent, int grammar_rule_number){
     //temp is at first element of rhs of the rule
     NODE temp = grammarRule->head->next;
-    TREENODE* arrayOfTreeNodePointers = insertRuleToTree(grammarRule,parent);
+    TREENODE* arrayOfTreeNodePointers = insertRuleToTree(grammarRule,parent,grammar_rule_number);
     int rhsLength = grammarRule->count-1;
 
     pop(stack);

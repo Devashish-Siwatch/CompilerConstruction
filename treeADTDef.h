@@ -19,11 +19,13 @@ struct tree_node
     char* name;
     char* lexeme;
     int line_number;
+    int rule_number;
     int valueIfNum;
     float valueIfRNum;
     TREENODE next;
     TREENODE parent;
     TREENODE child;
+    TREENODE inh;
 };
 
 

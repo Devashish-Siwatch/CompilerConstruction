@@ -13,90 +13,94 @@ Chaitanya Iyer - 2020A7PS0012P
 #include <string.h>
 #include <stdlib.h>
 
-void printParseTree(TREENODE  node, FILE* output_file) {
+void printParseTree(TREENODE  node) {
 
     if (node == NULL) return;
 
     if(node->child != NULL){
-        printParseTree(node->child,output_file);
+        printParseTree(node->child);
     }
+    //printf("%s and rule number : %d\n",node->name, node->rule_number+1);
     
-    //printf("Name : %-20s, lexeme : %-20s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15f \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
-    // printf("%-20s ",node->lexeme);
-    // if(node->line_number<0)
-    //     printf("%-11d ",node->line_number);
-    // else
-    //     printf("%-10d ",node->line_number);
-    // if(strcmp(node->lexeme,"----"))
-    //     printf("%-20s ",node->name);
-    // else
-    //     printf("%-20s","");
-
-    // if(strcmp(node->name,"num")==0){
-    //     printf("%-10d ",node->valueIfNum); 
-    // }
-    // else if(strcmp(node->name,"rnum")==0){
-    //     printf("%-10f ",node->valueIfRNum);
-    // }
-    // else
-    // {
-    //     printf("%-11s","");
-    // }
-    // if(strcmp(node->name,"S")==0)
-    //     printf("ROOT%-17s","");
-    // else
-    //     printf("%-20s ",node->parent->name);
-    // if(node->child!=NULL)
-    //     printf("no%-10s","");
-    // else    
-    //     printf("yes%-9s","");
-    // if(node->child!=NULL)
-    //     printf("%-20s ",node->name);
-    // else
-    //     printf("%-20s","");
-    // // printf("%-5f ",node->valueIfRNum);
-    // printf("\n");
-
-    //Writing to output file
-    fprintf(output_file,"%-20s ",node->lexeme);
+    //printf("Name : %-15s, lexeme : %-10s, line number : %-5d, valueIfNum : %-15d, valueIfRNum : %-15f \n", node->name, node->lexeme, node->line_number, node->valueIfNum, node->valueIfRNum);
+    printf("%-15s ",node->lexeme);
     if(node->line_number<0)
-        fprintf(output_file,"%-11d ",node->line_number);
+        printf("%-11d ",node->line_number);
     else
-        fprintf(output_file,"%-10d ",node->line_number);
+        printf("%-10d ",node->line_number);
     if(strcmp(node->lexeme,"----"))
-        fprintf(output_file,"%-20s ",node->name);
+        printf("%-20s ",node->name);
     else
-        fprintf(output_file,"%-20s","");
+        printf("%-20s","");
 
     if(strcmp(node->name,"num")==0){
-        fprintf(output_file,"%-10d ",node->valueIfNum); 
+        printf("%-10d ",node->valueIfNum); 
     }
     else if(strcmp(node->name,"rnum")==0){
-        fprintf(output_file,"%-10f ",node->valueIfRNum);
+        printf("%-10f ",node->valueIfRNum);
     }
     else
     {
-        fprintf(output_file,"%-11s","");
+        printf("%-11s","");
     }
     if(strcmp(node->name,"S")==0)
-        fprintf(output_file,"ROOT%-17s","");
+        printf("ROOT%-17s","");
     else
-        fprintf(output_file,"%-20s ",node->parent->name);
+        printf("%-20s ",node->parent->name);
     if(node->child!=NULL)
-        fprintf(output_file,"no%-10s","");
+        printf("no%-10s","");
     else    
-        fprintf(output_file,"yes%-9s","");
+        printf("yes%-9s","");
     if(node->child!=NULL)
-        fprintf(output_file,"%-20s ",node->name);
+        printf("%-20s ",node->name);
     else
-        fprintf(output_file,"%-20s","");
+        printf("%-20s","");
     // printf("%-5f ",node->valueIfRNum);
-    fprintf(output_file,"\n");
+    printf("%-10d ",node->line_number);
+    printf("\n");
+
+    //Writing to output file
+    // fprintf(output_file,"%-20s ",node->lexeme);
+    // if(node->line_number<0)
+    //     fprintf(output_file,"%-11d ",node->line_number);
+    // else
+    //     fprintf(output_file,"%-10d ",node->line_number);
+    // if(strcmp(node->lexeme,"----"))
+    //     fprintf(output_file,"%-20s ",node->name);
+    // else
+    //     fprintf(output_file,"%-20s","");
+
+    // if(strcmp(node->name,"num")==0){
+    //     fprintf(output_file,"%-10d ",node->valueIfNum); 
+    // }
+    // else if(strcmp(node->name,"rnum")==0){
+    //     fprintf(output_file,"%-10f ",node->valueIfRNum);
+    // }
+    // else
+    // {
+    //     fprintf(output_file,"%-11s","");
+    // }
+    // if(strcmp(node->name,"S")==0)
+    //     fprintf(output_file,"ROOT%-17s","");
+    // else
+    //     fprintf(output_file,"%-20s ",node->parent->name);
+    // if(node->child!=NULL)
+    //     fprintf(output_file,"no%-10s","");
+    // else    
+    //     fprintf(output_file,"yes%-9s","");
+    // if(node->child!=NULL)
+    //     fprintf(output_file,"%-20s ",node->name);
+    // else
+    //     fprintf(output_file,"%-20s","");
+    // fprintf(output_file,"%-10d ",node->line_number);
+    // // printf("%-5f ",node->valueIfRNum);
+
+    // fprintf(output_file,"\n");
 
     if (node->child != NULL){
         TREENODE temp = node->child->next;
         while (temp != NULL){
-            printParseTree(temp, output_file);
+            printParseTree(temp);
             temp = temp->next;
         }
     }
@@ -118,6 +122,7 @@ TREENODE createNewTreeNode(TREENODE parent){\
     strcpy(temp->lexeme, "----");
     temp->line_number = -1;
     temp->valueIfNum = 0;
+    temp->rule_number = -1;
     temp->valueIfRNum = 0.0;
     temp->child = NULL;
     temp->parent = parent;
@@ -125,10 +130,28 @@ TREENODE createNewTreeNode(TREENODE parent){\
     return temp;
 }
 
-TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
+TREENODE createNewTreeNode2(){\
+    TREENODE temp = (TREENODE)malloc(sizeof(tree_node));
+    char* name = (char*)malloc(50*sizeof(char));
+    char* lexeme = (char*)malloc(50*sizeof(char));
+    temp->name = name;
+    temp->lexeme = lexeme;
+    strcpy(temp->name, "----");
+    strcpy(temp->lexeme, "----");
+    temp->line_number = -1;
+    temp->valueIfNum = 0;
+    temp->rule_number = -1;
+    temp->valueIfRNum = 0.0;
+    temp->child = NULL;
+    temp->parent = NULL;
+    temp->next = NULL;
+    return temp;
+}
+
+TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent, int grammar_rule_number){
     NODE temp = grammar_rule->head;
     int numberOfRHSElements=grammar_rule->count-1;
-
+    parent->rule_number = grammar_rule_number;
     // int lengthOfRHS = 0;
     // NODE temp2 = temp;
     // while(temp!=NULL){
@@ -145,7 +168,6 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
     int count = 0;
     TREENODE treenode = createNewTreeNode(parent);
     while(temp!=NULL){
-
         int type = getTypeOfData(temp->data);
         if(type==0){
             //epsilon
@@ -176,7 +198,7 @@ TREENODE* insertRuleToTree(LIST grammar_rule, TREENODE parent){
     return treePointerArray;
 }
 
-void printTree(TREELIST tree, FILE *output_file){
+void printTree(TREELIST tree){
     TREENODE head = tree->head;
-    printParseTree(head, output_file);
+    printParseTree(head);
 }
